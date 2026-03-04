@@ -1,7 +1,35 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
-export function ProfilePage() {
+interface Props {
+  avatarUrl: string | null;
+  displayName: string;
+  onNameChange: (name: string) => void;
+  onAvatarChange: (url: string) => void;
+}
+
+function getInitials(name: string): string {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??';
+}
+
+export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChange }: Props) {
   const [activeTab, setActiveTab] = useState(0);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onAvatarChange(reader.result as string);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleNameBlur = (e: React.FocusEvent<HTMLSpanElement>) => {
+    const newName = e.currentTarget.innerText.trim();
+    if (newName && newName !== displayName) {
+      onNameChange(newName);
+    }
+  };
 
   return (
     <div className="profile-page-wrap">
@@ -9,7 +37,10 @@ export function ProfilePage() {
         <div className="profile-cover-new" />
         <div style={{ background: '#fff', flex: 1 }}>
           <div className="profile-header-row">
-            <div className="profile-av-new">WD</div>
+            <div className="profile-av-new" onClick={() => fileRef.current?.click()} style={{ cursor: 'pointer' }}>
+              {avatarUrl ? <img src={avatarUrl} alt="avatar" /> : getInitials(displayName)}
+            </div>
+            <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
             <div className="profile-header-actions">
               <button className="profile-edit-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
@@ -22,7 +53,7 @@ export function ProfilePage() {
           </div>
 
           <div className="profile-name-row">
-            <span className="profile-name-new" contentEditable suppressContentEditableWarning>Willy denz</span>
+            <span className="profile-name-new" contentEditable suppressContentEditableWarning onBlur={handleNameBlur}>{displayName}</span>
             <svg className="profile-verified" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
 
@@ -47,7 +78,9 @@ export function ProfilePage() {
               <div className="profile-story-thumb">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b0b8c4" strokeWidth="1.5"><circle cx="12" cy="12" r="9"/><polyline points="12 8 12 12 14 14"/></svg>
                 <div style={{ position: 'absolute', bottom: 4, left: 4 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg,#00aff0,#0095cc)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 9, fontWeight: 700, border: '2px solid #fff' }}>WD</div>
+                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'linear-gradient(135deg,#00aff0,#0095cc)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 9, fontWeight: 700, border: '2px solid #fff', overflow: 'hidden' }}>
+                    {avatarUrl ? <img src={avatarUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : getInitials(displayName)}
+                  </div>
                 </div>
               </div>
               <div className="profile-story-label">Archive de<br/>story</div>
