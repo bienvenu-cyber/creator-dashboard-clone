@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnlyFans</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#fff;
+  --text:#000;
+  --muted:#8a8a9a;
+  --border:#e0e0e0;
+  --blue:#00aff0;
+  --blue-light:#e8f7ff;
+  --green:#0dbe68;
+  --sidebar-w:220px;
+  --font:'Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+body{font-family:var(--font);background:#fff;color:var(--text);display:flex;min-height:100vh;font-size:13px;}
+[contenteditable]{outline:none;cursor:text;border-bottom:1px dashed transparent;transition:border-color .15s;}
+[contenteditable]:hover{border-bottom-color:var(--blue);}
+[contenteditable]:focus{border-bottom-color:var(--blue);background:rgba(0,175,240,.05);border-radius:2px;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;background:#fff;z-index:100;padding:20px 0 16px;}
+.sb-avatar-wrap{display:flex;align-items:center;padding:0 20px;margin-bottom:24px;position:relative;}
+.sb-avatar{width:44px;height:44px;border-radius:50%;background:#dde6ed;display:flex;align-items:center;justify-content:center;color:var(--blue);font-weight:700;font-size:14px;cursor:pointer;overflow:hidden;flex-shrink:0;border:none;letter-spacing:.5px;}
+.sb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.sb-avatar-upload{display:none;}
+.sb-nav{flex:1;overflow-y:auto;}
+.sb-item{display:flex;align-items:center;gap:16px;padding:14px 20px;cursor:pointer;color:#9aa3af;font-size:15px;font-weight:500;transition:color .12s;position:relative;white-space:nowrap;}
+.sb-item:hover{color:#444;}
+.sb-item.active{color:#111;font-weight:700;}
+.sb-item svg{width:26px;height:26px;flex-shrink:0;stroke:#b0bac4;stroke-width:1.7;transition:stroke .12s;}
+.sb-item:hover svg{stroke:#555;}
+.sb-item.active svg{stroke:#111;}
+.sb-new-post{margin:16px 16px 0;background:var(--blue);color:#fff;border:none;border-radius:26px;padding:13px 10px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;width:calc(100% - 32px);line-height:1.35;letter-spacing:.4px;text-transform:uppercase;}
+.sb-new-post:hover{background:#009fd8;}
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;background:#fff;}
+
+/* PAGE (hidden by default) */
+.page{display:none;flex:1;overflow:hidden;}
+.page.active{display:flex;flex-direction:column;height:100%;background:#fff;}
+
+/* ===================== STATISTICS PAGE ===================== */
+.stats-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.stats-header-title{font-size:15px;font-weight:700;letter-spacing:.5px;}
+.stats-help{width:24px;height:24px;border:2px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#888;cursor:pointer;}
+.stats-alert{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#fff8f0;border-bottom:1px solid #fce0c0;font-size:13px;color:#666;flex-shrink:0;}
+.stats-alert a{color:var(--blue);text-decoration:none;}
+.stats-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0;}
+.stats-tab{padding:13px 14px;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+.stats-tab:hover{color:#000;}
+.stats-tab.active{color:#000;border-bottom-color:#000;font-weight:700;}
+.stats-body{display:flex;flex:1;overflow:hidden;}
+.stats-main{flex:1;overflow-y:auto;padding:0;}
+.stats-right-col{width:280px;border-left:1px solid var(--border);overflow-y:auto;padding:16px;flex-shrink:0;}
+
+/* period box */
+.stats-period-box{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;}
+.stats-period-box:hover{background:#fafafa;}
+.stats-period-title{font-size:14px;font-weight:600;color:#111;}
+.stats-period-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.stats-inception-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);font-size:14px;}
+.stats-inception-row span:first-child{color:#111;}
+.stats-inception-row span:last-child{font-weight:600;color:#111;}
+
+/* sub-tabs pills */
+.stats-pills{display:flex;gap:8px;padding:14px 20px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.stats-pill{padding:7px 16px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--border);color:#555;transition:all .12s;background:#fff;}
+.stats-pill:hover{border-color:#aaa;color:#000;}
+.stats-pill.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+/* chart area */
+.stats-chart-section{padding:16px 20px 8px;}
+.stats-chart-title{font-size:14px;font-weight:600;color:#111;margin-bottom:4px;}
+.stats-chart-amount{font-size:22px;font-weight:700;margin-bottom:12px;display:flex;align-items:baseline;gap:8px;}
+.stats-chart-amount small{font-size:12px;color:var(--muted);font-weight:400;}
+.stats-chart-wrap{position:relative;height:140px;border-bottom:2px solid var(--blue);margin-bottom:6px;}
+.stats-chart-wrap svg{width:100%;height:100%;}
+.stats-chart-xlabels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);padding:4px 0 16px;}
+
+/* radio table */
+.stats-radio-table{padding:0 20px;}
+.stats-radio-row{display:flex;align-items:center;padding:11px 0;border-bottom:1px solid #f0f0f0;gap:12px;font-size:13.5px;}
+.stats-radio-row input[type=radio]{accent-color:var(--blue);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+.stats-radio-label{flex:1;color:#111;}
+.stats-radio-brut{color:var(--muted);font-size:13px;min-width:60px;text-align:right;}
+.stats-radio-net{font-weight:600;font-size:13px;min-width:60px;text-align:right;}
+.stats-radio-header{display:flex;padding:8px 0 4px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border);margin-bottom:2px;}
+.stats-radio-header span:first-child{flex:1;}
+
+/* right col widgets */
+.stats-rw{border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px;}
+.stats-rw-title{font-size:13px;font-weight:700;color:#111;margin-bottom:8px;}
+.stats-rw-sub{font-size:12px;color:var(--muted);line-height:1.6;}
+.stats-rw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;}
+.stats-rw-item label{font-size:11.5px;color:var(--muted);display:block;margin-bottom:3px;line-height:1.4;}
+.stats-rw-item .val{font-size:16px;font-weight:700;color:#111;}
+.stats-rw-divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+.stats-rw-balance{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.stats-rw-balance .lbl{font-size:12px;color:var(--muted);margin-bottom:2px;}
+.stats-rw-balance .big{font-size:20px;font-weight:700;color:#111;}
+.stats-rw-balance .sml{font-size:14px;font-weight:700;color:var(--muted);}
+.stats-select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;margin-bottom:6px;appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;padding-right:28px;}
+.btn-withdraw-sm{background:#e0e0e0;color:#999;border:none;border-radius:20px;padding:9px 16px;font-size:12px;font-weight:700;letter-spacing:.4px;cursor:not-allowed;width:100%;margin-bottom:6px;}
+.stats-earn-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:13px;}
+.stats-earn-label{color:#555;}
+.stats-earn-vals{display:flex;gap:20px;}
+.stats-earn-brut{color:var(--muted);font-size:12px;}
+.stats-earn-net{font-weight:600;color:#111;}
+
+/* engagement table */
+.stats-eng-table{padding:0 20px;}
+.stats-eng-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;}
+.stats-eng-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;padding:11px 0;border-bottom:1px solid #f5f5f5;font-size:13px;align-items:center;}
+.stats-eng-row:hover{background:#fafafa;margin:0 -8px;padding:11px 8px;}
+.stats-eng-label{font-weight:500;color:#111;}
+.stats-eng-val{color:#333;text-align:right;}
+.stats-eng-val.bold{font-weight:700;}
+
+/* portée */
+.stats-portee-chart{padding:0 20px 8px;}
+.stats-portee-visitors{font-size:14px;font-weight:700;color:#111;margin-bottom:8px;padding:0 20px;}
+
+/* fans */
+.stats-fans-row{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border);gap:12px;font-size:13.5px;cursor:pointer;}
+.stats-fans-row:hover{background:#fafafa;}
+.stats-fans-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0;}
+.stats-fans-name{font-weight:600;color:#111;}
+.stats-fans-sub{font-size:12px;color:var(--muted);}
+.stats-fans-amount{margin-left:auto;font-weight:700;color:#111;font-size:13px;}
+
+/* ===================== HOME PAGE ===================== */
+.home-content{padding:20px;max-width:600px;}
+.feed-card{border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+.feed-card-head{display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.feed-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c0392b,#8e44ad);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;}
+.feed-name{font-weight:600;font-size:13px;}
+.feed-time{font-size:11px;color:var(--muted);}
+.feed-img{width:100%;height:200px;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;opacity:.7;}
+.feed-actions{padding:10px 14px;display:flex;gap:16px;}
+.feed-act-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);cursor:pointer;border:none;background:none;}
+.feed-act-btn:hover{color:#000;}
+
+/* ===================== MESSAGES PAGE ===================== */
+.msg-layout{display:flex;flex:1;height:100%;}
+.msg-list-panel{width:360px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.msg-list-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.msg-sort-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--border);}
+.msg-sort-label{font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.4px;}
+.msg-filter-row{display:flex;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border);}
+.msg-filter-chip{padding:5px 14px;border-radius:20px;border:1px solid var(--border);font-size:12.5px;cursor:pointer;color:#555;display:flex;align-items:center;gap:4px;transition:all .12s;}
+.msg-filter-chip.active{background:#000;color:#fff;border-color:#000;}
+.msg-thread{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .12s;position:relative;}
+.msg-thread:hover{background:#fafafa;}
+.msg-thread.active{background:#e8f7ff;}
+.msg-thread-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;position:relative;}
+.msg-thread-online{width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid #fff;position:absolute;bottom:1px;right:1px;}
+.msg-thread-info{flex:1;min-width:0;}
+.msg-thread-name{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.msg-thread-preview{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.msg-thread-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.msg-thread-time{font-size:11px;color:var(--muted);}
+.msg-unread-badge{width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.msg-chat{flex:1;display:flex;flex-direction:column;}
+.msg-empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:20px;}
+.msg-new-btn{background:var(--blue);color:#fff;border:none;border-radius:24px;padding:13px 32px;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:background .12s;}
+.msg-new-btn:hover{background:#009fd8;}
+.msg-chat-head{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);}
+.msg-chat-head-info{display:flex;align-items:center;gap:10px;}
+.msg-chat-head-name{font-size:14px;font-weight:700;}
+.msg-chat-head-sub{font-size:12px;color:var(--muted);}
+.msg-chat-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:8px;background:#fafafa;}
+.msg-bubble{max-width:68%;padding:10px 14px;border-radius:18px;font-size:13.5px;line-height:1.5;}
+.msg-bubble.them{background:#f0f0f0;align-self:flex-start;border-bottom-left-radius:4px;}
+.msg-bubble.me{background:var(--blue);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.msg-chat-input{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:#fff;}
+.msg-chat-input input{flex:1;border:1px solid var(--border);border-radius:20px;padding:10px 16px;font-size:13px;outline:none;}
+.msg-chat-input input:focus{border-color:var(--blue);}
+.msg-send-btn{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+
+/* ===================== NOTIFICATIONS PAGE ===================== */
+.notif-layout{display:flex;flex:1;}
+.notif-center{flex:1;border-right:1px solid var(--border);overflow-y:auto;max-width:640px;display:flex;flex-direction:column;}
+.notif-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.notif-header-title{font-size:15px;font-weight:700;letter-spacing:.5px;}
+.notif-filters{display:flex;gap:8px;padding:12px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.notif-chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);font-size:12.5px;cursor:pointer;color:#555;white-space:nowrap;transition:all .12s;}
+.notif-chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.notif-chip:hover:not(.active){border-color:#aaa;color:#000;}
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;position:relative;}
+.notif-item:hover{background:#fafafa;}
+.notif-item.unread{background:#f0f9ff;}
+.notif-item.unread::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue);border-radius:0 2px 2px 0;}
+.notif-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0;}
+.notif-body{flex:1;min-width:0;}
+.notif-name{font-weight:600;font-size:13.5px;color:#000;}
+.notif-text{font-size:13px;color:#555;margin-top:2px;line-height:1.4;}
+.notif-time{font-size:11.5px;color:var(--muted);margin-top:4px;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);position:absolute;right:16px;top:50%;transform:translateY(-50%);}
+
+/* ===================== QUEUE PAGE ===================== */
+.queue-content{padding:20px;}
+.queue-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.queue-title{font-size:16px;font-weight:700;}
+.queue-btn{background:var(--blue);color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer;}
+.queue-empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.queue-empty svg{width:48px;height:48px;margin-bottom:12px;opacity:.3;}
+.queue-item{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.queue-item:hover{background:#f9f9f9;}
+.queue-thumb{width:56px;height:56px;border-radius:8px;background:#eee;object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#999;font-size:11px;}
+.queue-info{flex:1;}
+.queue-item-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+.queue-item-date{font-size:11.5px;color:var(--muted);}
+
+/* ===================== MY PROFILE PAGE ===================== */
+.profile-cover{height:180px;background:linear-gradient(135deg,#667eea,#764ba2);position:relative;}
+.profile-av-big{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#c0392b,#8e44ad);border:4px solid #fff;position:absolute;bottom:-40px;left:20px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:28px;}
+.profile-info-section{padding:50px 20px 20px;}
+.profile-display-name{font-size:18px;font-weight:700;margin-bottom:2px;}
+.profile-handle{font-size:13px;color:var(--muted);margin-bottom:12px;}
+.profile-stats-row{display:flex;gap:24px;margin-bottom:16px;}
+.profile-stat{text-align:center;}
+.profile-stat .num{font-size:16px;font-weight:700;}
+.profile-stat .lbl{font-size:11px;color:var(--muted);}
+.profile-bio{font-size:13px;color:#444;line-height:1.6;margin-bottom:16px;}
+
+/* ===================== HOME PAGE (UPGRADED) ===================== */
+.home-layout{display:flex;flex:1;}
+.home-center{flex:1;border-right:1px solid var(--border);overflow-y:auto;max-width:640px;}
+.home-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.home-header-title{font-size:15px;font-weight:700;letter-spacing:.5px;}
+.home-composer{border-bottom:1px solid var(--border);padding:14px 20px;}
+.home-composer-input{min-height:52px;font-size:14px;color:#333;outline:none;margin-bottom:12px;}
+.home-composer-input:empty:before{content:attr(data-placeholder);color:#bbb;}
+.home-composer-tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.home-composer-tools svg,.home-composer-tools span{cursor:pointer;transition:color .12s;}
+.home-composer-tools svg:hover{stroke:var(--blue);}
+.home-filter-row{display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);}
+.home-filter-chip{padding:5px 14px;border-radius:20px;border:1px solid var(--border);font-size:12.5px;cursor:pointer;color:#555;transition:all .12s;}
+.home-filter-chip.active{background:#000;color:#fff;border-color:#000;}
+.home-story-row{padding:12px 20px;border-bottom:1px solid var(--border);}
+.home-story-add{width:80px;display:flex;flex-direction:column;align-items:center;cursor:pointer;position:relative;}
+.home-story-av{width:64px;height:64px;border-radius:10px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.home-right{width:300px;flex-shrink:0;padding:16px;overflow-y:auto;}
+
+/* Feed post card */
+.feed-post{border-bottom:1px solid var(--border);padding:16px 20px;}
+.feed-post-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.feed-post-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0;}
+.feed-post-name{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:5px;}
+.feed-post-verified{color:var(--blue);}
+.feed-post-handle{font-size:12px;color:var(--muted);}
+.feed-post-time{font-size:12px;color:var(--muted);}
+.feed-post-text{font-size:13.5px;line-height:1.6;color:#333;margin-bottom:12px;}
+.feed-post-text a{color:var(--blue);text-decoration:none;}
+.feed-post-media{border-radius:10px;overflow:hidden;margin-bottom:12px;background:#000;width:100%;min-height:200px;display:flex;align-items:center;justify-content:center;position:relative;}
+.feed-post-play{width:48px;height:48px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.feed-post-actions{display:flex;align-items:center;gap:20px;}
+.feed-act{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--muted);cursor:pointer;border:none;background:none;transition:color .12s;}
+.feed-act:hover{color:#000;}
+.feed-act.liked{color:#e74c3c;}
+
+/* ===================== DECLARATIONS active section ===================== */
+.decl-section-item.active-section .decl-section-label{color:#000;font-weight:700;}
+.decl-section-item.active-section{border-left:3px solid #000;padding-left:13px;}
+
+/* Stats gains sub-page */
+.gains-period-box{border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px;}
+.gains-period-row{display:flex;align-items:center;justify-content:space-between;}
+.gains-period-label{font-size:14px;font-weight:600;}
+.gains-period-val{font-size:14px;font-weight:700;}
+.gains-chart-area{height:80px;border-bottom:2px solid var(--blue);margin:12px 0 8px;display:flex;align-items:flex-end;gap:1px;padding:0 2px;}
+.gains-bar{flex:1;background:var(--blue);opacity:.2;min-height:2px;}
+.gains-x-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:16px;}
+.gains-date-selector{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:12.5px;margin-bottom:16px;cursor:pointer;}
+.gains-line{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:13px;}
+.gains-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.gains-total-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:13.5px;font-weight:700;border-top:1px solid var(--border);}
+
+.coll-layout{display:flex;flex:1;height:100%;}
+.coll-left{width:320px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.coll-left-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.coll-left-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:.3px;}
+.coll-tabs{display:flex;border-bottom:1px solid var(--border);}
+.coll-tab{padding:10px 12px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.coll-tab.active{color:#000;border-bottom-color:#000;}
+.coll-order-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.coll-list-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.coll-list-item:hover,.coll-list-item.active{background:#e8f7ff;}
+.coll-list-name{font-size:14px;font-weight:500;}
+.coll-list-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.coll-list-icon{width:32px;height:32px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.coll-mid{width:420px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.coll-mid-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.coll-mid-title{font-size:15px;font-weight:700;letter-spacing:.3px;}
+.coll-mid-tabs{display:flex;border-bottom:1px solid var(--border);}
+.coll-mid-tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
+.coll-mid-tab.active{color:#000;border-bottom-color:#000;}
+.coll-mid-filter{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.coll-status-chips{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.coll-chip{padding:6px 14px;border-radius:20px;font-size:12.5px;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:#fff;transition:all .12s;}
+.coll-chip.active{background:#fff;border-color:#ccc;color:#000;}
+.coll-chip.sel{background:var(--blue-light);border-color:var(--blue);color:var(--blue);}
+.coll-fan-card{margin:16px;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.coll-fan-banner{height:70px;background:linear-gradient(135deg,#1a6fb5,#00aff0);display:flex;align-items:center;padding:12px;position:relative;}
+.coll-fan-av{width:56px;height:56px;border-radius:50%;background:var(--blue);border:3px solid #fff;display:flex;align-items:center;justify-content:center;margin:-28px 0 8px 12px;position:relative;z-index:1;}
+.coll-fan-body{padding:0 14px 14px;}
+.coll-fan-row{display:flex;align-items:center;gap:8px;padding:6px 0;color:#444;font-size:13px;cursor:pointer;}
+.coll-fan-row:hover{color:var(--blue);}
+.coll-fan-actions{display:flex;gap:10px;margin-top:10px;}
+.coll-fan-btn{flex:1;padding:10px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;}
+.coll-fan-btn.outline{background:#fff;border:1px solid var(--border);color:var(--blue);}
+.coll-fan-btn.outline:hover{border-color:var(--blue);}
+
+/* ===================== VAULT PAGE ===================== */
+.vault-layout{display:flex;flex:1;height:100%;}
+.vault-left{width:320px;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.vault-left-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.vault-left-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:.3px;}
+.vault-order-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.vault-cat-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+.vault-cat-item:hover,.vault-cat-item.active{background:#e8f7ff;}
+.vault-cat-name{font-size:14px;font-weight:500;}
+.vault-cat-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.vault-right{flex:1;display:flex;flex-direction:column;}
+.vault-right-header{padding:14px 20px;border-bottom:1px solid var(--border);font-size:15px;font-weight:700;letter-spacing:.3px;}
+.vault-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.vault-empty-icon{opacity:.6;}
+.vault-empty-text{font-size:13px;color:var(--muted);}
+
+/* ===================== QUEUE PAGE ===================== */
+.queue-layout{display:flex;flex:1;height:100%;}
+.queue-cal-panel{flex:1;border-right:1px solid var(--border);display:flex;flex-direction:column;max-width:680px;}
+.queue-cal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);}
+.queue-cal-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:.3px;}
+.queue-month-nav{display:flex;align-items:center;gap:6px;padding:12px 16px 8px;border-bottom:1px solid var(--border);}
+.queue-nav-btn{background:none;border:none;cursor:pointer;font-size:18px;color:#555;padding:2px 6px;border-radius:4px;line-height:1;}
+.queue-nav-btn:hover{background:#f0f0f0;}
+.queue-month-label{font-size:14px;font-weight:600;margin-left:4px;}
+.queue-type-chips{display:flex;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);}
+.queue-type-chip{padding:6px 16px;border-radius:20px;border:1px solid var(--border);font-size:13px;cursor:pointer;color:#555;transition:all .12s;}
+.queue-type-chip.active{border-color:#888;color:#000;background:#f5f5f5;}
+.queue-cal-grid{padding:0 8px 8px;flex:1;}
+.cal-day-header{display:inline-block;text-align:center;font-size:12px;font-weight:600;color:var(--muted);width:calc(100%/7);padding:8px 0;}
+#calDays{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-day{min-height:80px;padding:6px 8px;border-top:1px solid var(--border);cursor:pointer;transition:background .12s;font-size:13px;}
+.cal-day:hover{background:#f9f9f9;}
+.cal-day.today{background:#e8f7ff;}
+.cal-day.today .cal-day-num{color:var(--blue);font-weight:700;}
+.cal-day.other-month{color:#ccc;}
+.cal-day-num{font-size:13px;}
+.queue-day-panel{width:320px;flex-shrink:0;display:flex;flex-direction:column;}
+.queue-day-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;}
+.queue-day-add{border:1px dashed var(--border);margin:12px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:12px;cursor:pointer;color:var(--muted);transition:all .12s;}
+.queue-day-add:hover{border-color:var(--blue);color:var(--blue);}
+.queue-day-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;}
+.queue-day-empty-text{font-size:12px;color:var(--muted);text-align:center;}
+
+/* ===================== PLUS OVERLAY ===================== */
+.plus-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(0,0,0,.3);}
+.plus-panel{position:absolute;left:0;top:0;width:var(--sidebar-w);height:100vh;background:#fff;box-shadow:4px 0 20px rgba(0,0,0,.12);overflow-y:auto;display:flex;flex-direction:column;}
+.plus-profile{padding:20px 16px 16px;border-bottom:1px solid var(--border);}
+.plus-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#00aff0,#0095cc);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;margin-bottom:10px;}
+.plus-name{font-size:15px;font-weight:700;margin-bottom:2px;}
+.plus-handle{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.plus-stats{font-size:12px;color:#555;}
+.plus-menu{padding:6px 0;}
+.plus-menu-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;font-size:13.5px;color:#333;transition:background .12s;}
+.plus-menu-item:hover{background:#f5f5f5;color:var(--blue);}
+.plus-menu-item svg{flex-shrink:0;opacity:.7;}
+.plus-menu-item:hover svg{opacity:1;}
+.plus-toggle-row{justify-content:space-between;}
+.plus-logout{color:#e74c3c;}
+.plus-logout:hover{background:#fff5f5;color:#c0392b;}
+.plus-divider{height:1px;background:var(--border);margin:4px 0;}
+.toggle-switch{width:36px;height:20px;background:#ccc;border-radius:10px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;}
+.toggle-switch.on{background:var(--blue);}
+.toggle-knob{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle-switch.on .toggle-knob{left:18px;}
+
+/* ===================== DECLARATIONS PAGE ===================== */
+.decl-layout{display:flex;flex:1;min-height:0;}
+.decl-left{width:340px;border-right:1px solid var(--border);padding:20px;flex-shrink:0;overflow-y:auto;}
+.decl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.decl-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;letter-spacing:.3px;}
+.decl-help{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--muted);}
+.decl-alert{background:#fff8f0;border:1px solid #f5c68a;border-radius:8px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;font-size:13px;}
+.decl-alert-icon{color:#f39c12;font-size:16px;flex-shrink:0;margin-top:1px;}
+.decl-alert a{color:var(--blue);text-decoration:none;}
+.decl-balance-box{border:1px solid var(--border);border-radius:10px;margin-bottom:16px;overflow:hidden;}
+.decl-balance-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f0faff;border-bottom:1px solid var(--border);}
+.decl-balance-label{font-size:12px;font-weight:700;letter-spacing:.3px;color:#000;}
+.decl-balance-val{font-size:18px;font-weight:700;}
+.decl-balance-toggle{cursor:pointer;color:var(--blue);font-size:14px;}
+.decl-pending-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;}
+.decl-pending-label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.decl-pending-val{font-size:13px;font-weight:600;}
+.decl-payout-select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;margin-bottom:6px;background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.decl-payout-hint{font-size:11.5px;color:var(--muted);margin-bottom:12px;}
+.decl-withdraw-btn{width:100%;padding:11px;background:#d0d0d0;color:#fff;border:none;border-radius:20px;font-size:13px;font-weight:700;letter-spacing:.5px;cursor:not-allowed;margin-bottom:20px;}
+.decl-withdraw-btn.active{background:var(--blue);cursor:pointer;}
+.decl-withdraw-btn.active:hover{background:#009fd8;}
+.decl-section-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:color .12s;}
+.decl-section-item:hover{color:var(--blue);}
+.decl-section-item svg{color:var(--muted);}
+.decl-section-label{font-size:12px;font-weight:700;letter-spacing:.5px;color:inherit;}
+.decl-section-item.active-section .decl-section-label{color:#000;border-bottom:2px solid #000;padding-bottom:2px;}
+.decl-right{flex:1;padding:20px 24px;overflow-y:auto;}
+.decl-right-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.decl-right-title{font-size:14px;font-weight:700;letter-spacing:.3px;}
+.decl-right-sub{font-size:11.5px;color:var(--muted);}
+.decl-table-header{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.5fr 1fr;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;}
+.decl-table-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.5fr 1fr;padding:12px 0;border-bottom:1px solid var(--border);font-size:12.5px;align-items:center;cursor:pointer;transition:background .12s;}
+.decl-table-row:hover{background:#fafafa;}
+.decl-status-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.decl-status-ok{background:#e8fff4;color:var(--green);}
+.decl-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--muted);font-size:13px;gap:8px;}
+
+/* ===================== PROFILE PAGE (UPGRADED) ===================== */
+.profile-page-wrap{display:flex;flex:1;overflow:hidden;background:#fff;}
+.profile-main-col{flex:1;overflow-y:auto;border-right:1px solid var(--border);background:#fff;display:flex;flex-direction:column;}
+.profile-cover-new{height:180px;background:linear-gradient(135deg,#c8d8e8,#e0eaf4);position:relative;flex-shrink:0;width:100%;}
+.profile-cover-new img{width:100%;height:100%;object-fit:cover;display:block;}
+.profile-header-row{display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px;margin-top:-38px;margin-bottom:12px;position:relative;z-index:2;background:transparent;}
+.profile-av-new{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#00aff0,#0095cc);border:4px solid #fff;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;overflow:hidden;flex-shrink:0;}
+.profile-av-new img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.profile-header-actions{display:flex;gap:8px;align-items:center;padding-bottom:8px;}
+.profile-edit-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:#fff;transition:all .12s;}
+.profile-edit-btn:hover{border-color:var(--blue);color:var(--blue);}
+.profile-share-btn{width:34px;height:34px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;}
+.profile-share-btn:hover{border-color:var(--blue);}
+.profile-name-row{display:flex;align-items:center;gap:6px;padding:0 20px;margin-bottom:4px;}
+.profile-name-new{font-size:17px;font-weight:700;}
+.profile-verified{color:var(--blue);}
+.profile-handle-status{display:flex;align-items:center;gap:6px;padding:0 20px;margin-bottom:10px;font-size:13px;color:var(--muted);}
+.profile-status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.profile-status-text{color:#555;font-size:13px;}
+.profile-bio-new{padding:0 20px 10px;font-size:13px;color:#444;contenteditable:true;}
+.profile-social-btn{display:inline-flex;align-items:center;gap:6px;margin:0 20px 16px;padding:7px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;color:var(--blue);background:#fff;}
+.profile-social-btn:hover{background:var(--blue-light);}
+.profile-stories-row{display:flex;gap:12px;padding:0 20px 16px;border-bottom:1px solid var(--border);}
+.profile-story-item{width:80px;text-align:center;cursor:pointer;}
+.profile-story-thumb{width:80px;height:80px;border-radius:10px;background:linear-gradient(135deg,#c8d8e8,#e0eaf4);display:flex;align-items:center;justify-content:center;margin-bottom:6px;position:relative;border:1px solid var(--border);}
+.profile-story-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00aff0,#0095cc);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);}
+.profile-story-label{font-size:11px;color:#555;}
+.profile-sub-section{padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:space-between;}
+.profile-sub-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;margin-bottom:4px;}
+.profile-sub-value{font-size:13px;font-weight:500;}
+.profile-sub-sub{font-size:12px;color:var(--muted);}
+.profile-tabs-new{display:flex;border-bottom:1px solid var(--border);}
+.profile-tab-new{flex:1;padding:12px;text-align:center;font-size:12.5px;font-weight:600;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;}
+.profile-tab-new.active{color:#000;border-bottom-color:#000;}
+.profile-empty-posts{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--muted);font-size:13px;gap:8px;}
+.profile-right-col{width:300px;flex-shrink:0;padding:16px;overflow-y:auto;}
+.profile-search-box{display:flex;align-items:center;border:1px solid var(--border);border-radius:20px;padding:8px 14px;gap:8px;margin-bottom:16px;}
+.profile-search-box input{border:none;outline:none;font-size:13px;flex:1;}
+.profile-widget{border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+.profile-widget-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);}
+.profile-widget-title{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);}
+.profile-widget-body{padding:14px;}
+.spotify-btn{display:flex;align-items:center;gap:10px;background:#1DB954;color:#fff;border:none;border-radius:20px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;width:100%;}
+.abonnement-row{display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.abonnement-label{font-size:13px;font-weight:500;}
+.abonnement-sub{font-size:12px;color:var(--muted);}
+.ppv-widget{background:linear-gradient(135deg,#e8f4fd,#d0e8f8);border-radius:10px;padding:16px;margin-bottom:14px;text-align:center;}
+.ppv-title{font-size:14px;font-weight:800;color:var(--blue);letter-spacing:.5px;margin-bottom:12px;}
+.ppv-illustration{width:100%;height:100px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.profile-footer-links{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:var(--muted);padding-top:8px;}
+.profile-footer-links span{cursor:pointer;}
+.profile-footer-links span:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-avatar-wrap">
+    <div class="sb-avatar" id="sbAv" title="Cliquer pour changer la photo — TODO: connecter backend">WD</div>
+    <!-- TODO: connecter à ton backend d'upload -->
+    <input type="file" id="avatarUpload" class="sb-avatar-upload" accept="image/*">
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-item active" data-page="home">
+      <!-- Maison outline — correct -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Accueil
+    </div>
+    <div class="sb-item" data-page="notifications">
+      <!-- Cloche — correct -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Notifications
+    </div>
+    <div class="sb-item" data-page="messages">
+      <!-- Bulle carrée arrondie avec ligne longue + ligne courte -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><path d="M3 17l3 4h4"/></svg>
+      Messages
+    </div>
+    <div class="sb-item" data-page="collections">
+      <!-- Collections: image avec 3 étoiles au-dessus — OF exact -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="8" width="20" height="14" rx="2"/>
+        <circle cx="7.5" cy="14" r="1.5"/>
+        <polyline points="2 18 7 13 11 16 14 13 22 19"/>
+        <line x1="7" y1="5" x2="7" y2="8"/>
+        <line x1="12" y1="3" x2="12" y2="8"/>
+        <line x1="17" y1="5" x2="17" y2="8"/>
+        <line x1="5" y1="5" x2="9" y2="5"/>
+        <line x1="10" y1="3" x2="14" y2="3"/>
+        <line x1="15" y1="5" x2="19" y2="5"/>
+      </svg>
+      Collections
+    </div>
+    <div class="sb-item" data-page="vault">
+      <!-- Dossier sécurisé: cadre image + cadenas superposé bas-droit -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="3" width="20" height="18" rx="2"/>
+        <circle cx="7.5" cy="9" r="1.5"/>
+        <polyline points="2 17 8 11 12 15 15 12 22 18"/>
+        <rect x="14" y="13" width="7" height="6" rx="1.2" fill="white" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M16 13v-1.5a2 2 0 0 1 4 0V13" stroke-width="1.6"/>
+      </svg>
+      Dossier sécurisé
+    </div>
+    <div class="sb-item" data-page="queue">
+      <!-- Calendrier avec pointillés — correct -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="14" x2="12.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="16" y1="14" x2="16.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="8" y1="18" x2="8.01" y2="18" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-linecap="round" stroke-width="2.5"/></svg>
+      File d'attente
+    </div>
+    <div class="sb-item" data-page="declarations">
+      <!-- Barres dans carré arrondi — encadrées comme sur OF -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="2" width="20" height="20" rx="3"/>
+        <line x1="7" y1="18" x2="7" y2="13"/>
+        <line x1="12" y1="18" x2="12" y2="8"/>
+        <line x1="17" y1="18" x2="17" y2="11"/>
+      </svg>
+      Déclarations
+    </div>
+    <div class="sb-item" data-page="statistics">
+      <!-- Courbe + flèche dans carré arrondi -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="2" y="2" width="20" height="20" rx="3"/>
+        <polyline points="5 16 9 11 13 14 17 8"/>
+        <polyline points="15 8 17 8 17 10"/>
+      </svg>
+      Statistiques
+    </div>
+    <div class="sb-item" data-page="profile">
+      <!-- Silhouette personne — OF Mon profil -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+      Mon profil
+    </div>
+    <div class="sb-item" data-page="plus">
+      <!-- Cercle + 3 points — correct -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1" fill="currentColor" stroke="none"/></svg>
+      Plus
+    </div>
+  </nav>
+  <button class="sb-new-post">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    NOUVELLE PUBLICATION
+  </button>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<main class="main">
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+    <div class="home-layout">
+      <!-- CENTER: feed -->
+      <div class="home-center">
+        <!-- Header -->
+        <div class="home-header">
+          <span class="home-header-title">ACCUEIL</span>
+          <div style="display:flex;gap:12px;color:#888;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+        </div>
+        <!-- Post composer -->
+        <div class="home-composer">
+          <div class="home-composer-input" contenteditable="true" data-placeholder="Ecrivez une nouvelle publication..."></div>
+          <div class="home-composer-tools">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <span style="font-size:14px;font-weight:600;color:#aaa;">Aa</span>
+          </div>
+        </div>
+        <!-- Filter row -->
+        <div class="home-filter-row">
+          <div class="home-filter-chip active">Tout</div>
+          <div class="home-filter-chip">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </div>
+        </div>
+        <!-- Story add card -->
+        <div class="home-story-row">
+          <div class="home-story-add">
+            <div class="home-story-av">
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#00aff0,#0095cc);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;">WD</div>
+            </div>
+            <div style="position:absolute;top:8px;left:8px;width:20px;height:20px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div style="margin-top:6px;font-size:11px;color:#555;text-align:center;font-weight:500;">Ajoutez en<br>Story</div>
+          </div>
+        </div>
+        <!-- Feed posts -->
+        <div id="homeFeed"></div>
+      </div>
+      <!-- RIGHT: sidebar widgets -->
+      <div class="home-right">
+        <div class="profile-search-box" style="margin-bottom:14px;">
+          <input type="text" placeholder="Rechercher des utilisateurs ou des publi...">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <!-- Abonnement -->
+        <div class="profile-widget" style="margin-bottom:14px;">
+          <div class="profile-widget-body">
+            <div class="abonnement-row">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;">ABONNEMENT</div>
+                <div class="abonnement-label">Prix d'abonnement et promotions</div>
+                <div class="abonnement-sub">Abonnement gratuit</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- Événements prévus -->
+        <div class="profile-widget" style="margin-bottom:14px;">
+          <div class="profile-widget-body">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:8px;">ÉVÉNEMENTS PRÉVUS</div>
+            <div style="font-size:12px;color:#666;line-height:1.6;margin-bottom:14px;">Vous pouvez désormais programmer des publications, messages et streams pour augmenter votre présence en ligne et l'afficher dans Calendrier</div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding:16px 0;">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <div style="font-size:12px;color:#bbb;margin-top:8px;">Vous n'avez pas d'événements programmés.</div>
+            </div>
+            <div style="border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:10px;cursor:pointer;margin-bottom:10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div style="text-align:center;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;">AFFICHER LA FILE D'ATTENTE</div>
+          </div>
+        </div>
+        <!-- PPV widget -->
+        <div class="ppv-widget">
+          <div class="ppv-title">P-P-V  MESSAGES</div>
+          <div class="ppv-illustration">
+            <svg width="100" height="80" viewBox="0 0 100 80">
+              <rect x="15" y="20" width="50" height="38" rx="4" fill="#4a9fe8" opacity=".8"/>
+              <polygon points="15,20 40,42 65,20" fill="#2980b9"/>
+              <polygon points="15,58 28,42 15,32" fill="#3d8fd4"/>
+              <polygon points="65,58 52,42 65,32" fill="#3d8fd4"/>
+              <circle cx="72" cy="28" r="10" fill="#00c853" opacity=".9"/>
+              <text x="69" y="32" font-size="12" fill="white" font-weight="bold">$</text>
+              <circle cx="85" cy="50" r="8" fill="#00aff0" opacity=".7"/>
+              <text x="82" y="54" font-size="11" fill="white" font-weight="bold">$</text>
+              <circle cx="60" cy="60" r="6" fill="#4a9fe8" opacity=".6"/>
+              <text x="57" y="64" font-size="9" fill="white" font-weight="bold">$</text>
+            </svg>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            <span style="font-size:12px;font-weight:700;color:var(--blue);">OnlyFans</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS PAGE -->
+  <div class="page" id="page-notifications">
+    <div class="notif-layout">
+      <!-- CENTER -->
+      <div class="notif-center">
+        <div class="notif-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span class="notif-header-title">NOTIFICATIONS</span>
+          </div>
+          <div style="display:flex;gap:14px;color:#888;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          </div>
+        </div>
+        <!-- Filter chips -->
+        <div class="notif-filters">
+          <div class="notif-chip active" data-filter="all">Tout</div>
+          <div class="notif-chip" data-filter="abonnements">Abonnements</div>
+          <div class="notif-chip" data-filter="achats">Achats</div>
+          <div class="notif-chip" data-filter="pourboire">Pourboire</div>
+          <div class="notif-chip" data-filter="etiquettes">Étiquettes</div>
+          <div class="notif-chip" data-filter="commentaires">Commentaires</div>
+        </div>
+        <!-- Notification items -->
+        <div id="notifFeed"></div>
+      </div>
+      <!-- RIGHT sidebar -->
+      <div class="home-right">
+        <div class="profile-search-box" style="margin-bottom:14px;">
+          <input type="text" placeholder="Rechercher des utilisateurs ou des publi...">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="profile-widget" style="margin-bottom:14px;">
+          <div class="profile-widget-body">
+            <div class="abonnement-row">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;">ABONNEMENT</div>
+                <div class="abonnement-label">Prix d'abonnement et promotions</div>
+                <div class="abonnement-sub">Abonnement gratuit</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="profile-widget" style="margin-bottom:14px;">
+          <div class="profile-widget-body">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:8px;">ÉVÉNEMENTS PRÉVUS</div>
+            <div style="font-size:12px;color:#666;line-height:1.6;margin-bottom:14px;">Vous pouvez désormais programmer des publications, messages et streams pour augmenter votre présence en ligne et l'afficher dans Calendrier</div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 14px;">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <div style="font-size:12px;color:#bbb;margin-top:8px;">Vous n'avez pas d'événements programmés.</div>
+            </div>
+            <div style="border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;padding:10px;cursor:pointer;margin-bottom:10px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <div style="text-align:center;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;">AFFICHER LA FILE D'ATTENTE</div>
+          </div>
+        </div>
+        <div class="ppv-widget">
+          <div class="ppv-title">P-P-V  MESSAGES</div>
+          <div class="ppv-illustration">
+            <svg width="100" height="80" viewBox="0 0 100 80">
+              <rect x="15" y="20" width="50" height="38" rx="4" fill="#4a9fe8" opacity=".8"/>
+              <polygon points="15,20 40,42 65,20" fill="#2980b9"/>
+              <polygon points="15,58 28,42 15,32" fill="#3d8fd4"/>
+              <polygon points="65,58 52,42 65,32" fill="#3d8fd4"/>
+              <circle cx="72" cy="28" r="10" fill="#00c853" opacity=".9"/>
+              <text x="69" y="32" font-size="12" fill="white" font-weight="bold">$</text>
+              <circle cx="85" cy="50" r="8" fill="#00aff0" opacity=".7"/>
+              <text x="82" y="54" font-size="11" fill="white" font-weight="bold">$</text>
+            </svg>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            <span style="font-size:12px;font-weight:700;color:var(--blue);">OnlyFans</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MESSAGES PAGE -->
+  <div class="page" id="page-messages">
+    <div class="msg-layout">
+      <!-- LEFT: thread list -->
+      <div class="msg-list-panel">
+        <div class="msg-list-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span style="font-size:15px;font-weight:700;letter-spacing:.3px;">MESSAGES</span>
+          </div>
+          <div style="display:flex;gap:12px;color:#888;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="msg-sort-row">
+          <span class="msg-sort-label">PLUS RÉCENT EN PREMIER</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/></svg>
+        </div>
+        <div class="msg-filter-row">
+          <div class="msg-filter-chip active">Tout</div>
+          <div class="msg-filter-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          </div>
+        </div>
+        <div id="msgThreadList"></div>
+      </div>
+      <!-- RIGHT: chat area -->
+      <div class="msg-chat" id="msgChatArea">
+        <div class="msg-empty-state">
+          <div style="font-size:18px;font-weight:700;color:#222;margin-bottom:12px;text-align:center;">Sélectionnez une conversation ou envoyez un nouveau message</div>
+          <button class="msg-new-btn">NOUVEAU MESSAGE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLLECTIONS PAGE -->
+  <div class="page" id="page-collections">
+    <div class="coll-layout">
+      <!-- LEFT: liste des collections -->
+      <div class="coll-left">
+        <div class="coll-left-header">
+          <div class="coll-left-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            COLLECTIONS
+          </div>
+          <div style="display:flex;gap:12px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="coll-tabs">
+          <div class="coll-tab active">LISTES D'UTILISATEURS</div>
+          <div class="coll-tab">SIGNETS</div>
+          <div class="coll-tab">ÉTIQUETTES DE P...</div>
+        </div>
+        <div class="coll-order-row">
+          <span>ORDRE PERSONNALISÉ</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <div id="collListItems"></div>
+      </div>
+      <!-- MIDDLE: détail liste sélectionnée (Suivant) -->
+      <div class="coll-mid">
+        <div class="coll-mid-header">
+          <div class="coll-mid-title">SUIVANT</div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="coll-mid-tabs">
+          <div class="coll-mid-tab active">UTILISATEURS</div>
+          <div class="coll-mid-tab">PUBLICATIONS</div>
+        </div>
+        <div class="coll-mid-filter">
+          <span>RÉCENT</span>
+          <div style="display:flex;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </div>
+        </div>
+        <div class="coll-status-chips">
+          <div class="coll-chip active">Tout 1</div>
+          <div class="coll-chip sel">Actifs 1</div>
+          <div class="coll-chip">Expirés 0</div>
+          <div class="coll-chip">Attention requise 0</div>
+        </div>
+        <!-- Fan card -->
+        <div class="coll-fan-card">
+          <div class="coll-fan-banner">
+            <span style="font-size:11px;color:#fff;opacity:.8;font-weight:600;letter-spacing:1px;">OnlyFans</span>
+          </div>
+          <div class="coll-fan-body">
+            <div class="coll-fan-av">
+              <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </div>
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;width:100%;padding:0 4px;">
+              <div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="font-size:14px;font-weight:700;" contenteditable="true">OnlyFans Cre...</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--blue)"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div style="font-size:12px;color:var(--muted);" contenteditable="true">@onlyfanscreators</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </div>
+            </div>
+            <div class="coll-fan-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span style="font-size:12.5px;">Ajouter aux favoris et autres listes</span>
+            </div>
+            <div class="coll-fan-row" style="margin-top:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span style="font-size:12.5px;">Envoyer un conseil</span>
+            </div>
+            <div class="coll-fan-actions">
+              <button class="coll-fan-btn outline" contenteditable="true">ABONNÉ</button>
+              <button class="coll-fan-btn outline" contenteditable="true">GRATUITEMENT</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VAULT PAGE -->
+  <div class="page" id="page-vault">
+    <div class="vault-layout">
+      <!-- LEFT: categories -->
+      <div class="vault-left">
+        <div class="vault-left-header">
+          <div class="vault-left-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            DOSSIER SÉCURISÉ
+          </div>
+          <div style="display:flex;gap:12px;color:#888;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="vault-order-row"><span>DEFAULT</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </div>
+        <div id="vaultCategories"></div>
+      </div>
+      <!-- RIGHT: media grid -->
+      <div class="vault-right">
+        <div class="vault-right-header">TOUS LES MÉDIAS</div>
+        <div class="vault-empty">
+          <div class="vault-empty-icon">
+            <svg width="80" height="80" viewBox="0 0 120 100" fill="none">
+              <rect x="10" y="20" width="55" height="45" rx="4" fill="#dde3ea" stroke="#c8d0d8" stroke-width="1.5"/>
+              <circle cx="28" cy="38" r="8" fill="#b8c4ce"/>
+              <polygon points="15,58 35,38 50,50 65,35" fill="#c8d4de" opacity=".7"/>
+              <rect x="50" y="10" width="55" height="45" rx="4" fill="#e8edf2" stroke="#d0d8e0" stroke-width="1.5"/>
+              <circle cx="90" cy="32" r="5" fill="#bfc8d2"/>
+              <polygon points="55,48 70,30 85,42 105,22" fill="#d0dae4" opacity=".7"/>
+              <rect x="35" y="48" width="50" height="40" rx="4" fill="#dde3ea" stroke="#c8d0d8" stroke-width="1.5"/>
+              <polygon points="50,82 65,62 75,72 85,60" fill="#c8d4de" opacity=".6"/>
+              <rect x="68" y="62" width="12" height="10" rx="2" fill="#b8c4ce"/>
+              <polygon points="68,67 80,67 74,62" fill="#aab6c2"/>
+            </svg>
+          </div>
+          <div class="vault-empty-text">Cette catégorie est vide</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUEUE PAGE -->
+  <div class="page" id="page-queue">
+    <div class="queue-layout">
+      <!-- LEFT: calendar -->
+      <div class="queue-cal-panel">
+        <div class="queue-cal-header">
+          <div class="queue-cal-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            FILE D'ATTENTE
+          </div>
+          <div style="display:flex;gap:10px;color:#888;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="queue-month-nav">
+          <button class="queue-nav-btn" id="prevMonth">&#8249;</button>
+          <button class="queue-nav-btn" id="nextMonth">&#8250;</button>
+          <span class="queue-month-label" id="monthLabel">mars 2026</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;color:#888;cursor:pointer;"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/></svg>
+        </div>
+        <div class="queue-type-chips">
+          <div class="queue-type-chip active">Publications</div>
+          <div class="queue-type-chip">Messages</div>
+        </div>
+        <div class="queue-cal-grid">
+          <div class="cal-day-header">L</div><div class="cal-day-header">M</div><div class="cal-day-header">M</div>
+          <div class="cal-day-header">J</div><div class="cal-day-header">V</div><div class="cal-day-header">S</div><div class="cal-day-header">D</div>
+          <div id="calDays"></div>
+        </div>
+      </div>
+      <!-- RIGHT: day detail -->
+      <div class="queue-day-panel">
+        <div class="queue-day-header">
+          <button class="queue-nav-btn">&lt;</button>
+          <span id="selectedDateLabel">mars 4, 2026</span>
+          <button class="queue-nav-btn">&gt;</button>
+        </div>
+        <div class="queue-day-add">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="queue-day-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
+          <div class="queue-day-empty-text">Il n'y a pas d'événements prévus pour cette journée</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE (UPGRADED) -->
+  <div class="page" id="page-profile">
+    <div class="profile-page-wrap">
+      <div class="profile-main-col">
+        <!-- Cover -->
+        <div class="profile-cover-new"></div>
+        <!-- White content area starts here -->
+        <div style="background:#fff;flex:1;">
+        <div class="profile-header-row">
+          <div class="profile-av-new" id="profileAvBig">WD</div>
+          <div class="profile-header-actions">
+            <button class="profile-edit-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              MODIFIEZ LE PROFIL
+            </button>
+            <div class="profile-share-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- Name & handle -->
+        <div class="profile-name-row">
+          <span class="profile-name-new" contenteditable="true">Willy denz</span>
+          <svg class="profile-verified" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="profile-handle-status">
+          <span contenteditable="true">@u495354766</span>
+          <span>·</span>
+          <div class="profile-status-dot"></div>
+          <span class="profile-status-text">Disponible</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="profile-bio-new" contenteditable="true">its denz</div>
+        <button class="profile-social-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+          AJOUTER DES LIENS SOCIAUX
+        </button>
+        <!-- Stories -->
+        <div class="profile-stories-row">
+          <div class="profile-story-item">
+            <div class="profile-story-thumb">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b0b8c4" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><polyline points="12 8 12 12 14 14"/></svg>
+              <div style="position:absolute;bottom:4px;left:4px;">
+                <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#00aff0,#0095cc);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;border:2px solid #fff;">WD</div>
+              </div>
+            </div>
+            <div class="profile-story-label">Archive de<br>story</div>
+          </div>
+          <div class="profile-story-item">
+            <div class="profile-story-thumb" style="border:2px dashed #ccc;background:#f9f9f9;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00aff0" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div class="profile-story-label">Créer un<br>highlight</div>
+          </div>
+        </div>
+        <!-- Subscription -->
+        <div class="profile-sub-section">
+          <div>
+            <div class="profile-sub-label">ABONNEMENT</div>
+            <div class="profile-sub-value">Prix d'abonnement et promotions</div>
+            <div class="profile-sub-sub">Abonnement gratuit</div>
+          </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <!-- Tabs -->
+        <div class="profile-tabs-new">
+          <div class="profile-tab-new active">PAS DE POSTS</div>
+          <div class="profile-tab-new">NON MÉDIAS</div>
+        </div>
+        <div class="profile-empty-posts">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ddd" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <div style="color:var(--blue);font-weight:600;cursor:pointer;">CRÉER UNE NOUVELLE PUBLICATION</div>
+        </div>
+        </div><!-- end white content area -->
+      </div>
+      <!-- Right column -->
+      <div class="profile-right-col">
+        <div class="profile-search-box">
+          <input type="text" placeholder="Rechercher la publication de l'utilisateur">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <!-- Spotify widget -->
+        <div class="profile-widget">
+          <div class="profile-widget-header">
+            <span class="profile-widget-title">SPOTIFY</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div class="profile-widget-body">
+            <button class="spotify-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10" fill="none"/><path d="M8 12.5c2.7-1.4 5.6-1.7 8.3-.7M7 9.3c3.3-1.7 7-2 10.3-.8M9 15.6c2-1 4.2-1.3 6.3-.5" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+              SE CONNECTER AVEC SPOTIFY
+            </button>
+          </div>
+        </div>
+        <!-- Abonnement widget -->
+        <div class="profile-widget">
+          <div class="profile-widget-body">
+            <div class="abonnement-row">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:6px;">ABONNEMENT</div>
+                <div class="abonnement-label">Prix d'abonnement et promotions</div>
+                <div class="abonnement-sub">Abonnement gratuit</div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </div>
+        </div>
+        <!-- PPV widget -->
+        <div class="ppv-widget">
+          <div class="ppv-title">P-P-V  MESSAGES</div>
+          <div class="ppv-illustration">
+            <svg width="100" height="80" viewBox="0 0 100 80">
+              <rect x="15" y="20" width="50" height="38" rx="4" fill="#4a9fe8" opacity=".8"/>
+              <polygon points="15,20 40,42 65,20" fill="#2980b9"/>
+              <polygon points="15,58 28,42 15,32" fill="#3d8fd4"/>
+              <polygon points="65,58 52,42 65,32" fill="#3d8fd4"/>
+              <circle cx="72" cy="28" r="10" fill="#00c853" opacity=".9"/>
+              <text x="69" y="32" font-size="12" fill="white" font-weight="bold">$</text>
+              <circle cx="85" cy="50" r="8" fill="#00aff0" opacity=".7"/>
+              <text x="82" y="54" font-size="11" fill="white" font-weight="bold">$</text>
+              <circle cx="60" cy="60" r="6" fill="#4a9fe8" opacity=".6"/>
+              <text x="57" y="64" font-size="9" fill="white" font-weight="bold">$</text>
+            </svg>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--blue)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            <span style="font-size:12px;font-weight:700;color:var(--blue);">OnlyFans</span>
+          </div>
+        </div>
+        <div class="profile-footer-links">
+          <span>Privacy</span><span>·</span><span>Cookie Notice</span><span>·</span><span>Terms of Service</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECLARATIONS PAGE -->
+  <div class="page" id="page-declarations">
+    <div class="decl-layout">
+      <div class="decl-left">
+        <div class="decl-header">
+          <div class="decl-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            RELEVÉS
+          </div>
+          <div class="decl-help">?</div>
+        </div>
+        <div class="decl-alert">
+          <span class="decl-alert-icon">⚠</span>
+          <span>Veuillez remplir vos <a href="#">informations bancaires</a></span>
+        </div>
+        <div class="decl-balance-box">
+          <div class="decl-balance-row">
+            <span class="decl-balance-label">SOLDE COURANT</span>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span class="decl-balance-val" contenteditable="true">$0.00</span>
+              <span class="decl-balance-toggle">&#8963;</span>
+            </div>
+          </div>
+          <div class="decl-pending-row">
+            <span class="decl-pending-label">FONDS EN ATTENTE <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+            <span class="decl-pending-val" contenteditable="true">$0.00</span>
+          </div>
+        </div>
+        <select class="decl-payout-select">
+          <option>Paiements manuels</option>
+          <option>Paiements automatiques</option>
+        </select>
+        <div class="decl-payout-hint">Le montant minimum de retrait est de $20</div>
+        <button class="decl-withdraw-btn">DEMANDE DE RETRAIT</button>
+        <div class="decl-section-item active-section" data-section="revenus">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span class="decl-section-label">REVENUS</span>
+        </div>
+        <div class="decl-section-item" data-section="demandes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <span class="decl-section-label">DEMANDES DE PAIEMENT</span>
+        </div>
+        <div class="decl-section-item" data-section="statistiques">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span class="decl-section-label">STATISTIQUES SUR LES GAINS</span>
+        </div>
+        <div class="decl-section-item" data-section="retraits">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.85"/></svg>
+          <span class="decl-section-label">RETRAITS DE PRÉLÈVEMENT</span>
+        </div>
+        <div class="decl-section-item" data-section="references">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="decl-section-label">RÉFÉRENCES</span>
+        </div>
+      </div>
+      <!-- Dynamic right panel -->
+      <div class="decl-right" id="declRight"></div>
+    </div>
+  </div>
+
+  <!-- STATISTICS PAGE -->
+  <div class="page" id="page-statistics">
+    <!-- Header fixe -->
+    <div class="stats-header">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="stats-header-title">STATISTIQUES</span>
+      </div>
+      <div class="stats-help">?</div>
+    </div>
+    <!-- Alerte bancaire -->
+    <div class="stats-alert">
+      <span class="decl-alert-icon">⚠</span>
+      <span>Veuillez remplir vos <a href="#">informations bancaires</a></span>
+    </div>
+    <!-- Onglets principaux -->
+    <div class="stats-tabs">
+      <div class="stats-tab" data-stab="releves">RELEVÉS</div>
+      <div class="stats-tab active" data-stab="overview">VUE D'ENSEMBLE</div>
+      <div class="stats-tab" data-stab="engagement">ENGAGEMENT</div>
+      <div class="stats-tab" data-stab="portee">PORTÉE</div>
+      <div class="stats-tab" data-stab="fans">- DES FANS</div>
+    </div>
+    <!-- Contenu dynamique -->
+    <div class="stats-body">
+      <div class="stats-main" id="statsMain"></div>
+      <div class="stats-right-col" id="statsRight"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- PLUS OVERLAY -->
+<div class="plus-overlay" id="plusOverlay" style="display:none;">
+  <div class="plus-panel">
+    <!-- Profile header -->
+    <div class="plus-profile">
+      <div class="plus-av">WD</div>
+      <div class="plus-profile-info">
+        <div class="plus-name" contenteditable="true">Willy Denz</div>
+        <div class="plus-handle" contenteditable="true">@u495354766</div>
+        <div class="plus-stats">
+          <span><strong contenteditable="true">0</strong> Fans</span>
+          <span style="margin-left:14px;"><strong contenteditable="true">1</strong> Abonnements</span>
+        </div>
+      </div>
+    </div>
+    <!-- Menu items -->
+    <div class="plus-menu">
+      <div class="plus-menu-item" onclick="showPage('profile');closePlus()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Mon profil
+      </div>
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Mes références
+      </div>
+      <div class="plus-menu-item" onclick="showPage('collections');closePlus()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="2" y="8" width="20" height="14" rx="2"/>
+          <circle cx="7.5" cy="14" r="1.5"/>
+          <polyline points="2 18 7 13 11 16 14 13 22 19"/>
+          <line x1="7" y1="5" x2="7" y2="8"/><line x1="12" y1="3" x2="12" y2="8"/><line x1="17" y1="5" x2="17" y2="8"/>
+          <line x1="5" y1="5" x2="9" y2="5"/><line x1="10" y1="3" x2="14" y2="3"/><line x1="15" y1="5" x2="19" y2="5"/>
+        </svg>
+        Collections
+      </div>
+      <div class="plus-menu-item" onclick="showPage('queue');closePlus()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="14" x2="12.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="16" y1="14" x2="16.01" y2="14" stroke-linecap="round" stroke-width="2.5"/><line x1="8" y1="18" x2="8.01" y2="18" stroke-linecap="round" stroke-width="2.5"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-linecap="round" stroke-width="2.5"/></svg>
+        File d'attente
+      </div>
+      <div class="plus-menu-item" onclick="showPage('vault');closePlus()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="2" y="3" width="20" height="18" rx="2"/>
+          <circle cx="7.5" cy="9" r="1.5"/>
+          <polyline points="2 17 8 11 12 15 15 12 22 18"/>
+          <rect x="14" y="13" width="7" height="6" rx="1.2" fill="white" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M16 13v-1.5a2 2 0 0 1 4 0V13" stroke-width="1.6"/>
+        </svg>
+        Dossier sécurisé
+      </div>
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Paramètres
+      </div>
+      <div class="plus-menu-item" onclick="showPage('declarations');closePlus()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+        Déclarations
+      </div>
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Statistiques
+      </div>
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Formulaires de libération
+      </div>
+    </div>
+    <div class="plus-divider"></div>
+    <!-- Cards -->
+    <div class="plus-menu">
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Vos cartes (pour vous abonner)
+      </div>
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Ajouter une banque (pour gagner)
+      </div>
+    </div>
+    <div class="plus-divider"></div>
+    <!-- Support & dark mode -->
+    <div class="plus-menu">
+      <div class="plus-menu-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Aide et support
+      </div>
+      <div class="plus-menu-item plus-toggle-row">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Mode sombre
+        </div>
+        <div class="toggle-switch" id="darkToggle">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+    <div class="plus-divider"></div>
+    <div class="plus-menu">
+      <div class="plus-menu-item plus-logout">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Déconnexion
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+// ---- AVATAR UPLOAD (TODO: connecter à ton backend) ----
+const sbAv = document.getElementById('sbAv');
+const avatarUpload = document.getElementById('avatarUpload');
+let currentAvatarSrc = null;
+
+sbAv.addEventListener('click', () => avatarUpload.click());
+avatarUpload.addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentAvatarSrc = e.target.result;
+    // Sidebar
+    sbAv.innerHTML = `<img src="${currentAvatarSrc}" alt="avatar">`;
+    // Plus overlay
+    const plusAv = document.querySelector('.plus-av');
+    if(plusAv) plusAv.innerHTML = `<img src="${currentAvatarSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    // Profile page big avatar
+    const profAv = document.getElementById('profileAvBig');
+    if(profAv) profAv.innerHTML = `<img src="${currentAvatarSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    // Home feed story avatar
+    document.querySelectorAll('.home-story-av div, .profile-story-thumb div').forEach(el => {
+      el.innerHTML = `<img src="${currentAvatarSrc}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    });
+    // TODO: upload vers ton backend ici
+  };
+  reader.readAsDataURL(file);
+});
+
+
+// ---- NAVIGATION ----
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.sb-item[data-page="'+id+'"]').forEach(el => el.classList.add('active'));
+}
+document.querySelectorAll('.sb-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => {
+    if(item.dataset.page === 'plus') return;
+    showPage(item.dataset.page);
+  });
+});
+
+// ---- STATISTICS 5-TAB SYSTEM ----
+const statsMain = document.getElementById('statsMain');
+const statsRight = document.getElementById('statsRight');
+
+function makeChart(data, color='#00aff0', chartId='chart_'+Math.random().toString(36).slice(2)) {
+  const pts = data.map((v,i) => ({v, i}));
+  const encoded = encodeURIComponent(JSON.stringify(data));
+  return `<div style="position:relative;width:100%;height:140px;cursor:crosshair;" id="${chartId}" data-pts="${encoded}" data-color="${color}">
+    <canvas id="${chartId}_canvas" width="600" height="140" style="width:100%;height:140px;display:block;"></canvas>
+    <div style="position:absolute;bottom:2px;right:4px;font-size:10px;color:#bbb;pointer-events:none;">✏️ éditable</div>
+  </div>
+  <script>
+  (function(){
+    const cid = '${chartId}';
+    const el = document.getElementById(cid);
+    const canvas = document.getElementById(cid+'_canvas');
+    const ctx = canvas.getContext('2d');
+    let rawData = JSON.parse(decodeURIComponent(el.dataset.pts));
+    const color = el.dataset.color;
+    let dragging = false, dragIdx = -1;
+    const W = 600, H = 140, PAD = 12;
+
+    function getMax(d){ return Math.max(...d, 1); }
+    function ptX(i){ return PAD + (i/(rawData.length-1))*(W-2*PAD); }
+    function ptY(v){ return H-PAD - (v/getMax(rawData))*(H-2*PAD); }
+    function valFromY(y){ return Math.max(0, ((H-PAD-y)/(H-2*PAD))*getMax(rawData)); }
+
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      // grid lines
+      ctx.strokeStyle='#f0f0f0'; ctx.lineWidth=1;
+      [H*0.25, H*0.5, H*0.75].forEach(y=>{ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); });
+      // gradient fill
+      const grad = ctx.createLinearGradient(0,0,0,H);
+      grad.addColorStop(0, color+'44'); grad.addColorStop(1, color+'05');
+      ctx.beginPath();
+      ctx.moveTo(ptX(0), H);
+      rawData.forEach((v,i)=>ctx.lineTo(ptX(i), ptY(v)));
+      ctx.lineTo(ptX(rawData.length-1), H);
+      ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+      // line
+      ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=2.5; ctx.lineJoin='round';
+      rawData.forEach((v,i)=>{ i===0?ctx.moveTo(ptX(i),ptY(v)):ctx.lineTo(ptX(i),ptY(v)); });
+      ctx.stroke();
+      // dots on hover
+      rawData.forEach((v,i)=>{
+        ctx.beginPath(); ctx.arc(ptX(i),ptY(v),3.5,0,Math.PI*2);
+        ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+      });
+    }
+
+    function getIdx(mx){
+      let best=-1, bd=99999;
+      rawData.forEach((v,i)=>{ const d=Math.abs(ptX(i)*(W/canvas.offsetWidth||1)-mx); if(d<bd){bd=d;best=i;} });
+      return bd < 22 ? best : -1;
+    }
+
+    function evtPos(e){ const r=canvas.getBoundingClientRect(); const ce=e.touches?e.touches[0]:e; return {x:(ce.clientX-r.left)*(W/r.width), y:(ce.clientY-r.top)*(H/r.height)}; }
+
+    canvas.addEventListener('mousedown', e=>{ const p=evtPos(e); dragIdx=getIdx(p.x); if(dragIdx>=0){ dragging=true; rawData[dragIdx]=valFromY(p.y); draw(); }});
+    canvas.addEventListener('mousemove', e=>{ if(!dragging||dragIdx<0) return; const p=evtPos(e); rawData[dragIdx]=valFromY(p.y); draw(); });
+    canvas.addEventListener('mouseup', ()=>{ dragging=false; dragIdx=-1; });
+    canvas.addEventListener('mouseleave', ()=>{ dragging=false; dragIdx=-1; });
+    canvas.addEventListener('touchstart', e=>{ e.preventDefault(); const p=evtPos(e); dragIdx=getIdx(p.x); if(dragIdx>=0){ dragging=true; rawData[dragIdx]=valFromY(p.y); draw(); }}, {passive:false});
+    canvas.addEventListener('touchmove', e=>{ e.preventDefault(); if(!dragging) return; const p=evtPos(e); rawData[dragIdx]=valFromY(p.y); draw(); }, {passive:false});
+    canvas.addEventListener('touchend', ()=>{ dragging=false; });
+
+    draw();
+  })();
+  <\/script>`;
+}
+
+const periodBox = `
+  <div class="stats-period-box">
+    <div><div class="stats-period-title">Derniers 30 jours</div><div class="stats-period-sub" contenteditable="true">févr. 17, 2026 - mars 04, 2026 (heure locale UTC+01:00)</div></div>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="stats-inception-row"><span>Depuis Inception</span><span contenteditable="true">$1 146,03</span></div>`;
+
+const statsTabs = {
+
+  releves: () => {
+    statsMain.innerHTML = `
+      <div class="stats-pills">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills')">Revenus</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Principaux points forts</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Série d'activités</div>
+      </div>
+      ${periodBox}
+      <div style="padding:0 20px 0;">
+        <div class="stats-radio-header"><span>Revenus</span><span style="min-width:60px;text-align:right;">Brut</span><span style="min-width:60px;text-align:right;margin-left:20px;">Net</span></div>
+        ${[
+          {label:'Total', brut:'$1 146,03', net:'$916,82', checked:true},
+          {label:'Abonnements', brut:'$0,00', net:'$0,00'},
+          {label:'Des pourboires', brut:'$652,10', net:'$521,68'},
+          {label:'Publications', brut:'$0,00', net:'$0,00'},
+          {label:'Messages', brut:'$493,86', net:'$395,09'},
+          {label:'Références', brut:'$0,00', net:'$0,00'},
+          {label:'Streams', brut:'$0,00', net:'$0,00'},
+        ].map(r=>`<div class="stats-radio-row">
+          <input type="radio" name="rev" ${r.checked?'checked':''}>
+          <span class="stats-radio-label" contenteditable="true">${r.label}</span>
+          <span class="stats-radio-brut" contenteditable="true">${r.brut}</span>
+          <span class="stats-radio-net" contenteditable="true">${r.net}</span>
+        </div>`).join('')}
+      </div>`;
+    statsRight.innerHTML = `
+      <div class="stats-rw-balance">
+        <div><div class="lbl">Solde courant</div><div class="big" contenteditable="true">$0.00</div></div>
+        <div><div class="lbl">Fonds en attente</div><div class="sml" contenteditable="true">$0.00</div></div>
+      </div>
+      <select class="stats-select"><option>Paiements manuels</option><option>Paiements automatiques</option></select>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Le montant minimum de retrait est de $20</div>
+      <button class="btn-withdraw-sm">DEMANDE DE RETRAIT</button>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-title">Revenus</div>
+      ${[
+        {label:'Aucun revenu pendant la période sélectionnée', val:'', muted:true},
+      ].map(r=>`<div style="font-size:12.5px;color:var(--muted);margin-bottom:12px;">${r.label}</div>`).join('')}
+      <div class="stats-rw-grid">
+        <div class="stats-rw-item"><label>Visiteurs du profil</label><div class="val" contenteditable="true">3</div></div>
+        <div class="stats-rw-item"><label>Revenus des abonnements</label><div class="val" contenteditable="true">$0.00</div></div>
+      </div>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-item" style="margin-bottom:8px;"><label>Nouveaux abonnements/renouvellements</label><div class="val" contenteditable="true">0 / 0</div></div>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-title" style="margin-top:8px;">Publications</div>
+      <div style="font-size:12px;color:var(--muted);">Aucune activité de publication pendant la période sélectionnée</div>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-title" style="margin-top:8px;">Messages</div>
+      <div style="font-size:12px;color:var(--muted);">Aucune activité de messagerie pendant la période sélectionnée</div>`;
+  },
+
+  overview: () => {
+    const chartData = [0,0,0,0,0,0,0,0,0,0,0,0,120,80,200,180,260,300,220,180,240,260,200,280,300,260,220,310,280,320];
+    statsMain.innerHTML = `
+      <div class="stats-pills">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills')">Revenus</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Principaux points forts</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Série d'activités</div>
+      </div>
+      ${periodBox}
+      <div class="stats-chart-section">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;">
+          <div class="stats-chart-amount" contenteditable="true">$1 146,03 <small>NET</small></div>
+          <span style="font-size:11px;color:var(--muted);">févr. 17, 2026 - mars 04, 2026</span>
+        </div>
+        <div class="stats-chart-wrap">${makeChart(chartData)}</div>
+        <div class="stats-chart-xlabels">
+          ${['févr. 17, 2026','févr. 20, 2026','févr. 23, 2026','févr. 26, 2026','mars 01, 2026','mars 04, 2026'].map(l=>`<span>${l}</span>`).join('')}
+        </div>
+      </div>
+      <div class="stats-radio-table">
+        <div class="stats-radio-header"><span>Revenus</span><span style="min-width:60px;text-align:right;">Brut</span><span style="min-width:60px;text-align:right;margin-left:20px;">Net</span></div>
+        ${[
+          {label:'Total', brut:'$1 432,53', net:'$1 146,03', checked:true},
+          {label:'Abonnements', brut:'$0,00', net:'$0,00'},
+          {label:'Des pourboires', brut:'$652,10', net:'$521,68'},
+          {label:'Publications', brut:'$0,00', net:'$0,00'},
+          {label:'Messages', brut:'$493,86', net:'$395,09'},
+          {label:'Références', brut:'$0,00', net:'$0,00'},
+          {label:'Streams', brut:'$0,00', net:'$0,00'},
+        ].map(r=>`<div class="stats-radio-row">
+          <input type="radio" name="ov" ${r.checked?'checked':''}>
+          <span class="stats-radio-label" contenteditable="true">${r.label}</span>
+          <span class="stats-radio-brut" contenteditable="true">${r.brut}</span>
+          <span class="stats-radio-net" contenteditable="true">${r.net}</span>
+        </div>`).join('')}
+      </div>`;
+    statsRight.innerHTML = `
+      <div class="stats-rw-balance">
+        <div><div class="lbl">Solde courant</div><div class="big" contenteditable="true">$0.00</div></div>
+        <div><div class="lbl">Fonds en attente ⓘ</div><div class="sml" contenteditable="true">$0.00</div></div>
+      </div>
+      <select class="stats-select"><option>Paiements manuels</option><option>Paiements automatiques</option></select>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Le montant minimum de retrait est de $20</div>
+      <button class="btn-withdraw-sm">DEMANDE DE RETRAIT</button>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-title">Revenus</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Aucun revenu pendant la période sélectionnée</div>
+      <div class="stats-rw-grid">
+        <div class="stats-rw-item"><label>Visiteurs du profil</label><div class="val" contenteditable="true">3</div></div>
+        <div class="stats-rw-item"><label>Revenus des abonnements</label><div class="val" contenteditable="true">$0.00</div></div>
+      </div>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-item" style="margin-bottom:8px;"><label>Nouveaux abonnements/renouvellements</label><div class="val" contenteditable="true">0 / 0</div></div>
+      <hr class="stats-rw-divider">
+      <div class="stats-rw-title" style="margin-top:8px;">Publications</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;">Aucune activité de publication pendant la période sélectionnée</div>
+      <div class="stats-rw-title">Messages</div>
+      <div style="font-size:12px;color:var(--muted);">Aucune activité de messagerie pendant la période sélectionnée</div>`;
+  },
+
+  engagement: () => {
+    const engChart = [0,0,5,12,8,18,22,15,30,28,35,20,45,38,50,42,55,48,60,52,58,65,70,62,75,68,80,72,85,78];
+    statsMain.innerHTML = `
+      <div class="stats-pills">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills')">Publications</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Messages</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Streaming</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Des histoires</div>
+      </div>
+      ${periodBox}
+      <div class="stats-pills" style="border-top:1px solid var(--border);">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills:nth-of-type(2)')">Achats</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:nth-of-type(2)')">Des pourboires</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:nth-of-type(2)')">Vues</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:nth-of-type(2)')">J'aime</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:nth-of-type(2)')">Commentaires</div>
+      </div>
+      <div class="stats-chart-section">
+        <div class="stats-chart-wrap">${makeChart(engChart, '#00aff0')}</div>
+        <div class="stats-chart-xlabels">
+          ${['févr. 17, 2026','févr. 20, 2026','févr. 23, 2026','févr. 26, 2026','mars 01, 2026','mars 04, 2026'].map(l=>`<span>${l}</span>`).join('')}
+        </div>
+      </div>
+      <div class="stats-eng-table">
+        <div class="stats-eng-header"><span>Contenu</span><span>Vues</span><span>J'aime</span><span>Revenus</span></div>
+        ${[
+          {label:'Post photo – 18 mai', vues:'142', likes:'38', rev:'$100,00'},
+          {label:'Post vidéo – 21 mai', vues:'289', likes:'74', rev:'$260,04'},
+          {label:'Message PPV – 22 mai', vues:'95', likes:'21', rev:'$190,74'},
+          {label:'Post photo – 23 mai', vues:'201', likes:'56', rev:'$152,10'},
+          {label:'Story – 25 mai', vues:'318', likes:'102', rev:'$0,00'},
+        ].map(r=>`<div class="stats-eng-row">
+          <span class="stats-eng-label" contenteditable="true">${r.label}</span>
+          <span class="stats-eng-val" contenteditable="true">${r.vues}</span>
+          <span class="stats-eng-val" contenteditable="true">${r.likes}</span>
+          <span class="stats-eng-val bold" contenteditable="true">${r.rev}</span>
+        </div>`).join('')}
+      </div>`;
+    statsRight.innerHTML = `
+      <div class="stats-rw">
+        <div class="stats-rw-title">Sommaire</div>
+        <div class="stats-rw-grid">
+          <div class="stats-rw-item"><label>Total vues</label><div class="val" contenteditable="true">1 045</div></div>
+          <div class="stats-rw-item"><label>Total j'aime</label><div class="val" contenteditable="true">291</div></div>
+          <div class="stats-rw-item"><label>Commentaires</label><div class="val" contenteditable="true">47</div></div>
+          <div class="stats-rw-item"><label>Achats PPV</label><div class="val" contenteditable="true">12</div></div>
+        </div>
+      </div>
+      <div class="stats-rw">
+        <div class="stats-rw-title">Poste supérieur</div>
+        <div style="font-size:12.5px;color:#111;font-weight:500;margin-bottom:4px;" contenteditable="true">Post vidéo – 21 mai</div>
+        <div class="stats-rw-grid">
+          <div class="stats-rw-item"><label>Vues</label><div class="val" contenteditable="true">289</div></div>
+          <div class="stats-rw-item"><label>Revenus</label><div class="val" contenteditable="true">$260,04</div></div>
+        </div>
+      </div>`;
+  },
+
+  portee: () => {
+    const porteeChart = [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,2];
+    const porteeChart2 = porteeChart.map(v=>v*1.2);
+    statsMain.innerHTML = `
+      <div class="stats-pills">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills')">Visiteurs du profil</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Promotions</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Liens d'essai</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills')">Liens de suivi</div>
+      </div>
+      ${periodBox}
+      <div class="stats-pills" style="border-top:1px solid var(--border);">
+        <div class="stats-pill active" onclick="pillClick(this,'.stats-pills:last-of-type')">Tout</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:last-of-type')">Invités</div>
+        <div class="stats-pill" onclick="pillClick(this,'.stats-pills:last-of-type')">Utilisateurs</div>
+      </div>
+      <div class="stats-chart-section">
+        <div class="stats-portee-visitors"><strong contenteditable="true">3</strong> Visiteurs</div>
+        <div class="stats-chart-wrap">${makeChart(porteeChart, '#00aff0', 'chart_portee')}</div>
+        <div class="stats-chart-xlabels">
+          ${['févr. 17, 2026','févr. 20, 2026','févr. 23, 2026','févr. 26, 2026','mars 01, 2026','mars 04, 2026'].map(l=>`<span>${l}</span>`).join('')}
+        </div>
+      </div>
+      <div class="stats-eng-table">
+        <div class="stats-eng-header"><span>Stat</span><span>Invités</span><span>Utilisateurs</span><span>Total</span></div>
+        <div class="stats-eng-row"><span class="stats-eng-label">Visiteurs du profil</span><span class="stats-eng-val" contenteditable="true">3</span><span class="stats-eng-val" contenteditable="true">0</span><span class="stats-eng-val bold" contenteditable="true">3</span></div>
+        <div class="stats-eng-row"><span class="stats-eng-label">Durée de la vue</span><span class="stats-eng-val" contenteditable="true">0h:00min</span><span class="stats-eng-val" contenteditable="true">0h:00min</span><span class="stats-eng-val bold" contenteditable="true">0h:00min</span></div>
+      </div>
+      <div style="padding:16px 20px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Principaux pays</div>
+        <div class="stats-eng-header"><span>Pays</span><span>Invités</span><span>Utilisateurs</span><span>Total</span></div>
+        ${[
+          {pays:'🇫🇷 France', inv:'3', users:'0', total:'3'},
+          {pays:'🇺🇸 États-Unis', inv:'1', users:'1', total:'2'},
+          {pays:'🇨🇦 Canada', inv:'1', users:'0', total:'1'},
+        ].map(r=>`<div class="stats-eng-row"><span class="stats-eng-label" contenteditable="true">${r.pays}</span><span class="stats-eng-val" contenteditable="true">${r.inv}</span><span class="stats-eng-val" contenteditable="true">${r.users}</span><span class="stats-eng-val bold" contenteditable="true">${r.total}</span></div>`).join('')}
+      </div>`;
+    statsRight.innerHTML = `
+      <div class="stats-rw">
+        <div class="stats-rw-title">Sommaire</div>
+        <div class="stats-rw-grid">
+          <div class="stats-rw-item"><label>Visiteurs du profil</label><div class="val" contenteditable="true">3</div></div>
+          <div class="stats-rw-item"><label>Nouveaux abonnements/renouvellements</label><div class="val" contenteditable="true">0 / 0</div></div>
+        </div>
+        <hr class="stats-rw-divider">
+        <div class="stats-rw-item"><label>Revenus des abonnements</label><div class="val" contenteditable="true">$0.00</div></div>
+      </div>`;
+  },
+
+  fans: () => {
+    const fans = [
+      {init:'BT', color:'#ff6b35', name:'BigTipper99', joined:'18 jan. 2026', spent:'$652,10', msgs:12, tips:8},
+      {init:'RK', color:'#f39c12', name:'Roxy_K',      joined:'02 fév. 2026', spent:'$263,08', msgs:7,  tips:3},
+      {init:'JX', color:'#00aff0', name:'JakeXO',      joined:'14 fév. 2026', spent:'$190,74', msgs:5,  tips:6},
+      {init:'LF', color:'#7b2ff7', name:'Lisa_Fan',    joined:'20 fév. 2026', spent:'$152,10', msgs:18, tips:2},
+      {init:'MV', color:'#2ecc71', name:'Mark_VIP',    joined:'01 mars 2026', spent:'$100,00', msgs:3,  tips:4},
+    ];
+    statsMain.innerHTML = `
+      <div class="stats-pills">
+        <div class="stats-pill active" onclick="pillClick(this,this.parentElement)">Abonnements</div>
+        <div class="stats-pill" onclick="pillClick(this,this.parentElement)">Meilleurs ventilateurs</div>
+      </div>
+      <div class="stats-period-box">
+        <div><div class="stats-period-title">Derniers 30 jours</div><div class="stats-period-sub" contenteditable="true">févr. 17, 2026 - mars 04, 2026 (heure locale UTC+01:00)</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="stats-pills" style="border-top:1px solid var(--border);">
+        <div class="stats-pill active" onclick="pillClick(this,this.parentElement)">Tout</div>
+        <div class="stats-pill" onclick="pillClick(this,this.parentElement)">Renouvelle</div>
+        <div class="stats-pill" onclick="pillClick(this,this.parentElement)">Nouveaux abonnés</div>
+      </div>
+      <div class="stats-eng-table" style="padding:0 20px;">
+        <div class="stats-eng-header" style="grid-template-columns:2fr 1fr 1fr 1fr;">
+          <span>Fan</span><span>Abonné depuis</span><span>Dépensé</span><span>Messages</span>
+        </div>
+        ${fans.map(f=>`
+          <div class="stats-fans-row" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;align-items:center;padding:12px 0;border-bottom:1px solid #f5f5f5;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="stats-fans-av" style="background:${f.color};">${f.init}</div>
+              <div>
+                <div class="stats-fans-name" contenteditable="true">${f.name}</div>
+                <div class="stats-fans-sub">${f.tips} pourboire${f.tips>1?'s':''}</div>
+              </div>
+            </div>
+            <span style="font-size:13px;color:#555;" contenteditable="true">${f.joined}</span>
+            <span style="font-size:13px;font-weight:600;color:#111;" contenteditable="true">${f.spent}</span>
+            <span style="font-size:13px;color:#555;" contenteditable="true">${f.msgs}</span>
+          </div>`).join('')}
+      </div>`;
+    statsRight.innerHTML = `
+      <div class="stats-rw">
+        <div class="stats-rw-title">Sommaire</div>
+        <div class="stats-rw-grid">
+          <div class="stats-rw-item"><label>Total abonnés</label><div class="val" contenteditable="true">5</div></div>
+          <div class="stats-rw-item"><label>Nouveaux abonnés</label><div class="val" contenteditable="true">2</div></div>
+          <div class="stats-rw-item"><label>Renouvellements</label><div class="val" contenteditable="true">3</div></div>
+          <div class="stats-rw-item"><label>Revenus abonnements</label><div class="val" contenteditable="true">$0.00</div></div>
+        </div>
+      </div>
+      <div class="stats-rw">
+        <div class="stats-rw-title">Ventilateur supérieur</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#ff6b35;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;">BT</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;" contenteditable="true">BigTipper99</div>
+            <div style="font-size:12px;color:var(--muted);" contenteditable="true">$652,10 dépensés · 8 pourboires</div>
+          </div>
+        </div>
+      </div>`;
+  }
+};
+
+function pillClick(el, scope) {
+  const container = el.closest('.stats-pills') || el.parentElement;
+  container.querySelectorAll('.stats-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function renderStatsTab(tab) {
+  if(statsTabs[tab]) statsTabs[tab]();
+}
+
+document.querySelectorAll('.stats-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderStatsTab(this.dataset.stab);
+  });
+});
+
+// default tab
+renderStatsTab('overview');
+
+
+
+// ---- DECLARATIONS DYNAMIC SECTIONS ----
+const declData = [
+  {date:'23 mai 2025, 6h25', amt:'$152,10', fee:'$30,42', net:'$121,68', desc:'Pourboire de Roha K', statut:'Payé'},
+  {date:'22 mai 2025, 8h55', amt:'$190,74', fee:'$38,15', net:'$152,59', desc:'Message de Rutor K', statut:'Payé'},
+  {date:'21 mai 2025, 2h44', amt:'$260,04', fee:'$52,01', net:'$208,03', desc:'Message de Juandir W', statut:'Payé'},
+  {date:'20 mai 2025, 23h04', amt:'$263,08', fee:'$52,62', net:'$210,46', desc:'Message de Samantha V', statut:'Payé'},
+  {date:'19 mai 2025, 16h12', amt:'$180,00', fee:'$36,00', net:'$144,00', desc:'Abonnement BigTipper99', statut:'Payé'},
+  {date:'18 mai 2025, 9h30', amt:'$100,00', fee:'$20,00', net:'$80,00', desc:'Pourboire de JakeXO', statut:'Payé'},
+];
+
+const declSections = {
+  revenus: () => `
+    <div class="decl-right-header">
+      <span class="decl-right-title">REVENUS</span>
+      <span class="decl-right-sub">Date/heure affichée en heure locale (UTC+01:00)</span>
+    </div>
+    <div class="decl-table-header">
+      <div>DATE ET HEURE</div><div>MONTANT</div><div>HONORAIRES</div><div>NET</div><div>DESCRIPTION</div><div>STATUT</div>
+    </div>
+    <div id="declRowsInner"></div>`,
+
+  demandes: () => `
+    <div class="decl-right-header">
+      <span class="decl-right-title">DEMANDES DE PAIEMENT</span>
+      <span class="decl-right-sub">Date/heure affichée en heure locale (UTC+01:00)</span>
+    </div>
+    <div style="background:#e8f7ff;border:1px solid #b3e0f7;border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;color:#0077aa;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Les transactions peuvent prendre jusqu'à 3 à 5 jours ouvrables
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">
+        <div>DATE ET HEURE</div><div>FACTURE</div><div>MONTANT</div><div>STATUT</div>
+      </div>
+      <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Pas de demandes</div>
+    </div>`,
+
+  statistiques: () => `
+    <div class="decl-right-header">
+      <span class="decl-right-title">STATISTIQUES SUR LES GAINS</span>
+      <span class="decl-right-sub">Date/heure affichée dans le fuseau horaire UTC</span>
+    </div>
+    <div class="gains-period-box">
+      <div class="gains-period-row">
+        <span class="gains-period-label">Depuis Inception</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="gains-period-val" contenteditable="true">$1 146,03</span>
+          <span style="cursor:pointer;color:var(--blue);">&#8963;</span>
+        </div>
+      </div>
+      <div class="gains-chart-area">
+        ${[20,35,18,50,40,28,60,45,55,70,38,48,65,80,55,90,70,60,85,75,68,92,78,88,95,82,70,100,88,95].map(h=>`<div class="gains-bar" style="height:${h}%;opacity:.6;"></div>`).join('')}
+      </div>
+      <div class="gains-x-labels">
+        <span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span>
+      </div>
+      <div class="gains-date-selector">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        De <strong style="color:#000;margin:0 4px;" contenteditable="true">4 mars 2026</strong> Pour <strong style="color:#000;margin:0 4px;" contenteditable="true">4 mars 2026</strong>
+      </div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#00aff0;"></div>Abonnements</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#7b2ff7;"></div>Des pourboires</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#ff6b35;"></div>Publications</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#e91e8c;"></div>Messages</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#ccc;"></div>Références</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-line"><div style="display:flex;align-items:center;gap:8px;"><div class="gains-dot" style="background:#f39c12;"></div>Streams</div><span contenteditable="true">$0.00</span><span contenteditable="true">$0.00</span></div>
+      <div class="gains-total-row"><span>TOTAL</span><span style="color:var(--muted);font-size:12px;">BRUT <span contenteditable="true">$0.00</span></span><span>NET <span contenteditable="true">$0.00</span></span></div>
+    </div>`,
+
+  retraits: () => `
+    <div class="decl-right-header">
+      <span class="decl-right-title">STATISTIQUES SUR LES GAINS</span>
+      <span class="decl-right-sub">Date/heure affichée dans le fuseau horaire UTC</span>
+    </div>
+    <div class="gains-period-box">
+      <div class="gains-period-row">
+        <span class="gains-period-label">Depuis Inception</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="gains-period-val" contenteditable="true">$1 146,03</span>
+          <span style="cursor:pointer;color:var(--blue);">&#8963;</span>
+        </div>
+      </div>
+      <div class="gains-chart-area">
+        ${[20,35,18,50,40,28,60,45,55,70,38,48,65,80,55,90,70,60,85,75,68,92,78,88,95,82,70,100,88,95].map(h=>`<div class="gains-bar" style="height:${h}%;opacity:.6;"></div>`).join('')}
+      </div>
+      <div class="gains-x-labels"><span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span><span>04 mars 26</span></div>
+      <div class="gains-total-row"><span>TOTAL</span><span style="color:var(--muted);font-size:12px;">BRUT <span contenteditable="true">$0.00</span></span><span>NET <span contenteditable="true">$0.00</span></span></div>
+    </div>`,
+
+  references: () => `
+    <div class="decl-right-header">
+      <span class="decl-right-title">RELEVÉ DES REVENUS DE RÉFÉRENCE</span>
+      <span class="decl-right-sub">Date/heure affichée en heure locale (UTC+01:00)</span>
+    </div>
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;">
+        <div>DATE ET HEURE</div><div>FACTURE</div><div>MONTANT</div><div>STATUT</div>
+      </div>
+      <div style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">Cette liste est vide</div>
+    </div>`
+};
+
+function renderDeclSection(section) {
+  const right = document.getElementById('declRight');
+  if(!right) return;
+  right.innerHTML = declSections[section]();
+  if(section === 'revenus') {
+    const inner = document.getElementById('declRowsInner');
+    if(inner) declData.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'decl-table-row';
+      row.innerHTML = `<div contenteditable="true">${r.date}</div><div contenteditable="true">${r.amt}</div><div contenteditable="true">${r.fee}</div><div contenteditable="true">${r.net}</div><div contenteditable="true">${r.desc}</div><div><span class="decl-status-badge decl-status-ok">&#10003; ${r.statut}</span></div>`;
+      inner.appendChild(row);
+    });
+  }
+}
+renderDeclSection('revenus');
+
+document.querySelectorAll('.decl-section-item').forEach(item => {
+  item.addEventListener('click', function(){
+    document.querySelectorAll('.decl-section-item').forEach(x => x.classList.remove('active-section'));
+    this.classList.add('active-section');
+    renderDeclSection(this.dataset.section);
+  });
+});
+
+// ---- HOME FEED ----
+const feedPosts = [
+  {av:'OF', color:'#00aff0', name:'OnlyFans', verified:true, handle:'@onlyfans', time:'Hier', text:'Ready to multiply your houseplants? <a href="#">@surfwithclaire</a> walks you through the easiest pothos propagation ever—perfect for beginners and plant lovers alike. 🌿✨ <a href="#">onlyfans.com/surfwithclaire</a> / <a href="#">onlyfans.com/oftv</a>', hasVideo:true, likes:1842, comments:94},
+  {av:'WD', color:'linear-gradient(135deg,#00aff0,#0095cc)', name:'Willy denz', verified:true, handle:'@u495354766', time:'il y a 3 jours', text:'Nouvelle publication disponible pour mes abonnés ! 🔥 Merci pour votre soutien continu, ça compte énormément. N\'hésitez pas à partager et à laisser un commentaire 💬', hasVideo:false, likes:312, comments:28},
+  {av:'OF', color:'#ff6b35', name:'OnlyFans Creators', verified:true, handle:'@creators', time:'il y a 5 jours', text:'💡 Tip du jour : Publiez aux heures de pointe (18h–22h) pour maximiser votre visibilité. Les créateurs qui publient régulièrement voient une croissance de <strong>3x</strong> plus rapide. <a href="#">onlyfans.com/guide</a>', hasVideo:false, likes:4721, comments:382},
+  {av:'WD', color:'linear-gradient(135deg,#00aff0,#0095cc)', name:'Willy denz', verified:true, handle:'@u495354766', time:'il y a 1 semaine', text:'Merci à tous mes fans pour ce premier mois incroyable ! 🙏 Je prépare du contenu exclusif qui arrive très bientôt. Restez connectés 🎉', hasVideo:false, likes:156, comments:42},
+];
+
+const homeFeed = document.getElementById('homeFeed');
+if(homeFeed) feedPosts.forEach(p => {
+  const el = document.createElement('div');
+  el.className = 'feed-post';
+  const bgStyle = p.color.includes('gradient') ? `background:${p.color}` : `background:${p.color}`;
+  el.innerHTML = `
+    <div class="feed-post-head">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="feed-post-av" style="${bgStyle}">${p.av}</div>
+        <div>
+          <div class="feed-post-name">${p.name} ${p.verified?`<svg class="feed-post-verified" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`:''}</div>
+          <div class="feed-post-handle">${p.handle} · <span class="feed-post-time">${p.time}</span></div>
+        </div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    </div>
+    <div class="feed-post-text" contenteditable="true">${p.text}</div>
+    ${p.hasVideo ? `<div class="feed-post-media"><div class="feed-post-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>` : ''}
+    <div class="feed-post-actions">
+      <button class="feed-act" onclick="this.classList.toggle('liked')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span contenteditable="true">${p.likes}</span>
+      </button>
+      <button class="feed-act">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span contenteditable="true">${p.comments}</span>
+      </button>
+      <button class="feed-act">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+    </div>`;
+  homeFeed.appendChild(el);
+});
+
+// Profile tabs
+document.querySelectorAll('.profile-tab-new').forEach(t => {
+  t.addEventListener('click', function(){
+    document.querySelectorAll('.profile-tab-new').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+// home filter chips
+document.querySelectorAll('.home-filter-chip').forEach(c => {
+  c.addEventListener('click', function(){
+    document.querySelectorAll('.home-filter-chip').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// ---- NOTIFICATIONS ----
+const notifData = [
+  {name:'Sophie M.', initials:'SM', text:"s'est abonnée à vous", time:'il y a 2 minutes', color:'#e91e8c', type:'abonnements', unread:true, icon:'👤'},
+  {name:'BigTipper99', initials:'BT', text:'vous a envoyé un pourboire de <strong>$50.00</strong>', time:'il y a 15 minutes', color:'#ff6b35', type:'pourboire', unread:true, icon:'💰'},
+  {name:'JakeXO', initials:'JX', text:'a aimé votre publication <em>"Nouveau contenu exclusif"</em>', time:'il y a 1 heure', color:'#00aff0', type:'achats', unread:false, icon:'❤️'},
+  {name:'Lisa_Fan', initials:'LF', text:'vous a envoyé un message', time:'il y a 3 heures', color:'#7b2ff7', type:'abonnements', unread:true, icon:'💬'},
+  {name:'Mark_VIP', initials:'MV', text:'a renouvelé son abonnement pour 3 mois', time:'il y a 5 heures', color:'#2ecc71', type:'abonnements', unread:false, icon:'🔄'},
+  {name:'Camille', initials:'CA', text:"a commenté : <em>\"Wow incroyable ! 🔥\"</em>", time:'Hier, 22h14', color:'#e74c3c', type:'commentaires', unread:false, icon:'💬'},
+  {name:'OnlyFans', initials:'OF', text:'Votre paiement de <strong>$916.48</strong> a été traité avec succès', time:'Hier, 18h00', color:'#00aff0', type:'achats', unread:false, icon:'✅'},
+  {name:'Roxy_K', initials:'RK', text:'a acheté votre publication PPV pour <strong>$25.00</strong>', time:'Avant-hier', color:'#f39c12', type:'achats', unread:false, icon:'🛒'},
+  {name:'DevXPro', initials:'DP', text:'vous a envoyé un pourboire de <strong>$100.00</strong> avec le message : <em>"Contenu top !"</em>', time:'Il y a 3 jours', color:'#3498db', type:'pourboire', unread:false, icon:'💰'},
+  {name:'Sophie M.', initials:'SM', text:'a taguée votre publication dans sa story', time:'Il y a 4 jours', color:'#e91e8c', type:'etiquettes', unread:false, icon:'🏷️'},
+];
+
+const notifFeed = document.getElementById('notifFeed');
+let activeFilter = 'all';
+
+function renderNotifs(filter) {
+  if(!notifFeed) return;
+  notifFeed.innerHTML = '';
+  const filtered = filter === 'all' ? notifData : notifData.filter(n => n.type === filter);
+  filtered.forEach(n => {
+    const el = document.createElement('div');
+    el.className = 'notif-item' + (n.unread ? ' unread' : '');
+    el.innerHTML = `
+      <div class="notif-av" style="background:${n.color}">${n.initials}</div>
+      <div class="notif-body">
+        <div class="notif-name" contenteditable="true">${n.name}</div>
+        <div class="notif-text">${n.text}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+      ${n.unread ? '<div class="notif-dot"></div>' : ''}`;
+    el.addEventListener('click', () => { el.classList.remove('unread'); el.querySelector('.notif-dot')?.remove(); });
+    notifFeed.appendChild(el);
+  });
+}
+renderNotifs('all');
+
+document.querySelectorAll('.notif-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.notif-chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+    renderNotifs(this.dataset.filter);
+  });
+});
+
+// ---- MESSAGES ----
+const threads = [
+  {name:'Sophie M.', initials:'SM', preview:'Je pensais à quelque chose comme...', time:'2m', color:'#e91e8c', unread:3, online:true, convo:[
+    {from:'them',text:"Hey ! J'adore tellement ton contenu 💕",time:'14:22'},
+    {from:'me',text:'Merci beaucoup, ça me touche vraiment !',time:'14:25'},
+    {from:'them',text:'Tu peux faire un contenu perso pour moi ? 🙏',time:'14:26'},
+    {from:'me',text:'Bien sûr ! Envoie-moi les détails et on en discute',time:'14:28'},
+    {from:'them',text:"Je pensais à quelque chose comme...",time:'14:30'},
+  ]},
+  {name:'BigTipper99', initials:'BT', preview:"Je t'ai envoyé un pourboire !", time:'15m', color:'#ff6b35', unread:0, online:false, convo:[
+    {from:'them',text:"Hello ! Je viens de t'envoyer un pourboire de $50 💸",time:'13:45'},
+    {from:'me',text:'Waouh merci infiniment, tu es trop généreux ! 🙏🔥',time:'13:48'},
+    {from:'them',text:'Tu le mérites vraiment, ton contenu est au top',time:'13:50'},
+    {from:'me',text:'Ça me motive encore plus à créer ! Merci 💪',time:'13:52'},
+  ]},
+  {name:'JakeXO', initials:'JX', preview:'Cette dernière publication était incroyable', time:'1h', color:'#00aff0', unread:1, online:true, convo:[
+    {from:'them',text:'Ta dernière publication était absolument incroyable 🔥🔥',time:'12:10'},
+    {from:'them',text:'La qualité de ton contenu est vraiment au niveau !',time:'12:11'},
+    {from:'me',text:'Merci Jake ! J\'ai mis beaucoup d\'effort là-dedans 😊',time:'12:20'},
+    {from:'them',text:'Ça se voit clairement. Hâte de voir la suite !',time:'12:22'},
+  ]},
+  {name:'Lisa_Fan', initials:'LF', preview:"C'est quand ton prochain stream ?", time:'3h', color:'#7b2ff7', unread:0, online:false, convo:[
+    {from:'them',text:'Salut ! Tu prévois un stream bientôt ? 🎥',time:'10:05'},
+    {from:'me',text:'Oui ! Je prévois quelque chose pour la semaine prochaine',time:'10:30'},
+    {from:'them',text:"Génial ! J'ai hâte 🥳 C'est quand exactement ?",time:'10:32'},
+  ]},
+  {name:'Mark_VIP', initials:'MV', preview:'Abonnement renouvelé, continue !', time:'5h', color:'#2ecc71', unread:0, online:false, convo:[
+    {from:'them',text:"Je viens de renouveler mon abonnement pour 3 mois 💪",time:'08:15'},
+    {from:'me',text:'Merci Mark, tu es un super fan ! Contenu exclusif en route 🚀',time:'08:45'},
+    {from:'them',text:'Continue comme ça, tu assures vraiment !',time:'08:47'},
+  ]},
+  {name:'Roxy_K', initials:'RK', preview:'Merci pour le contenu perso !', time:'Hier', color:'#f39c12', unread:0, online:false, convo:[
+    {from:'them',text:'Merci beaucoup pour le contenu personnalisé 😍',time:'Hier 20:00'},
+    {from:'me',text:'Avec plaisir Roxy ! Reviens quand tu veux 😊',time:'Hier 20:15'},
+  ]},
+];
+
+let activeThread = null;
+const msgThreadList = document.getElementById('msgThreadList');
+const msgChatArea = document.getElementById('msgChatArea');
+
+function renderChat(thread) {
+  activeThread = thread;
+  msgChatArea.innerHTML = `
+    <div class="msg-chat-head">
+      <div class="msg-chat-head-info">
+        <div class="msg-thread-av" style="background:${thread.color};position:relative;">
+          ${thread.initials}
+          ${thread.online ? '<div class="msg-thread-online"></div>' : ''}
+        </div>
+        <div>
+          <div class="msg-chat-head-name" contenteditable="true">${thread.name}</div>
+          <div class="msg-chat-head-sub">${thread.online ? '🟢 En ligne' : 'Hors ligne'}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;color:#aaa;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="cursor:pointer;"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+    <div class="msg-chat-body" id="activeChatBody">
+      ${thread.convo.map(m => `<div class="msg-bubble ${m.from}" contenteditable="true">${m.text}</div>`).join('')}
+    </div>
+    <div class="msg-chat-input">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" style="cursor:pointer;flex-shrink:0;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <input type="text" placeholder="Écrire un message..." id="chatInput" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="msg-send-btn" onclick="sendMsg()">&#8593;</button>
+    </div>`;
+  const body = document.getElementById('activeChatBody');
+  if(body) body.scrollTop = body.scrollHeight;
+}
+
+function sendMsg() {
+  const input = document.getElementById('chatInput');
+  if(!input || !input.value.trim()) return;
+  const body = document.getElementById('activeChatBody');
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble me';
+  bubble.contentEditable = 'true';
+  bubble.textContent = input.value.trim();
+  body.appendChild(bubble);
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+}
+
+if(msgThreadList) {
+  threads.forEach((t, i) => {
+    const el = document.createElement('div');
+    el.className = 'msg-thread';
+    el.innerHTML = `
+      <div class="msg-thread-av" style="background:${t.color}">
+        ${t.initials}
+        ${t.online ? '<div class="msg-thread-online"></div>' : ''}
+      </div>
+      <div class="msg-thread-info">
+        <div class="msg-thread-name">${t.name}</div>
+        <div class="msg-thread-preview">${t.preview}</div>
+      </div>
+      <div class="msg-thread-meta">
+        <span class="msg-thread-time">${t.time}</span>
+        ${t.unread ? `<div class="msg-unread-badge">${t.unread}</div>` : ''}
+      </div>`;
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.msg-thread').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+      el.querySelector('.msg-unread-badge')?.remove();
+      renderChat(t);
+    });
+    msgThreadList.appendChild(el);
+  });
+  // Auto-open first thread
+  msgThreadList.firstChild?.click();
+}
+
+
+
+// ---- COLLECTIONS ----
+const collItems = [
+  {name:'Suivant', sub:'1 utilisateur · 25 posts', active:true},
+  {name:'Fans', sub:'vide'},
+  {name:'Amis', sub:'vide'},
+  {name:'Au Silence', sub:'vide'},
+  {name:'Récent (dernières 24 heures)', sub:'Aucun nouvel abonné au cours des dernières 24 he...'},
+  {name:'Marqué', sub:'vide'},
+  {name:'Restreints', sub:'vide'},
+  {name:'Bloqués', sub:'vide'},
+];
+const collListItems = document.getElementById('collListItems');
+if(collListItems) {
+  collItems.forEach((c,i) => {
+    const el = document.createElement('div');
+    el.className = 'coll-list-item' + (i===0?' active':'');
+    el.innerHTML = `<div>
+      <div class="coll-list-name" contenteditable="true">${c.name}</div>
+      <div class="coll-list-sub" contenteditable="true">${c.sub}</div>
+    </div>
+    ${i===0?`<div class="coll-list-icon"><svg viewBox="0 0 24 24" fill="white" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>`:''}`;
+    collListItems.appendChild(el);
+  });
+}
+// coll tab clicks
+document.querySelectorAll('.coll-tab').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.coll-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.coll-mid-tab').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.coll-mid-tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.coll-chip').forEach(c => {
+  c.addEventListener('click', function() {
+    document.querySelectorAll('.coll-chip').forEach(x=>{x.classList.remove('active');x.classList.remove('sel');});
+    this.classList.add('sel');
+  });
+});
+
+// ---- VAULT ----
+const vaultCats = [
+  {name:'Tous les médias', sub:'vide', active:true},
+  {name:'Histoires', sub:'vide'},
+  {name:'Publications', sub:'vide'},
+  {name:'Messages', sub:'vide'},
+  {name:'Ruisseaux', sub:'vide'},
+  {name:'Téléchargements', sub:'vide'},
+];
+const vaultCategories = document.getElementById('vaultCategories');
+if(vaultCategories){
+  vaultCats.forEach((c,i) => {
+    const el = document.createElement('div');
+    el.className = 'vault-cat-item' + (i===0?' active':'');
+    el.innerHTML = `<div><div class="vault-cat-name" contenteditable="true">${c.name}</div><div class="vault-cat-sub">${c.sub}</div></div>`;
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.vault-cat-item').forEach(x=>x.classList.remove('active'));
+      el.classList.add('active');
+    });
+    vaultCategories.appendChild(el);
+  });
+}
+
+// ---- QUEUE CALENDAR ----
+const frMonths = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+let calYear = 2026, calMonth = 2; // mars 2026 (0-indexed)
+let selectedDay = 4;
+
+function renderCalendar(){
+  const label = document.getElementById('monthLabel');
+  const daysEl = document.getElementById('calDays');
+  const selLabel = document.getElementById('selectedDateLabel');
+  if(!label||!daysEl) return;
+  label.textContent = frMonths[calMonth] + ' ' + calYear;
+  if(selLabel) selLabel.textContent = frMonths[calMonth] + ' ' + selectedDay + ', ' + calYear;
+  daysEl.innerHTML = '';
+  const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+  // convert Sunday=0 to Mon=0
+  const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const prevDays = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  // prev month padding
+  for(let i = startOffset-1; i >= 0; i--){
+    const d = document.createElement('div');
+    d.className = 'cal-day other-month';
+    d.innerHTML = `<div class="cal-day-num">${prevDays-i}</div>`;
+    daysEl.appendChild(d);
+  }
+  // current month
+  for(let i=1; i<=daysInMonth; i++){
+    const d = document.createElement('div');
+    const isToday = (calYear===today.getFullYear() && calMonth===today.getMonth() && i===today.getDate());
+    const isSel = (i===selectedDay);
+    d.className = 'cal-day' + (isToday?' today':'') + (isSel&&!isToday?' selected':'');
+    if(isSel&&!isToday) d.style.background='#f0f9ff';
+    d.innerHTML = `<div class="cal-day-num">${i}</div>`;
+    d.addEventListener('click', ()=>{ selectedDay=i; renderCalendar(); });
+    daysEl.appendChild(d);
+  }
+  // next month padding
+  const totalCells = startOffset + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for(let i=1; i<=remaining; i++){
+    const d = document.createElement('div');
+    d.className = 'cal-day other-month';
+    d.innerHTML = `<div class="cal-day-num">${i}</div>`;
+    daysEl.appendChild(d);
+  }
+}
+renderCalendar();
+document.getElementById('prevMonth')?.addEventListener('click', ()=>{ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); });
+document.getElementById('nextMonth')?.addEventListener('click', ()=>{ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); });
+document.querySelectorAll('.queue-type-chip').forEach(c=>{ c.addEventListener('click',function(){ document.querySelectorAll('.queue-type-chip').forEach(x=>x.classList.remove('active')); this.classList.add('active'); }); });
+
+// ---- PLUS OVERLAY ----
+function closePlus(){
+  document.getElementById('plusOverlay').style.display='none';
+}
+document.querySelectorAll('.sb-item[data-page="plus"]').forEach(el=>{
+  el.addEventListener('click', e=>{
+    e.stopPropagation();
+    const ov = document.getElementById('plusOverlay');
+    ov.style.display = ov.style.display==='none'?'block':'none';
+  });
+});
+document.getElementById('plusOverlay')?.addEventListener('click', function(e){
+  if(e.target===this) closePlus();
+});
+// dark toggle
+document.getElementById('darkToggle')?.addEventListener('click', function(){
+  this.classList.toggle('on');
+});
+
+// Remove old queueContent reference (element no longer exists)
+
+</script>
+</body>
+</html>
