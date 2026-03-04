@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Dashboard screenshots (too large for git)
+dashboard-screenshots/
