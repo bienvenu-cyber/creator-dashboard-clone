@@ -9,8 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Trash2, Camera, Save, FolderOpen, Plus, Settings, X, LogOut, Crown } from 'lucide-react';
 
-// Pages
 import { OFSidebarNav } from '@/components/dashboard/OFSidebarNav';
+import { OFMobileNav } from '@/components/dashboard/OFMobileNav';
 import { HomePage } from '@/components/dashboard/pages/HomePage';
 import { NotificationsPage } from '@/components/dashboard/pages/NotificationsPage';
 import { MessagesPage } from '@/components/dashboard/pages/MessagesPage';
@@ -40,6 +40,8 @@ export default function Generator() {
   const [saving, setSaving] = useState(false);
   const [loadDialogOpen, setLoadDialogOpen] = useState(false);
   const [toolbarOpen, setToolbarOpen] = useState(false);
+  const [displayName, setDisplayName] = useState('Willy denz');
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,12 +71,11 @@ export default function Generator() {
     }
     setSaving(true);
     try {
-      // Capture all contenteditable values from the DOM
       const editableData: Record<string, string> = {};
       dashboardRef.current?.querySelectorAll('[contenteditable]').forEach((el, i) => {
         editableData[`field_${i}`] = (el as HTMLElement).innerText;
       });
-      const config = { activePage, editableData };
+      const config = { activePage, editableData, displayName, avatarUrl };
 
       if (currentDashboardId) {
         await supabase.from('dashboards').update({ name: dashboardName, config: config as any }).eq('id', currentDashboardId);
@@ -95,6 +96,8 @@ export default function Generator() {
     setDashboardName(dashboard.name);
     setCurrentDashboardId(dashboard.id);
     if (dashboard.config?.activePage) setActivePage(dashboard.config.activePage);
+    if (dashboard.config?.displayName) setDisplayName(dashboard.config.displayName);
+    if (dashboard.config?.avatarUrl) setAvatarUrl(dashboard.config.avatarUrl);
     setLoadDialogOpen(false);
     toast.success(`Dashboard "${dashboard.name}" chargé`);
   };
@@ -114,49 +117,40 @@ export default function Generator() {
     setPlusOpen(false);
   };
 
+  const pages = [
+    { key: 'home', component: <HomePage /> },
+    { key: 'notifications', component: <NotificationsPage /> },
+    { key: 'messages', component: <MessagesPage /> },
+    { key: 'collections', component: <CollectionsPage /> },
+    { key: 'vault', component: <VaultPage /> },
+    { key: 'queue', component: <QueuePage /> },
+    { key: 'declarations', component: <DeclarationsPage /> },
+    { key: 'statistics', component: <StatisticsPage /> },
+    { key: 'profile', component: <ProfilePage avatarUrl={avatarUrl} displayName={displayName} onNameChange={setDisplayName} onAvatarChange={setAvatarUrl} /> },
+  ];
+
   return (
     <div ref={dashboardRef} className="of-app">
-      {/* Sidebar */}
-      <OFSidebarNav activePage={activePage} onPageChange={showPage} onPlusClick={() => setPlusOpen(!plusOpen)} />
+      <OFSidebarNav
+        activePage={activePage}
+        onPageChange={showPage}
+        onPlusClick={() => setPlusOpen(!plusOpen)}
+        avatarUrl={avatarUrl}
+        displayName={displayName}
+        onAvatarChange={setAvatarUrl}
+      />
 
-      {/* Main */}
       <main className="of-main">
-        <div className={`of-page ${activePage === 'home' ? 'active' : ''}`}>
-          <HomePage />
-        </div>
-        <div className={`of-page ${activePage === 'notifications' ? 'active' : ''}`}>
-          <NotificationsPage />
-        </div>
-        <div className={`of-page ${activePage === 'messages' ? 'active' : ''}`}>
-          <MessagesPage />
-        </div>
-        <div className={`of-page ${activePage === 'collections' ? 'active' : ''}`}>
-          <CollectionsPage />
-        </div>
-        <div className={`of-page ${activePage === 'vault' ? 'active' : ''}`}>
-          <VaultPage />
-        </div>
-        <div className={`of-page ${activePage === 'queue' ? 'active' : ''}`}>
-          <QueuePage />
-        </div>
-        <div className={`of-page ${activePage === 'declarations' ? 'active' : ''}`}>
-          <DeclarationsPage />
-        </div>
-        <div className={`of-page ${activePage === 'statistics' ? 'active' : ''}`}>
-          <StatisticsPage />
-        </div>
-        <div className={`of-page ${activePage === 'profile' ? 'active' : ''}`}>
-          <ProfilePage />
-        </div>
+        {pages.map(p => (
+          <div key={p.key} className={`of-page ${activePage === p.key ? 'active' : ''}`}>
+            {p.component}
+          </div>
+        ))}
       </main>
 
-      {/* Plus overlay */}
-      {plusOpen && (
-        <PlusOverlay
-          onClose={() => setPlusOpen(false)}
-          onNavigate={showPage}
-        />
-      )}
+      <OFMobileNav activePage={activePage} onPageChange={showPage} onPlusClick={() => setPlusOpen(!plusOpen)} />
+
+      {plusOpen && <PlusOverlay onClose={() => setPlusOpen(false)} onNavigate={showPage} />}
 
       {/* Toolbar FAB */}
       <div className="of-toolbar-fab">
@@ -181,12 +175,9 @@ export default function Generator() {
         </button>
       </div>
 
-      {/* Load Dialog */}
       <Dialog open={loadDialogOpen} onOpenChange={setLoadDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Mes Dashboards</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Mes Dashboards</DialogTitle></DialogHeader>
           <div className="mb-3">
             <Input value={dashboardName} onChange={(e) => setDashboardName(e.target.value)} placeholder="Nom du dashboard" />
           </div>

@@ -1,7 +1,12 @@
+import { useRef } from 'react';
+
 interface Props {
   activePage: string;
   onPageChange: (page: string) => void;
   onPlusClick: () => void;
+  avatarUrl: string | null;
+  displayName: string;
+  onAvatarChange: (url: string) => void;
 }
 
 const menuItems = [
@@ -17,11 +22,29 @@ const menuItems = [
   { key: 'plus', label: 'Plus', icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><circle cx="8" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="12" r="1" fill="currentColor" stroke="none"/></svg> },
 ];
 
-export function OFSidebarNav({ activePage, onPageChange, onPlusClick }: Props) {
+function getInitials(name: string): string {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??';
+}
+
+export function OFSidebarNav({ activePage, onPageChange, onPlusClick, avatarUrl, displayName, onAvatarChange }: Props) {
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => onAvatarChange(reader.result as string);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   return (
     <aside className="of-sidebar">
       <div className="sb-avatar-wrap">
-        <div className="sb-avatar">WD</div>
+        <div className="sb-avatar" onClick={() => fileRef.current?.click()}>
+          {avatarUrl ? <img src={avatarUrl} alt="avatar" /> : getInitials(displayName)}
+        </div>
+        <input ref={fileRef} type="file" accept="image/*" className="sb-avatar-upload" onChange={handleFileChange} />
       </div>
       <nav className="sb-nav">
         {menuItems.map(item => (

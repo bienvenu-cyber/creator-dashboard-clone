@@ -1,49 +1,48 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-const periodBox = (
-  <div className="stats-period-box">
-    <div>
-      <div className="stats-period-title">Derniers 30 jours</div>
-      <div className="stats-period-sub" contentEditable suppressContentEditableWarning>févr. 17, 2026 - mars 04, 2026 (heure locale UTC+01:00)</div>
+function PeriodBox() {
+  return (
+    <div className="stats-period-box">
+      <div>
+        <div className="stats-period-title">Derniers 30 jours</div>
+        <div className="stats-period-sub" contentEditable suppressContentEditableWarning>févr. 17, 2026 - mars 04, 2026 (heure locale UTC+01:00)</div>
+      </div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
     </div>
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-  </div>
-);
+  );
+}
 
-function ChartCanvas({ data, color = '#00aff0' }: { data: number[]; color?: string }) {
+function ChartCanvas({ data, color = '#00aff0', onDataChange }: { data: number[]; color?: string; onDataChange?: (data: number[]) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [editing, setEditing] = useState(false);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const W = 600, H = 140, PAD = 12;
+    const W = canvas.width, H = canvas.height, PAD = 12;
     ctx.clearRect(0, 0, W, H);
     const max = Math.max(...data, 1);
     const ptX = (i: number) => PAD + (i / (data.length - 1)) * (W - 2 * PAD);
     const ptY = (v: number) => H - PAD - (v / max) * (H - 2 * PAD);
 
-    // Grid
     ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 1;
     [H * 0.25, H * 0.5, H * 0.75].forEach(y => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
 
-    // Fill
     const grad = ctx.createLinearGradient(0, 0, 0, H);
     grad.addColorStop(0, color + '44'); grad.addColorStop(1, color + '05');
     ctx.beginPath(); ctx.moveTo(ptX(0), H);
     data.forEach((v, i) => ctx.lineTo(ptX(i), ptY(v)));
     ctx.lineTo(ptX(data.length - 1), H); ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
 
-    // Line
     ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
     data.forEach((v, i) => { i === 0 ? ctx.moveTo(ptX(i), ptY(v)) : ctx.lineTo(ptX(i), ptY(v)); });
     ctx.stroke();
 
-    // Dots
     data.forEach((v, i) => {
       ctx.beginPath(); ctx.arc(ptX(i), ptY(v), 3.5, 0, Math.PI * 2);
       ctx.fillStyle = '#fff'; ctx.fill();
@@ -53,10 +52,41 @@ function ChartCanvas({ data, color = '#00aff0' }: { data: number[]; color?: stri
 
   useEffect(() => { draw(); }, [draw]);
 
+  const handleInputChange = (index: number, value: string) => {
+    if (!onDataChange) return;
+    const num = parseInt(value) || 0;
+    const newData = [...data];
+    newData[index] = num;
+    onDataChange(newData);
+  };
+
   return (
-    <div className="stats-chart-wrap">
-      <canvas ref={canvasRef} width={600} height={140} style={{ width: '100%', height: 140, display: 'block' }} />
-    </div>
+    <>
+      <div className="stats-chart-wrap">
+        <canvas ref={canvasRef} width={600} height={140} style={{ width: '100%', height: 140, display: 'block' }} />
+      </div>
+      {onDataChange && (
+        <>
+          <button className="chart-edit-toggle" onClick={() => setEditing(!editing)}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+            {editing ? 'Masquer' : 'Modifier données'}
+          </button>
+          {editing && (
+            <div className="chart-data-editor">
+              {data.map((v, i) => (
+                <input
+                  key={i}
+                  className="chart-data-input"
+                  type="number"
+                  value={v}
+                  onChange={(e) => handleInputChange(i, e.target.value)}
+                />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </>
   );
 }
 
@@ -70,9 +100,15 @@ const tabs = [
   { key: 'fans', label: '- DES FANS' },
 ];
 
+const defaultChartData = [0,0,0,0,0,0,0,0,0,0,0,0,120,80,200,180,260,300,220,180,240,260,200,280,300,260,220,310,280,320];
+const defaultEngData = [0,0,5,12,8,18,22,15,30,28,35,20,45,38,50,42,55,48,60,52,58,65,70,62,75,68,80,72,85,78];
+const defaultPorteeData = [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,2];
+
 export function StatisticsPage() {
   const [activeTab, setActiveTab] = useState('overview');
-  const [activePill, setActivePill] = useState(0);
+  const [chartData, setChartData] = useState(defaultChartData);
+  const [engChartData, setEngChartData] = useState(defaultEngData);
+  const [porteeChartData, setPorteeChartData] = useState(defaultPorteeData);
 
   return (
     <>
@@ -96,10 +132,10 @@ export function StatisticsPage() {
       </div>
       <div className="stats-body">
         <div className="stats-main">
-          {activeTab === 'releves' && <RelevesTab />}
-          {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'engagement' && <EngagementTab />}
-          {activeTab === 'portee' && <PorteeTab />}
+          {activeTab === 'releves' && <RelevesTab chartData={chartData} onChartDataChange={setChartData} />}
+          {activeTab === 'overview' && <OverviewTab chartData={chartData} onChartDataChange={setChartData} />}
+          {activeTab === 'engagement' && <EngagementTab chartData={engChartData} onChartDataChange={setEngChartData} />}
+          {activeTab === 'portee' && <PorteeTab chartData={porteeChartData} onChartDataChange={setPorteeChartData} />}
           {activeTab === 'fans' && <FansTab />}
         </div>
         <div className="stats-right-col">
@@ -110,46 +146,28 @@ export function StatisticsPage() {
   );
 }
 
-function RelevesTab() {
+function RelevesTab({ chartData, onChartDataChange }: { chartData: number[]; onChartDataChange: (d: number[]) => void }) {
   return (
     <>
       <div className="stats-pills">
         <div className="stats-pill active">Revenus</div>
         <div className="stats-pill">Chargebacks</div>
       </div>
-      {periodBox}
+      <PeriodBox />
       <div className="stats-inception-row">
         <span>Depuis Inception</span>
         <span contentEditable suppressContentEditableWarning>$1 146,03</span>
       </div>
       <div className="stats-chart-section">
-        <ChartCanvas data={[0,0,0,0,0,0,0,0,0,0,0,0,120,80,200,180,260,300,220,180,240,260,200,280,300,260,220,310,280,320]} />
+        <ChartCanvas data={chartData} onDataChange={onChartDataChange} />
         <div className="stats-chart-xlabels">{xlabels.map((l, i) => <span key={i}>{l}</span>)}</div>
       </div>
-      <div className="stats-radio-table">
-        <div className="stats-radio-header"><span>Revenus</span><span style={{ minWidth: 60, textAlign: 'right' }}>Brut</span><span style={{ minWidth: 60, textAlign: 'right', marginLeft: 20 }}>Net</span></div>
-        {[
-          { label: 'Total', brut: '$1 432,53', net: '$1 146,03', checked: true },
-          { label: 'Abonnements', brut: '$0,00', net: '$0,00' },
-          { label: 'Des pourboires', brut: '$652,10', net: '$521,68' },
-          { label: 'Publications', brut: '$0,00', net: '$0,00' },
-          { label: 'Messages', brut: '$493,86', net: '$395,09' },
-          { label: 'Références', brut: '$0,00', net: '$0,00' },
-          { label: 'Streams', brut: '$0,00', net: '$0,00' },
-        ].map((r, i) => (
-          <div key={i} className="stats-radio-row">
-            <input type="radio" name="ov" defaultChecked={r.checked} />
-            <span className="stats-radio-label" contentEditable suppressContentEditableWarning>{r.label}</span>
-            <span className="stats-radio-brut" contentEditable suppressContentEditableWarning>{r.brut}</span>
-            <span className="stats-radio-net" contentEditable suppressContentEditableWarning>{r.net}</span>
-          </div>
-        ))}
-      </div>
+      <RadioTable />
     </>
   );
 }
 
-function OverviewTab() {
+function OverviewTab({ chartData, onChartDataChange }: { chartData: number[]; onChartDataChange: (d: number[]) => void }) {
   return (
     <>
       <div className="stats-pills">
@@ -157,39 +175,45 @@ function OverviewTab() {
         <div className="stats-pill">Principaux points forts</div>
         <div className="stats-pill">Série d'activités</div>
       </div>
-      {periodBox}
+      <PeriodBox />
       <div className="stats-chart-section">
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
           <div className="stats-chart-amount" contentEditable suppressContentEditableWarning>$1 146,03 <small>NET</small></div>
           <span style={{ fontSize: 11, color: '#8a8a9a' }}>févr. 17, 2026 - mars 04, 2026</span>
         </div>
-        <ChartCanvas data={[0,0,0,0,0,0,0,0,0,0,0,0,120,80,200,180,260,300,220,180,240,260,200,280,300,260,220,310,280,320]} />
+        <ChartCanvas data={chartData} onDataChange={onChartDataChange} />
         <div className="stats-chart-xlabels">{xlabels.map((l, i) => <span key={i}>{l}</span>)}</div>
       </div>
-      <div className="stats-radio-table">
-        <div className="stats-radio-header"><span>Revenus</span><span style={{ minWidth: 60, textAlign: 'right' }}>Brut</span><span style={{ minWidth: 60, textAlign: 'right', marginLeft: 20 }}>Net</span></div>
-        {[
-          { label: 'Total', brut: '$1 432,53', net: '$1 146,03', checked: true },
-          { label: 'Abonnements', brut: '$0,00', net: '$0,00' },
-          { label: 'Des pourboires', brut: '$652,10', net: '$521,68' },
-          { label: 'Publications', brut: '$0,00', net: '$0,00' },
-          { label: 'Messages', brut: '$493,86', net: '$395,09' },
-          { label: 'Références', brut: '$0,00', net: '$0,00' },
-          { label: 'Streams', brut: '$0,00', net: '$0,00' },
-        ].map((r, i) => (
-          <div key={i} className="stats-radio-row">
-            <input type="radio" name="ov2" defaultChecked={r.checked} />
-            <span className="stats-radio-label" contentEditable suppressContentEditableWarning>{r.label}</span>
-            <span className="stats-radio-brut" contentEditable suppressContentEditableWarning>{r.brut}</span>
-            <span className="stats-radio-net" contentEditable suppressContentEditableWarning>{r.net}</span>
-          </div>
-        ))}
-      </div>
+      <RadioTable />
     </>
   );
 }
 
-function EngagementTab() {
+function RadioTable() {
+  return (
+    <div className="stats-radio-table">
+      <div className="stats-radio-header"><span>Revenus</span><span style={{ minWidth: 60, textAlign: 'right' }}>Brut</span><span style={{ minWidth: 60, textAlign: 'right', marginLeft: 20 }}>Net</span></div>
+      {[
+        { label: 'Total', brut: '$1 432,53', net: '$1 146,03', checked: true },
+        { label: 'Abonnements', brut: '$0,00', net: '$0,00' },
+        { label: 'Des pourboires', brut: '$652,10', net: '$521,68' },
+        { label: 'Publications', brut: '$0,00', net: '$0,00' },
+        { label: 'Messages', brut: '$493,86', net: '$395,09' },
+        { label: 'Références', brut: '$0,00', net: '$0,00' },
+        { label: 'Streams', brut: '$0,00', net: '$0,00' },
+      ].map((r, i) => (
+        <div key={i} className="stats-radio-row">
+          <input type="radio" name="rev-radio" defaultChecked={r.checked} />
+          <span className="stats-radio-label" contentEditable suppressContentEditableWarning>{r.label}</span>
+          <span className="stats-radio-brut" contentEditable suppressContentEditableWarning>{r.brut}</span>
+          <span className="stats-radio-net" contentEditable suppressContentEditableWarning>{r.net}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EngagementTab({ chartData, onChartDataChange }: { chartData: number[]; onChartDataChange: (d: number[]) => void }) {
   return (
     <>
       <div className="stats-pills">
@@ -198,7 +222,7 @@ function EngagementTab() {
         <div className="stats-pill">Streaming</div>
         <div className="stats-pill">Des histoires</div>
       </div>
-      {periodBox}
+      <PeriodBox />
       <div className="stats-pills" style={{ borderTop: '1px solid #e0e0e0' }}>
         <div className="stats-pill active">Achats</div>
         <div className="stats-pill">Des pourboires</div>
@@ -207,7 +231,7 @@ function EngagementTab() {
         <div className="stats-pill">Commentaires</div>
       </div>
       <div className="stats-chart-section">
-        <ChartCanvas data={[0,0,5,12,8,18,22,15,30,28,35,20,45,38,50,42,55,48,60,52,58,65,70,62,75,68,80,72,85,78]} />
+        <ChartCanvas data={chartData} onDataChange={onChartDataChange} />
         <div className="stats-chart-xlabels">{xlabels.map((l, i) => <span key={i}>{l}</span>)}</div>
       </div>
       <div className="stats-eng-table">
@@ -231,7 +255,7 @@ function EngagementTab() {
   );
 }
 
-function PorteeTab() {
+function PorteeTab({ chartData, onChartDataChange }: { chartData: number[]; onChartDataChange: (d: number[]) => void }) {
   return (
     <>
       <div className="stats-pills">
@@ -240,7 +264,7 @@ function PorteeTab() {
         <div className="stats-pill">Liens d'essai</div>
         <div className="stats-pill">Liens de suivi</div>
       </div>
-      {periodBox}
+      <PeriodBox />
       <div className="stats-pills" style={{ borderTop: '1px solid #e0e0e0' }}>
         <div className="stats-pill active">Tout</div>
         <div className="stats-pill">Invités</div>
@@ -248,7 +272,7 @@ function PorteeTab() {
       </div>
       <div className="stats-chart-section">
         <div className="stats-portee-visitors"><strong contentEditable suppressContentEditableWarning>3</strong> Visiteurs</div>
-        <ChartCanvas data={[0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,2]} />
+        <ChartCanvas data={chartData} onDataChange={onChartDataChange} />
         <div className="stats-chart-xlabels">{xlabels.map((l, i) => <span key={i}>{l}</span>)}</div>
       </div>
       <div className="stats-eng-table">
