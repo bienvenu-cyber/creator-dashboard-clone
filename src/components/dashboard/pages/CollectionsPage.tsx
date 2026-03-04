@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
 const collItems = [
-  { name: 'Suivant', sub: '1 utilisateur · 25 posts', active: true },
-  { name: 'Fans', sub: 'vide' },
-  { name: 'Amis', sub: 'vide' },
-  { name: 'Au Silence', sub: 'vide' },
-  { name: 'Récent (dernières 24 heures)', sub: 'Aucun nouvel abonné au cours des dernières 24 he...' },
-  { name: 'Marqué', sub: 'vide' },
-  { name: 'Restreints', sub: 'vide' },
-  { name: 'Bloqués', sub: 'vide' },
+  { name: 'Following', sub: '1 user · 25 posts', active: true },
+  { name: 'Fans', sub: 'empty' },
+  { name: 'Friends', sub: 'empty' },
+  { name: 'Muted', sub: 'empty' },
+  { name: 'Recent (last 24 hours)', sub: 'No new subscribers in the last 24 hours...' },
+  { name: 'Bookmarked', sub: 'empty' },
+  { name: 'Restricted', sub: 'empty' },
+  { name: 'Blocked', sub: 'empty' },
 ];
 
 export function CollectionsPage() {
@@ -18,7 +18,6 @@ export function CollectionsPage() {
 
   return (
     <div className="coll-layout">
-      {/* Left panel */}
       <div className="coll-left">
         <div className="coll-left-header">
           <div className="coll-left-title">
@@ -31,12 +30,12 @@ export function CollectionsPage() {
           </div>
         </div>
         <div className="coll-tabs">
-          {["LISTES D'UTILISATEURS", 'SIGNETS', 'ÉTIQUETTES DE P...'].map((t, i) => (
+          {['USER LISTS', 'BOOKMARKS', 'POST TAGS'].map((t, i) => (
             <div key={i} className={`coll-tab ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>{t}</div>
           ))}
         </div>
         <div className="coll-order-row">
-          <span>ORDRE PERSONNALISÉ</span>
+          <span>CUSTOM ORDER</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </div>
         {collItems.map((c, i) => (
@@ -54,30 +53,28 @@ export function CollectionsPage() {
         ))}
       </div>
 
-      {/* Middle panel */}
       <div className="coll-mid">
         <div className="coll-mid-header">
-          <div className="coll-mid-title">SUIVANT</div>
+          <div className="coll-mid-title">FOLLOWING</div>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
         <div className="coll-mid-tabs">
-          {['UTILISATEURS', 'PUBLICATIONS'].map((t, i) => (
+          {['USERS', 'POSTS'].map((t, i) => (
             <div key={i} className={`coll-mid-tab ${activeMidTab === i ? 'active' : ''}`} onClick={() => setActiveMidTab(i)}>{t}</div>
           ))}
         </div>
         <div className="coll-mid-filter">
-          <span>RÉCENT</span>
+          <span>RECENT</span>
           <div style={{ display: 'flex', gap: 8 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
         </div>
         <div className="coll-status-chips">
-          <div className="coll-chip active">Tout 1</div>
-          <div className="coll-chip sel">Actifs 1</div>
-          <div className="coll-chip">Expirés 0</div>
-          <div className="coll-chip">Attention requise 0</div>
+          <div className="coll-chip active">All 1</div>
+          <div className="coll-chip sel">Active 1</div>
+          <div className="coll-chip">Expired 0</div>
+          <div className="coll-chip">Attention required 0</div>
         </div>
-        {/* Fan card */}
         <div className="coll-fan-card">
           <div className="coll-fan-banner">
             <span style={{ fontSize: 11, color: '#fff', opacity: .8, fontWeight: 600, letterSpacing: 1 }}>OnlyFans</span>
@@ -96,8 +93,8 @@ export function CollectionsPage() {
               </div>
             </div>
             <div className="coll-fan-actions">
-              <button className="coll-fan-btn outline" contentEditable suppressContentEditableWarning>ABONNÉ</button>
-              <button className="coll-fan-btn outline" contentEditable suppressContentEditableWarning>GRATUITEMENT</button>
+              <button className="coll-fan-btn outline" contentEditable suppressContentEditableWarning>SUBSCRIBED</button>
+              <button className="coll-fan-btn outline" contentEditable suppressContentEditableWarning>FREE</button>
             </div>
           </div>
         </div>

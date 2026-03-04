@@ -44,7 +44,7 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
             <div className="profile-header-actions">
               <button className="profile-edit-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-                MODIFIEZ LE PROFIL
+                EDIT PROFILE
               </button>
               <div className="profile-share-btn">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
@@ -61,7 +61,7 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
             <span contentEditable suppressContentEditableWarning>@u495354766</span>
             <span>·</span>
             <div className="profile-status-dot" />
-            <span className="profile-status-text">Disponible</span>
+            <span className="profile-status-text">Available</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
 
@@ -69,7 +69,7 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
 
           <button className="profile-social-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-            AJOUTER DES LIENS SOCIAUX
+            ADD SOCIAL LINKS
           </button>
 
           {/* Stories */}
@@ -83,35 +83,35 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
                   </div>
                 </div>
               </div>
-              <div className="profile-story-label">Archive de<br/>story</div>
+              <div className="profile-story-label">Story<br/>archive</div>
             </div>
             <div className="profile-story-item">
               <div className="profile-story-thumb" style={{ border: '2px dashed #ccc', background: '#f9f9f9' }}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00aff0" strokeWidth="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
               </div>
-              <div className="profile-story-label">Créer un<br/>highlight</div>
+              <div className="profile-story-label">Create a<br/>highlight</div>
             </div>
           </div>
 
           {/* Subscription */}
           <div className="profile-sub-section">
             <div>
-              <div className="profile-sub-label">ABONNEMENT</div>
-              <div className="profile-sub-value">Prix d'abonnement et promotions</div>
-              <div className="profile-sub-sub">Abonnement gratuit</div>
+              <div className="profile-sub-label">SUBSCRIPTION</div>
+              <div className="profile-sub-value">Subscription price and promotions</div>
+              <div className="profile-sub-sub">Free subscription</div>
             </div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
 
           {/* Tabs */}
           <div className="profile-tabs-new">
-            {['PAS DE POSTS', 'NON MÉDIAS'].map((t, i) => (
+            {['NO POSTS', 'NON MEDIA'].map((t, i) => (
               <div key={i} className={`profile-tab-new ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>{t}</div>
             ))}
           </div>
           <div className="profile-empty-posts">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-            <div style={{ color: '#00aff0', fontWeight: 600, cursor: 'pointer' }}>CRÉER UNE NOUVELLE PUBLICATION</div>
+            <div style={{ color: '#00aff0', fontWeight: 600, cursor: 'pointer' }}>CREATE A NEW POST</div>
           </div>
         </div>
       </div>
@@ -119,7 +119,7 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
       {/* Right column */}
       <div className="profile-right-col">
         <div className="profile-search-box">
-          <input type="text" placeholder="Rechercher la publication de l'utilisateur" />
+          <input type="text" placeholder="Search user's posts" />
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
 
@@ -130,7 +130,7 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
           <div className="profile-widget-body">
             <button className="spotify-btn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10" fill="none"/><path d="M8 12.5c2.7-1.4 5.6-1.7 8.3-.7M7 9.3c3.3-1.7 7-2 10.3-.8M9 15.6c2-1 4.2-1.3 6.3-.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none"/></svg>
-              SE CONNECTER AVEC SPOTIFY
+              CONNECT WITH SPOTIFY
             </button>
           </div>
         </div>
@@ -139,9 +139,9 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
           <div className="profile-widget-body">
             <div className="abonnement-row">
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#8a8a9a', letterSpacing: '.5px', marginBottom: 6 }}>ABONNEMENT</div>
-                <div className="abonnement-label">Prix d'abonnement et promotions</div>
-                <div className="abonnement-sub">Abonnement gratuit</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#8a8a9a', letterSpacing: '.5px', marginBottom: 6 }}>SUBSCRIPTION</div>
+                <div className="abonnement-label">Subscription price and promotions</div>
+                <div className="abonnement-sub">Free subscription</div>
               </div>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
             </div>
