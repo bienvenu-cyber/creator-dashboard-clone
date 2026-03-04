@@ -1,2 +1,4 @@
-import Generator from './Generator';
-export default Generator;
+import { Navigate } from 'react-router-dom';
+export default function Index() {
+  return <Navigate to="/" replace />;
+}

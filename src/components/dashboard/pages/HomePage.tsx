@@ -1,14 +1,53 @@
 import { useState } from 'react';
 
-const feedPosts = [
-  { av: 'OF', color: '#00aff0', name: 'OnlyFans', verified: true, handle: '@onlyfans', time: '5 hours ago', text: 'Ready to multiply your houseplants? @surfwithclaire walks you through the easiest pothos propagation ever—perfect for beginners and plant lovers alike. 🌿✨', hasVideo: true, likes: 1842, comments: 94 },
-  { av: 'WD', color: 'linear-gradient(135deg,#00aff0,#0095cc)', name: 'Willy denz', verified: true, handle: '@u495354766', time: '3 days ago', text: "New post available for my subscribers! 🔥 Thank you for your continued support, it means a lot. Don't hesitate to share and leave a comment 💬", hasVideo: false, likes: 312, comments: 28 },
-  { av: 'OF', color: '#ff6b35', name: 'OnlyFans Creators', verified: true, handle: '@creators', time: '5 days ago', text: "💡 Tip of the day: Post during peak hours (6pm–10pm) to maximize your visibility. Creators who post consistently see 3x faster growth.", hasVideo: false, likes: 4721, comments: 382 },
-  { av: 'WD', color: 'linear-gradient(135deg,#00aff0,#0095cc)', name: 'Willy denz', verified: true, handle: '@u495354766', time: '1 week ago', text: 'Thank you to all my fans for this incredible first month! 🙏 I\'m preparing exclusive content coming very soon. Stay tuned 🎉', hasVideo: false, likes: 156, comments: 42 },
+interface FeedPost {
+  av: string;
+  color: string;
+  name: string;
+  verified: boolean;
+  handle: string;
+  time: string;
+  text: string;
+  mediaType?: 'video' | 'image' | 'gallery';
+  mediaUrl?: string;
+  mediaGradient?: string;
+  likes: number;
+  comments: number;
+}
+
+const feedPosts: FeedPost[] = [
+  { av: 'OF', color: '#00aff0', name: 'OnlyFans', verified: true, handle: '@onlyfans', time: '5 hours ago', text: 'Ready to multiply your houseplants? @surfwithclaire walks you through the easiest pothos propagation ever—perfect for beginners and plant lovers alike. 🌿✨', mediaType: 'video', mediaGradient: 'linear-gradient(135deg, #1a1a2e, #16213e)', likes: 1842, comments: 94 },
+  { av: 'WD', color: 'linear-gradient(135deg,#00aff0,#0095cc)', name: 'Willy denz', verified: true, handle: '@u495354766', time: '3 days ago', text: "New post available for my subscribers! 🔥 Thank you for your continued support, it means a lot. Don't hesitate to share and leave a comment 💬", mediaType: 'image', mediaGradient: 'linear-gradient(135deg, #667eea, #764ba2)', likes: 312, comments: 28 },
+  { av: 'SC', color: '#e74c3c', name: 'Sarah Collins', verified: true, handle: '@sarahc_fit', time: '4 days ago', text: 'Morning workout done ✅ New ab routine dropping this week for all my subscribers. Who wants early access? Comment below! 💪🔥', mediaType: 'image', mediaGradient: 'linear-gradient(135deg, #f093fb, #f5576c)', likes: 2103, comments: 247 },
+  { av: 'OF', color: '#ff6b35', name: 'OnlyFans Creators', verified: true, handle: '@creators', time: '5 days ago', text: "💡 Tip of the day: Post during peak hours (6pm–10pm) to maximize your visibility. Creators who post consistently see 3x faster growth.", likes: 4721, comments: 382 },
+  { av: 'WD', color: 'linear-gradient(135deg,#00aff0,#0095cc)', name: 'Willy denz', verified: true, handle: '@u495354766', time: '1 week ago', text: 'Thank you to all my fans for this incredible first month! 🙏 I\'m preparing exclusive content coming very soon. Stay tuned 🎉', mediaType: 'gallery', mediaGradient: 'linear-gradient(135deg, #a18cd1, #fbc2eb)', likes: 156, comments: 42 },
+  { av: 'JM', color: '#2ecc71', name: 'Jake Morrison', verified: true, handle: '@jakemorrison', time: '1 week ago', text: 'Behind the scenes of today\'s photoshoot 📸 My photographer is absolutely incredible. Full set dropping tomorrow for premium subscribers only!', mediaType: 'image', mediaGradient: 'linear-gradient(135deg, #4facfe, #00f2fe)', likes: 891, comments: 63 },
+  { av: 'LR', color: '#9b59b6', name: 'Luna Rose', verified: true, handle: '@lunarose_', time: '1 week ago', text: 'Just hit 10K subscribers! 🎉🥳 To celebrate, I\'m doing a special live stream this Friday at 8 PM EST. Mark your calendars! Special surprises for everyone who shows up 💜', likes: 5432, comments: 891 },
+  { av: 'OF', color: '#00aff0', name: 'OnlyFans', verified: true, handle: '@onlyfans', time: '2 weeks ago', text: '📊 Creator Spotlight: @chefmarco has been serving up amazing content! From farm-to-table recipes to kitchen tips, his page is a must-follow for food lovers. Check it out!', mediaType: 'video', mediaGradient: 'linear-gradient(135deg, #0c3483, #a2b6df)', likes: 3201, comments: 178 },
+  { av: 'WD', color: 'linear-gradient(135deg,#00aff0,#0095cc)', name: 'Willy denz', verified: true, handle: '@u495354766', time: '2 weeks ago', text: 'Q&A session results are in! Here are the top 5 questions you asked. Full video response coming this weekend. Thanks for all the engagement! 🙌', likes: 89, comments: 34 },
+  { av: 'MK', color: '#e67e22', name: 'Mike K', verified: false, handle: '@mikefit_k', time: '2 weeks ago', text: 'New meal prep guide just dropped! 🍗🥦 30 recipes, complete macros, shopping lists included. Link in bio for subscribers. Let me know which recipe you try first!', mediaType: 'image', mediaGradient: 'linear-gradient(135deg, #fa709a, #fee140)', likes: 1567, comments: 203 },
+  { av: 'AS', color: '#1abc9c', name: 'Anna Styles', verified: true, handle: '@annastyles', time: '3 weeks ago', text: 'Travel vlog from Bali is LIVE! 🌴 Swipe through to see my favorite spots. Full video with all the hidden gems on my page. Who else wants to visit Bali? ✈️', mediaType: 'gallery', mediaGradient: 'linear-gradient(135deg, #43e97b, #38f9d7)', likes: 4102, comments: 567 },
+  { av: 'OF', color: '#ff6b35', name: 'OnlyFans Creators', verified: true, handle: '@creators', time: '3 weeks ago', text: '🚀 Platform update: New analytics features are now live! Track your growth, engagement rates, and top-performing content all in one place. Visit your Statistics page to explore.', likes: 6789, comments: 432 },
 ];
 
 export function HomePage() {
   const [activeFilter, setActiveFilter] = useState('all');
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [postLikes, setPostLikes] = useState<number[]>(feedPosts.map(p => p.likes));
+
+  const toggleLike = (index: number) => {
+    const newLiked = new Set(likedPosts);
+    const newLikes = [...postLikes];
+    if (newLiked.has(index)) {
+      newLiked.delete(index);
+      newLikes[index]--;
+    } else {
+      newLiked.add(index);
+      newLikes[index]++;
+    }
+    setLikedPosts(newLiked);
+    setPostLikes(newLikes);
+  };
 
   return (
     <div className="home-layout">
@@ -73,17 +112,32 @@ export function HomePage() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
             </div>
             <div className="feed-post-text" contentEditable suppressContentEditableWarning>{p.text}</div>
-            {p.hasVideo && (
-              <div className="feed-post-media">
-                <div className="feed-post-play">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                </div>
+            {p.mediaType && (
+              <div className="feed-post-media" style={{ background: p.mediaGradient || '#000', minHeight: p.mediaType === 'gallery' ? 280 : 220 }}>
+                {p.mediaType === 'video' && (
+                  <div className="feed-post-play">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  </div>
+                )}
+                {p.mediaType === 'image' && (
+                  <div style={{ position: 'absolute', bottom: 12, right: 12, background: 'rgba(0,0,0,.5)', borderRadius: 6, padding: '4px 8px', fontSize: 11, color: '#fff' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4 }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Photo
+                  </div>
+                )}
+                {p.mediaType === 'gallery' && (
+                  <div style={{ display: 'flex', gap: 4, position: 'absolute', bottom: 12, left: '50%', transform: 'translateX(-50%)' }}>
+                    {[0,1,2,3].map(d => (
+                      <div key={d} style={{ width: d === 0 ? 8 : 6, height: d === 0 ? 8 : 6, borderRadius: '50%', background: d === 0 ? '#fff' : 'rgba(255,255,255,.5)' }} />
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             <div className="feed-post-actions">
-              <button className="feed-act">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                <span contentEditable suppressContentEditableWarning>{p.likes}</span>
+              <button className={`feed-act ${likedPosts.has(i) ? 'liked' : ''}`} onClick={() => toggleLike(i)}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill={likedPosts.has(i) ? '#e74c3c' : 'none'} stroke={likedPosts.has(i) ? '#e74c3c' : 'currentColor'} strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span contentEditable suppressContentEditableWarning>{postLikes[i]}</span>
               </button>
               <button className="feed-act">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -91,6 +145,9 @@ export function HomePage() {
               </button>
               <button className="feed-act">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              </button>
+              <button className="feed-act" style={{ marginLeft: 'auto' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               </button>
             </div>
           </div>
