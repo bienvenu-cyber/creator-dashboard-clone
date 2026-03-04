@@ -1,17 +1,19 @@
 import { useState, useRef } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
-interface Props {
+interface DashboardContext {
   avatarUrl: string | null;
   displayName: string;
-  onNameChange: (name: string) => void;
-  onAvatarChange: (url: string) => void;
+  setDisplayName: (name: string) => void;
+  setAvatarUrl: (url: string) => void;
 }
 
 function getInitials(name: string): string {
   return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '??';
 }
 
-export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChange }: Props) {
+export function ProfilePage() {
+  const { avatarUrl, displayName, setDisplayName: onNameChange, setAvatarUrl: onAvatarChange } = useOutletContext<DashboardContext>();
   const [activeTab, setActiveTab] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -72,7 +74,6 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
             ADD SOCIAL LINKS
           </button>
 
-          {/* Stories */}
           <div className="profile-stories-row">
             <div className="profile-story-item">
               <div className="profile-story-thumb">
@@ -93,7 +94,6 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
             </div>
           </div>
 
-          {/* Subscription */}
           <div className="profile-sub-section">
             <div>
               <div className="profile-sub-label">SUBSCRIPTION</div>
@@ -103,7 +103,6 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
           </div>
 
-          {/* Tabs */}
           <div className="profile-tabs-new">
             {['NO POSTS', 'NON MEDIA'].map((t, i) => (
               <div key={i} className={`profile-tab-new ${activeTab === i ? 'active' : ''}`} onClick={() => setActiveTab(i)}>{t}</div>
@@ -116,7 +115,6 @@ export function ProfilePage({ avatarUrl, displayName, onNameChange, onAvatarChan
         </div>
       </div>
 
-      {/* Right column */}
       <div className="profile-right-col">
         <div className="profile-search-box">
           <input type="text" placeholder="Search user's posts" />

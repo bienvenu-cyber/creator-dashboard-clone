@@ -1,4 +1,21 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+const tabRoutes: Record<string, string> = {
+  statements: '/my/statistics/statements/earnings',
+  overview: '/my/statistics/overview/earnings',
+  engagement: '/my/statistics/engagement/posts',
+  reach: '/my/statistics/reach/profile-visitors',
+  fans: '/my/statistics/fans/subscriptions',
+};
+
+const routeToTab: Record<string, string> = {
+  '/my/statistics/statements/earnings': 'statements',
+  '/my/statistics/overview/earnings': 'overview',
+  '/my/statistics/engagement/posts': 'engagement',
+  '/my/statistics/reach/profile-visitors': 'reach',
+  '/my/statistics/fans/subscriptions': 'fans',
+};
 
 function PeriodBox() {
   return (
@@ -96,10 +113,16 @@ const defaultEngData = [0,0,5,12,8,18,22,15,30,28,35,20,45,38,50,42,55,48,60,52,
 const defaultReachData = [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,2];
 
 export function StatisticsPage() {
-  const [activeTab, setActiveTab] = useState('overview');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeTab = routeToTab[location.pathname] || 'overview';
   const [chartData, setChartData] = useState(defaultChartData);
   const [engChartData, setEngChartData] = useState(defaultEngData);
   const [reachChartData, setReachChartData] = useState(defaultReachData);
+
+  const handleTabChange = (key: string) => {
+    navigate(tabRoutes[key]);
+  };
 
   return (
     <>
@@ -116,7 +139,7 @@ export function StatisticsPage() {
       </div>
       <div className="stats-tabs">
         {tabs.map(t => (
-          <div key={t.key} className={`stats-tab ${activeTab === t.key ? 'active' : ''}`} onClick={() => setActiveTab(t.key)}>
+          <div key={t.key} className={`stats-tab ${activeTab === t.key ? 'active' : ''}`} onClick={() => handleTabChange(t.key)}>
             {t.label}
           </div>
         ))}
@@ -359,58 +382,13 @@ function RightCol({ activeTab }: { activeTab: string }) {
         <div className="stats-rw-item"><label>Subscription earnings</label><div className="val" contentEditable suppressContentEditableWarning>$0.00</div></div>
       </div>
       <hr className="stats-rw-divider" />
-      <div className="stats-rw-item" style={{ marginBottom: 8 }}><label>New subscriptions/renewals</label><div className="val" contentEditable suppressContentEditableWarning>0 / 0</div></div>
-      <hr className="stats-rw-divider" />
-      <div className="stats-rw-title" style={{ marginTop: 8 }}>Posts</div>
-      <div style={{ fontSize: 12, color: '#8a8a9a', marginBottom: 10 }}>No post activity during the selected period</div>
-      <div className="stats-rw-title">Messages</div>
-      <div style={{ fontSize: 12, color: '#8a8a9a' }}>No messaging activity during the selected period</div>
-
-      {activeTab === 'engagement' && (
-        <>
-          <div className="stats-rw" style={{ marginTop: 14 }}>
-            <div className="stats-rw-title">Summary</div>
-            <div className="stats-rw-grid">
-              <div className="stats-rw-item"><label>Total views</label><div className="val" contentEditable suppressContentEditableWarning>1,045</div></div>
-              <div className="stats-rw-item"><label>Total likes</label><div className="val" contentEditable suppressContentEditableWarning>291</div></div>
-              <div className="stats-rw-item"><label>Comments</label><div className="val" contentEditable suppressContentEditableWarning>47</div></div>
-              <div className="stats-rw-item"><label>PPV purchases</label><div className="val" contentEditable suppressContentEditableWarning>12</div></div>
-            </div>
-          </div>
-          <div className="stats-rw">
-            <div className="stats-rw-title">Top post</div>
-            <div style={{ fontSize: 12.5, color: '#111', fontWeight: 500, marginBottom: 4 }} contentEditable suppressContentEditableWarning>Video post – May 21</div>
-            <div className="stats-rw-grid">
-              <div className="stats-rw-item"><label>Views</label><div className="val" contentEditable suppressContentEditableWarning>289</div></div>
-              <div className="stats-rw-item"><label>Earnings</label><div className="val" contentEditable suppressContentEditableWarning>$260.04</div></div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {activeTab === 'fans' && (
-        <>
-          <div className="stats-rw" style={{ marginTop: 14 }}>
-            <div className="stats-rw-title">Summary</div>
-            <div className="stats-rw-grid">
-              <div className="stats-rw-item"><label>Total subscribers</label><div className="val" contentEditable suppressContentEditableWarning>5</div></div>
-              <div className="stats-rw-item"><label>New subscribers</label><div className="val" contentEditable suppressContentEditableWarning>2</div></div>
-              <div className="stats-rw-item"><label>Renewals</label><div className="val" contentEditable suppressContentEditableWarning>3</div></div>
-              <div className="stats-rw-item"><label>Subscription earnings</label><div className="val" contentEditable suppressContentEditableWarning>$0.00</div></div>
-            </div>
-          </div>
-          <div className="stats-rw">
-            <div className="stats-rw-title">Top fan</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
-              <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#ff6b35', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>BT</div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600 }} contentEditable suppressContentEditableWarning>BigTipper99</div>
-                <div style={{ fontSize: 12, color: '#8a8a9a' }} contentEditable suppressContentEditableWarning>$652.10 spent · 8 tips</div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <div className="stats-rw-title">Revenue breakdown</div>
+      <div className="stats-rw-grid">
+        <div className="stats-rw-item"><label>Tips</label><div className="val" contentEditable suppressContentEditableWarning>$521.68</div></div>
+        <div className="stats-rw-item"><label>Messages</label><div className="val" contentEditable suppressContentEditableWarning>$395.09</div></div>
+        <div className="stats-rw-item"><label>Posts</label><div className="val" contentEditable suppressContentEditableWarning>$0.00</div></div>
+        <div className="stats-rw-item"><label>Streams</label><div className="val" contentEditable suppressContentEditableWarning>$0.00</div></div>
+      </div>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -11,16 +11,6 @@ import { Trash2, Camera, Save, FolderOpen, Plus, Settings, X, LogOut, Crown } fr
 
 import { OFSidebarNav } from '@/components/dashboard/OFSidebarNav';
 import { OFMobileNav } from '@/components/dashboard/OFMobileNav';
-
-import { HomePage } from '@/components/dashboard/pages/HomePage';
-import { NotificationsPage } from '@/components/dashboard/pages/NotificationsPage';
-import { MessagesPage } from '@/components/dashboard/pages/MessagesPage';
-import { CollectionsPage } from '@/components/dashboard/pages/CollectionsPage';
-import { VaultPage } from '@/components/dashboard/pages/VaultPage';
-import { QueuePage } from '@/components/dashboard/pages/QueuePage';
-import { ProfilePage } from '@/components/dashboard/pages/ProfilePage';
-import { DeclarationsPage } from '@/components/dashboard/pages/DeclarationsPage';
-import { StatisticsPage } from '@/components/dashboard/pages/StatisticsPage';
 import { PlusOverlay } from '@/components/dashboard/PlusOverlay';
 
 interface SavedDashboard {
@@ -30,10 +20,38 @@ interface SavedDashboard {
   created_at: string;
 }
 
-export default function Generator() {
+// Map route paths to page keys for active state
+const routeToPage: Record<string, string> = {
+  '/': 'home',
+  '/my/notifications': 'notifications',
+  '/my/chats': 'messages',
+  '/my/collections/user-lists/subscribers/active': 'collections',
+  '/my/vault/list/all': 'vault',
+  '/my/queue': 'queue',
+  '/my/statements/earnings': 'declarations',
+  '/my/statistics/statements/earnings': 'statistics',
+  '/my/statistics/overview/earnings': 'statistics',
+  '/my/statistics/engagement/posts': 'statistics',
+  '/my/statistics/reach/profile-visitors': 'statistics',
+  '/my/statistics/fans/subscriptions': 'statistics',
+};
+
+export const pageToRoute: Record<string, string> = {
+  home: '/',
+  notifications: '/my/notifications',
+  messages: '/my/chats',
+  collections: '/my/collections/user-lists/subscribers/active',
+  vault: '/my/vault/list/all',
+  queue: '/my/queue',
+  declarations: '/my/statements/earnings',
+  statistics: '/my/statistics/overview/earnings',
+  profile: '/u495354766',
+};
+
+export default function DashboardLayout() {
   const { user, signOut, hasActiveSubscription, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [activePage, setActivePage] = useState('home');
+  const location = useLocation();
   const [plusOpen, setPlusOpen] = useState(false);
   const [dashboardName, setDashboardName] = useState('My Dashboard');
   const [savedDashboards, setSavedDashboards] = useState<SavedDashboard[]>([]);
@@ -44,6 +62,19 @@ export default function Generator() {
   const [displayName, setDisplayName] = useState('Willy denz');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  // Determine active page from current URL
+  const activePage = location.pathname.startsWith('/u') 
+    ? 'profile' 
+    : routeToPage[location.pathname] || 'home';
+
+  const navigateTo = (page: string) => {
+    const route = pageToRoute[page];
+    if (route) {
+      navigate(route);
+      setPlusOpen(false);
+    }
+  };
 
   const loadDashboards = async () => {
     const { data } = await supabase.from('dashboards').select('*').order('updated_at', { ascending: false });
@@ -92,9 +123,12 @@ export default function Generator() {
   const loadDashboard = (dashboard: SavedDashboard) => {
     setDashboardName(dashboard.name);
     setCurrentDashboardId(dashboard.id);
-    if (dashboard.config?.activePage) setActivePage(dashboard.config.activePage);
     if (dashboard.config?.displayName) setDisplayName(dashboard.config.displayName);
     if (dashboard.config?.avatarUrl) setAvatarUrl(dashboard.config.avatarUrl);
+    if (dashboard.config?.activePage) {
+      const route = pageToRoute[dashboard.config.activePage];
+      if (route) navigate(route);
+    }
     setLoadDialogOpen(false);
     toast.success(`Dashboard "${dashboard.name}" loaded`);
   };
@@ -109,28 +143,11 @@ export default function Generator() {
     toast.success('Dashboard deleted');
   };
 
-  const showPage = (page: string) => {
-    setActivePage(page);
-    setPlusOpen(false);
-  };
-
-  const pages = [
-    { key: 'home', component: <HomePage /> },
-    { key: 'notifications', component: <NotificationsPage /> },
-    { key: 'messages', component: <MessagesPage /> },
-    { key: 'collections', component: <CollectionsPage /> },
-    { key: 'vault', component: <VaultPage /> },
-    { key: 'queue', component: <QueuePage /> },
-    { key: 'declarations', component: <DeclarationsPage /> },
-    { key: 'statistics', component: <StatisticsPage /> },
-    { key: 'profile', component: <ProfilePage avatarUrl={avatarUrl} displayName={displayName} onNameChange={setDisplayName} onAvatarChange={setAvatarUrl} /> },
-  ];
-
   return (
     <div ref={dashboardRef} className="of-app">
       <OFSidebarNav
         activePage={activePage}
-        onPageChange={showPage}
+        onPageChange={navigateTo}
         onPlusClick={() => setPlusOpen(!plusOpen)}
         avatarUrl={avatarUrl}
         displayName={displayName}
@@ -138,22 +155,20 @@ export default function Generator() {
       />
 
       <main className="of-main">
-        {pages.map(p => (
-          <div key={p.key} className={`of-page ${activePage === p.key ? 'active' : ''}`}>
-            {p.component}
-          </div>
-        ))}
+        <div className="of-page active">
+          <Outlet context={{ avatarUrl, displayName, setDisplayName: (n: string) => setDisplayName(n), setAvatarUrl: (u: string) => setAvatarUrl(u) }} />
+        </div>
       </main>
 
       <OFMobileNav
         activePage={activePage}
-        onPageChange={showPage}
+        onPageChange={navigateTo}
         onPlusClick={() => setPlusOpen(!plusOpen)}
         avatarUrl={avatarUrl}
         displayName={displayName}
       />
 
-      {plusOpen && <PlusOverlay onClose={() => setPlusOpen(false)} onNavigate={showPage} />}
+      {plusOpen && <PlusOverlay onClose={() => setPlusOpen(false)} onNavigate={navigateTo} />}
 
       {/* Toolbar FAB */}
       <div className="of-toolbar-fab">
