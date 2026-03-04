@@ -620,52 +620,7 @@
   z-index: 150;
 }
 
-/* ===================== MOBILE BOTTOM NAV ===================== */
-.of-mobile-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background: #fff;
-  border-top: 1px solid var(--of-border);
-  z-index: 100;
-  align-items: center;
-  justify-content: space-around;
-  padding: 0 8px;
-}
-.of-mobile-nav-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: #9aa3af;
-  transition: color .12s;
-  padding: 0;
-}
-.of-mobile-nav-item svg {
-  width: 24px;
-  height: 24px;
-  stroke: #b0bac4;
-  stroke-width: 1.8;
-  transition: stroke .12s;
-}
-.of-mobile-nav-item.active { color: #111; }
-.of-mobile-nav-item.active svg { stroke: #111; }
-.of-mobile-nav-item.plus {
-  width: 40px;
-  height: 40px;
-  background: var(--of-blue);
-  border-radius: 50%;
-}
-.of-mobile-nav-item.plus svg { stroke: #fff; width: 20px; height: 20px; }
-
-/* ===================== EDITABLE CHART DATA ===================== */
+/* ===================== EDITABLE CHART DATA (always visible) ===================== */
 .chart-data-editor {
   display: flex;
   gap: 4px;
@@ -687,21 +642,6 @@
   border-color: var(--of-blue);
   background: rgba(0,175,240,.05);
 }
-.chart-edit-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 1px solid var(--of-border);
-  border-radius: 12px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--of-muted);
-  background: #fff;
-  margin-left: 8px;
-  transition: all .12s;
-}
-.chart-edit-toggle:hover { border-color: var(--of-blue); color: var(--of-blue); }
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 768px) {

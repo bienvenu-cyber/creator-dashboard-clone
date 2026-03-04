@@ -17,7 +17,6 @@ function PeriodBox() {
 
 function ChartCanvas({ data, color = '#00aff0', onDataChange }: { data: number[]; color?: string; onDataChange?: (data: number[]) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [editing, setEditing] = useState(false);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -66,25 +65,17 @@ function ChartCanvas({ data, color = '#00aff0', onDataChange }: { data: number[]
         <canvas ref={canvasRef} width={600} height={140} style={{ width: '100%', height: 140, display: 'block' }} />
       </div>
       {onDataChange && (
-        <>
-          <button className="chart-edit-toggle" onClick={() => setEditing(!editing)}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-            {editing ? 'Masquer' : 'Modifier données'}
-          </button>
-          {editing && (
-            <div className="chart-data-editor">
-              {data.map((v, i) => (
-                <input
-                  key={i}
-                  className="chart-data-input"
-                  type="number"
-                  value={v}
-                  onChange={(e) => handleInputChange(i, e.target.value)}
-                />
-              ))}
-            </div>
-          )}
-        </>
+        <div className="chart-data-editor">
+          {data.map((v, i) => (
+            <input
+              key={i}
+              className="chart-data-input"
+              type="number"
+              value={v}
+              onChange={(e) => handleInputChange(i, e.target.value)}
+            />
+          ))}
+        </div>
       )}
     </>
   );
