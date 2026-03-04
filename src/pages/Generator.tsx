@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Trash2, Camera, Save, FolderOpen, Plus, Settings, X, LogOut, Crown } from 'lucide-react';
 
 import { OFSidebarNav } from '@/components/dashboard/OFSidebarNav';
-import { OFMobileNav } from '@/components/dashboard/OFMobileNav';
+
 import { HomePage } from '@/components/dashboard/pages/HomePage';
 import { NotificationsPage } from '@/components/dashboard/pages/NotificationsPage';
 import { MessagesPage } from '@/components/dashboard/pages/MessagesPage';
@@ -148,7 +148,7 @@ export default function Generator() {
         ))}
       </main>
 
-      <OFMobileNav activePage={activePage} onPageChange={showPage} onPlusClick={() => setPlusOpen(!plusOpen)} />
+      
 
       {plusOpen && <PlusOverlay onClose={() => setPlusOpen(false)} onNavigate={showPage} />}
 
