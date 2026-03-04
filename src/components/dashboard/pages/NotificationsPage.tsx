@@ -1,25 +1,25 @@
 import { useState } from 'react';
 
 const notifData = [
-  { name: 'Sophie M.', initials: 'SM', text: "s'est abonnée à vous", time: 'il y a 2 minutes', color: '#e91e8c', type: 'abonnements', unread: true },
-  { name: 'BigTipper99', initials: 'BT', text: 'vous a envoyé un pourboire de $50.00', time: 'il y a 15 minutes', color: '#ff6b35', type: 'pourboire', unread: true },
-  { name: 'JakeXO', initials: 'JX', text: 'a aimé votre publication "Nouveau contenu exclusif"', time: 'il y a 1 heure', color: '#00aff0', type: 'achats', unread: false },
-  { name: 'Lisa_Fan', initials: 'LF', text: 'vous a envoyé un message', time: 'il y a 3 heures', color: '#7b2ff7', type: 'abonnements', unread: true },
-  { name: 'Mark_VIP', initials: 'MV', text: 'a renouvelé son abonnement pour 3 mois', time: 'il y a 5 heures', color: '#2ecc71', type: 'abonnements', unread: false },
-  { name: 'Camille', initials: 'CA', text: 'a commenté : "Wow incroyable ! 🔥"', time: 'Hier, 22h14', color: '#e74c3c', type: 'commentaires', unread: false },
-  { name: 'OnlyFans', initials: 'OF', text: 'Votre paiement de $916.48 a été traité avec succès', time: 'Hier, 18h00', color: '#00aff0', type: 'achats', unread: false },
-  { name: 'Roxy_K', initials: 'RK', text: 'a acheté votre publication PPV pour $25.00', time: 'Avant-hier', color: '#f39c12', type: 'achats', unread: false },
-  { name: 'DevXPro', initials: 'DP', text: 'vous a envoyé un pourboire de $100.00 avec le message : "Contenu top !"', time: 'Il y a 3 jours', color: '#3498db', type: 'pourboire', unread: false },
-  { name: 'Sophie M.', initials: 'SM', text: 'a taguée votre publication dans sa story', time: 'Il y a 4 jours', color: '#e91e8c', type: 'etiquettes', unread: false },
+  { name: 'Sophie M.', initials: 'SM', text: 'subscribed to you', time: '2 minutes ago', color: '#e91e8c', type: 'subscriptions', unread: true },
+  { name: 'BigTipper99', initials: 'BT', text: 'sent you a $50.00 tip', time: '15 minutes ago', color: '#ff6b35', type: 'tips', unread: true },
+  { name: 'JakeXO', initials: 'JX', text: 'liked your post "New exclusive content"', time: '1 hour ago', color: '#00aff0', type: 'purchases', unread: false },
+  { name: 'Lisa_Fan', initials: 'LF', text: 'sent you a message', time: '3 hours ago', color: '#7b2ff7', type: 'subscriptions', unread: true },
+  { name: 'Mark_VIP', initials: 'MV', text: 'renewed their subscription for 3 months', time: '5 hours ago', color: '#2ecc71', type: 'subscriptions', unread: false },
+  { name: 'Camille', initials: 'CA', text: 'commented: "Wow incredible! 🔥"', time: 'Yesterday, 10:14pm', color: '#e74c3c', type: 'comments', unread: false },
+  { name: 'OnlyFans', initials: 'OF', text: 'Your payment of $916.48 has been processed successfully', time: 'Yesterday, 6:00pm', color: '#00aff0', type: 'purchases', unread: false },
+  { name: 'Roxy_K', initials: 'RK', text: 'purchased your PPV post for $25.00', time: '2 days ago', color: '#f39c12', type: 'purchases', unread: false },
+  { name: 'DevXPro', initials: 'DP', text: 'sent you a $100.00 tip with message: "Top content!"', time: '3 days ago', color: '#3498db', type: 'tips', unread: false },
+  { name: 'Sophie M.', initials: 'SM', text: 'tagged your post in their story', time: '4 days ago', color: '#e91e8c', type: 'tags', unread: false },
 ];
 
 const filters = [
-  { key: 'all', label: 'Tout' },
-  { key: 'abonnements', label: 'Abonnements' },
-  { key: 'achats', label: 'Achats' },
-  { key: 'pourboire', label: 'Pourboire' },
-  { key: 'etiquettes', label: 'Étiquettes' },
-  { key: 'commentaires', label: 'Commentaires' },
+  { key: 'all', label: 'All' },
+  { key: 'subscriptions', label: 'Subscriptions' },
+  { key: 'purchases', label: 'Purchases' },
+  { key: 'tips', label: 'Tips' },
+  { key: 'tags', label: 'Tags' },
+  { key: 'comments', label: 'Comments' },
 ];
 
 export function NotificationsPage() {
@@ -67,7 +67,7 @@ export function NotificationsPage() {
 
       <div className="home-right">
         <div className="profile-search-box" style={{ marginBottom: 14 }}>
-          <input type="text" placeholder="Rechercher des utilisateurs ou des publi..." />
+          <input type="text" placeholder="Search users or posts..." />
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div className="ppv-widget">

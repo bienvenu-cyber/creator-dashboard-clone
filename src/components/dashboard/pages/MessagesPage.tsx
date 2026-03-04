@@ -1,36 +1,36 @@
 import { useState, useRef, useEffect } from 'react';
 
 const threads = [
-  { name: 'Sophie M.', initials: 'SM', preview: 'Je pensais à quelque chose comme...', time: '2m', color: '#e91e8c', unread: 3, online: true, convo: [
-    { from: 'them', text: "Hey ! J'adore tellement ton contenu 💕" },
-    { from: 'me', text: 'Merci beaucoup, ça me touche vraiment !' },
-    { from: 'them', text: 'Tu peux faire un contenu perso pour moi ? 🙏' },
-    { from: 'me', text: 'Bien sûr ! Envoie-moi les détails et on en discute' },
-    { from: 'them', text: 'Je pensais à quelque chose comme...' },
+  { name: 'Sophie M.', initials: 'SM', preview: 'I was thinking about something like...', time: '2m', color: '#e91e8c', unread: 3, online: true, convo: [
+    { from: 'them', text: "Hey! I love your content so much 💕" },
+    { from: 'me', text: 'Thank you so much, that really means a lot!' },
+    { from: 'them', text: 'Can you make custom content for me? 🙏' },
+    { from: 'me', text: "Of course! Send me the details and we'll discuss" },
+    { from: 'them', text: 'I was thinking about something like...' },
   ]},
-  { name: 'BigTipper99', initials: 'BT', preview: "Je t'ai envoyé un pourboire !", time: '15m', color: '#ff6b35', unread: 0, online: false, convo: [
-    { from: 'them', text: "Hello ! Je viens de t'envoyer un pourboire de $50 💸" },
-    { from: 'me', text: 'Waouh merci infiniment, tu es trop généreux ! 🙏🔥' },
-    { from: 'them', text: 'Tu le mérites vraiment, ton contenu est au top' },
-    { from: 'me', text: 'Ça me motive encore plus à créer ! Merci 💪' },
+  { name: 'BigTipper99', initials: 'BT', preview: "I sent you a tip!", time: '15m', color: '#ff6b35', unread: 0, online: false, convo: [
+    { from: 'them', text: "Hello! I just sent you a $50 tip 💸" },
+    { from: 'me', text: "Wow thank you so much, you're too generous! 🙏🔥" },
+    { from: 'them', text: 'You really deserve it, your content is top notch' },
+    { from: 'me', text: 'That motivates me even more to create! Thanks 💪' },
   ]},
-  { name: 'JakeXO', initials: 'JX', preview: 'Cette dernière publication était incroyable', time: '1h', color: '#00aff0', unread: 1, online: true, convo: [
-    { from: 'them', text: 'Ta dernière publication était absolument incroyable 🔥🔥' },
-    { from: 'me', text: "Merci Jake ! J'ai mis beaucoup d'effort là-dedans 😊" },
-    { from: 'them', text: 'Ça se voit clairement. Hâte de voir la suite !' },
+  { name: 'JakeXO', initials: 'JX', preview: 'That last post was incredible', time: '1h', color: '#00aff0', unread: 1, online: true, convo: [
+    { from: 'them', text: 'Your latest post was absolutely incredible 🔥🔥' },
+    { from: 'me', text: "Thanks Jake! I put a lot of effort into that one 😊" },
+    { from: 'them', text: "It clearly shows. Can't wait to see more!" },
   ]},
-  { name: 'Lisa_Fan', initials: 'LF', preview: "C'est quand ton prochain stream ?", time: '3h', color: '#7b2ff7', unread: 0, online: false, convo: [
-    { from: 'them', text: 'Salut ! Tu prévois un stream bientôt ? 🎥' },
-    { from: 'me', text: 'Oui ! Je prévois quelque chose pour la semaine prochaine' },
-    { from: 'them', text: "Génial ! J'ai hâte 🥳" },
+  { name: 'Lisa_Fan', initials: 'LF', preview: "When's your next stream?", time: '3h', color: '#7b2ff7', unread: 0, online: false, convo: [
+    { from: 'them', text: 'Hey! Are you planning a stream soon? 🎥' },
+    { from: 'me', text: "Yes! I'm planning something for next week" },
+    { from: 'them', text: "Awesome! Can't wait 🥳" },
   ]},
-  { name: 'Mark_VIP', initials: 'MV', preview: 'Abonnement renouvelé, continue !', time: '5h', color: '#2ecc71', unread: 0, online: false, convo: [
-    { from: 'them', text: "Je viens de renouveler mon abonnement pour 3 mois 💪" },
-    { from: 'me', text: 'Merci Mark, tu es un super fan ! Contenu exclusif en route 🚀' },
+  { name: 'Mark_VIP', initials: 'MV', preview: 'Subscription renewed, keep it up!', time: '5h', color: '#2ecc71', unread: 0, online: false, convo: [
+    { from: 'them', text: "Just renewed my subscription for 3 months 💪" },
+    { from: 'me', text: "Thanks Mark, you're an amazing fan! Exclusive content on the way 🚀" },
   ]},
-  { name: 'Roxy_K', initials: 'RK', preview: 'Merci pour le contenu perso !', time: 'Hier', color: '#f39c12', unread: 0, online: false, convo: [
-    { from: 'them', text: 'Merci beaucoup pour le contenu personnalisé 😍' },
-    { from: 'me', text: 'Avec plaisir Roxy ! Reviens quand tu veux 😊' },
+  { name: 'Roxy_K', initials: 'RK', preview: 'Thanks for the custom content!', time: 'Yesterday', color: '#f39c12', unread: 0, online: false, convo: [
+    { from: 'them', text: 'Thank you so much for the custom content 😍' },
+    { from: 'me', text: "My pleasure Roxy! Come back anytime 😊" },
   ]},
 ];
 
@@ -58,7 +58,6 @@ export function MessagesPage() {
 
   return (
     <div className="msg-layout">
-      {/* Thread list */}
       <div className="msg-list-panel">
         <div className="msg-list-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -70,11 +69,11 @@ export function MessagesPage() {
           </div>
         </div>
         <div className="msg-sort-row">
-          <span className="msg-sort-label">RÉCENT</span>
+          <span className="msg-sort-label">RECENT</span>
         </div>
         <div className="msg-filter-row">
-          <div className="msg-filter-chip active">Tout</div>
-          <div className="msg-filter-chip">Non lus</div>
+          <div className="msg-filter-chip active">All</div>
+          <div className="msg-filter-chip">Unread</div>
         </div>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {threads.map((t, i) => (
@@ -96,7 +95,6 @@ export function MessagesPage() {
         </div>
       </div>
 
-      {/* Chat */}
       <div className="msg-chat">
         <div className="msg-chat-head">
           <div className="msg-chat-head-info">
@@ -106,7 +104,7 @@ export function MessagesPage() {
             </div>
             <div>
               <div className="msg-chat-head-name" contentEditable suppressContentEditableWarning>{active.name}</div>
-              <div className="msg-chat-head-sub">{active.online ? '🟢 En ligne' : 'Hors ligne'}</div>
+              <div className="msg-chat-head-sub">{active.online ? '🟢 Online' : 'Offline'}</div>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 12, color: '#aaa' }}>
@@ -123,7 +121,7 @@ export function MessagesPage() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" style={{ cursor: 'pointer', flexShrink: 0 }}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <input
             type="text"
-            placeholder="Écrire un message..."
+            placeholder="Write a message..."
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') sendMsg(); }}

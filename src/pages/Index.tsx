@@ -1,2 +1,2 @@
-import Landing from './Landing';
-export default Landing;
+import Generator from './Generator';
+export default Generator;
