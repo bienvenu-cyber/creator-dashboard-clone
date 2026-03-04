@@ -2,38 +2,44 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { DashboardConfig, defaultDashboardConfig } from '@/types/dashboard';
 import { toast } from 'sonner';
-import { OFSidebar } from '@/components/dashboard/OFSidebar';
-import { OFMobileNav } from '@/components/dashboard/OFMobileNav';
-import { OFTopBar } from '@/components/dashboard/OFTopBar';
-import { OFStatsCards } from '@/components/dashboard/OFStatsCards';
-import { OFChart } from '@/components/dashboard/OFChart';
-import { OFEarningsBreakdown } from '@/components/dashboard/OFEarningsBreakdown';
-import { OFRecentActivity } from '@/components/dashboard/OFRecentActivity';
-import { OFToolbar } from '@/components/dashboard/OFToolbar';
 import html2canvas from 'html2canvas';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Camera, Save, FolderOpen, Plus, Settings, X, LogOut, Crown } from 'lucide-react';
+
+// Pages
+import { OFSidebarNav } from '@/components/dashboard/OFSidebarNav';
+import { HomePage } from '@/components/dashboard/pages/HomePage';
+import { NotificationsPage } from '@/components/dashboard/pages/NotificationsPage';
+import { MessagesPage } from '@/components/dashboard/pages/MessagesPage';
+import { CollectionsPage } from '@/components/dashboard/pages/CollectionsPage';
+import { VaultPage } from '@/components/dashboard/pages/VaultPage';
+import { QueuePage } from '@/components/dashboard/pages/QueuePage';
+import { ProfilePage } from '@/components/dashboard/pages/ProfilePage';
+import { DeclarationsPage } from '@/components/dashboard/pages/DeclarationsPage';
+import { StatisticsPage } from '@/components/dashboard/pages/StatisticsPage';
+import { PlusOverlay } from '@/components/dashboard/PlusOverlay';
 
 interface SavedDashboard {
   id: string;
   name: string;
-  config: DashboardConfig;
+  config: any;
   created_at: string;
 }
 
 export default function Generator() {
   const { user, signOut, hasActiveSubscription, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const [config, setConfig] = useState<DashboardConfig>(defaultDashboardConfig);
+  const [activePage, setActivePage] = useState('home');
+  const [plusOpen, setPlusOpen] = useState(false);
   const [dashboardName, setDashboardName] = useState('Mon Dashboard');
   const [savedDashboards, setSavedDashboards] = useState<SavedDashboard[]>([]);
   const [currentDashboardId, setCurrentDashboardId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadDialogOpen, setLoadDialogOpen] = useState(false);
+  const [toolbarOpen, setToolbarOpen] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,21 +49,17 @@ export default function Generator() {
 
   const loadDashboards = async () => {
     const { data } = await supabase.from('dashboards').select('*').order('updated_at', { ascending: false });
-    if (data) setSavedDashboards(data.map(d => ({ ...d, config: d.config as unknown as DashboardConfig })));
+    if (data) setSavedDashboards(data);
   };
 
   const handleExport = async () => {
     if (!dashboardRef.current) return;
-    const canvas = await html2canvas(dashboardRef.current, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#0f0f1a',
-    });
+    const canvas = await html2canvas(dashboardRef.current, { scale: 2, useCORS: true, backgroundColor: '#fff' });
     const link = document.createElement('a');
     link.download = `onlyfans-dashboard-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-    toast.success('Screenshot exported!');
+    toast.success('Screenshot exporté !');
   };
 
   const handleSave = async () => {
@@ -67,6 +69,13 @@ export default function Generator() {
     }
     setSaving(true);
     try {
+      // Capture all contenteditable values from the DOM
+      const editableData: Record<string, string> = {};
+      dashboardRef.current?.querySelectorAll('[contenteditable]').forEach((el, i) => {
+        editableData[`field_${i}`] = (el as HTMLElement).innerText;
+      });
+      const config = { activePage, editableData };
+
       if (currentDashboardId) {
         await supabase.from('dashboards').update({ name: dashboardName, config: config as any }).eq('id', currentDashboardId);
         toast.success('Dashboard mis à jour !');
@@ -83,9 +92,9 @@ export default function Generator() {
   };
 
   const loadDashboard = (dashboard: SavedDashboard) => {
-    setConfig(dashboard.config);
     setDashboardName(dashboard.name);
     setCurrentDashboardId(dashboard.id);
+    if (dashboard.config?.activePage) setActivePage(dashboard.config.activePage);
     setLoadDialogOpen(false);
     toast.success(`Dashboard "${dashboard.name}" chargé`);
   };
@@ -94,101 +103,104 @@ export default function Generator() {
     await supabase.from('dashboards').delete().eq('id', id);
     if (currentDashboardId === id) {
       setCurrentDashboardId(null);
-      setConfig(defaultDashboardConfig);
       setDashboardName('Mon Dashboard');
     }
     loadDashboards();
     toast.success('Dashboard supprimé');
   };
 
-  const newDashboard = () => {
-    setConfig(defaultDashboardConfig);
-    setDashboardName('Mon Dashboard');
-    setCurrentDashboardId(null);
-    toast.success('Nouveau dashboard créé');
+  const showPage = (page: string) => {
+    setActivePage(page);
+    setPlusOpen(false);
   };
 
   return (
-    <div
-      ref={dashboardRef}
-      className="min-h-screen flex"
-      style={{ background: '#0f0f1a', color: '#fff', fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif' }}
-    >
-      {/* Sidebar - desktop */}
-      <OFSidebar config={config} onConfigChange={setConfig} />
+    <div ref={dashboardRef} className="of-app">
+      {/* Sidebar */}
+      <OFSidebarNav activePage={activePage} onPageChange={showPage} onPlusClick={() => setPlusOpen(!plusOpen)} />
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        <OFTopBar config={config} onConfigChange={setConfig} />
+      {/* Main */}
+      <main className="of-main">
+        <div className={`of-page ${activePage === 'home' ? 'active' : ''}`}>
+          <HomePage />
+        </div>
+        <div className={`of-page ${activePage === 'notifications' ? 'active' : ''}`}>
+          <NotificationsPage />
+        </div>
+        <div className={`of-page ${activePage === 'messages' ? 'active' : ''}`}>
+          <MessagesPage />
+        </div>
+        <div className={`of-page ${activePage === 'collections' ? 'active' : ''}`}>
+          <CollectionsPage />
+        </div>
+        <div className={`of-page ${activePage === 'vault' ? 'active' : ''}`}>
+          <VaultPage />
+        </div>
+        <div className={`of-page ${activePage === 'queue' ? 'active' : ''}`}>
+          <QueuePage />
+        </div>
+        <div className={`of-page ${activePage === 'declarations' ? 'active' : ''}`}>
+          <DeclarationsPage />
+        </div>
+        <div className={`of-page ${activePage === 'statistics' ? 'active' : ''}`}>
+          <StatisticsPage />
+        </div>
+        <div className={`of-page ${activePage === 'profile' ? 'active' : ''}`}>
+          <ProfilePage />
+        </div>
+      </main>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6 pb-24 lg:pb-6">
-          <div className="max-w-[1200px] mx-auto space-y-4 lg:space-y-5">
-            {/* Stats */}
-            <OFStatsCards config={config} onConfigChange={setConfig} />
-
-            {/* Chart + Earnings Breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
-              <div className="lg:col-span-2">
-                <OFChart config={config} onConfigChange={setConfig} />
-              </div>
-              <div>
-                <OFEarningsBreakdown config={config} onConfigChange={setConfig} />
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <OFRecentActivity config={config} onConfigChange={setConfig} />
-          </div>
-        </main>
-      </div>
-
-      {/* Mobile bottom nav */}
-      <OFMobileNav />
+      {/* Plus overlay */}
+      {plusOpen && (
+        <PlusOverlay
+          onClose={() => setPlusOpen(false)}
+          onNavigate={showPage}
+        />
+      )}
 
       {/* Toolbar FAB */}
-      <OFToolbar
-        onExport={handleExport}
-        onSave={handleSave}
-        onLoad={() => setLoadDialogOpen(true)}
-        onNew={newDashboard}
-        onSignOut={signOut}
-        onAdmin={isAdmin ? () => navigate('/admin') : undefined}
-        onSubscribe={!hasActiveSubscription && !isAdmin ? () => navigate('/subscribe') : undefined}
-        saving={saving}
-        isAdmin={isAdmin}
-        hasSubscription={hasActiveSubscription}
-      />
+      <div className="of-toolbar-fab">
+        {toolbarOpen && (
+          <div className="rounded-xl p-2 flex flex-col gap-1 shadow-2xl mb-2" style={{ background: '#fff', border: '1px solid #e0e0e0', minWidth: 160 }}>
+            <ToolBtn icon={Camera} label="Screenshot" onClick={() => { handleExport(); setToolbarOpen(false); }} />
+            <ToolBtn icon={Save} label={saving ? 'Saving...' : 'Sauvegarder'} onClick={handleSave} />
+            <ToolBtn icon={FolderOpen} label="Charger" onClick={() => setLoadDialogOpen(true)} />
+            <ToolBtn icon={Plus} label="Nouveau" onClick={() => { setCurrentDashboardId(null); setDashboardName('Mon Dashboard'); toast.success('Nouveau dashboard'); }} />
+            {isAdmin && <ToolBtn icon={Settings} label="Admin" onClick={() => navigate('/admin')} />}
+            {!hasActiveSubscription && !isAdmin && <ToolBtn icon={Crown} label="Premium" onClick={() => navigate('/subscribe')} accent />}
+            <div style={{ borderTop: '1px solid #e0e0e0', margin: '2px 0' }} />
+            <ToolBtn icon={LogOut} label="Déconnexion" onClick={signOut} />
+          </div>
+        )}
+        <button
+          onClick={() => setToolbarOpen(!toolbarOpen)}
+          className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+          style={{ background: '#00aff0', color: '#fff' }}
+        >
+          {toolbarOpen ? <X className="w-5 h-5" /> : <Settings className="w-5 h-5" />}
+        </button>
+      </div>
 
       {/* Load Dialog */}
       <Dialog open={loadDialogOpen} onOpenChange={setLoadDialogOpen}>
-        <DialogContent style={{ background: '#1b1b2f', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle style={{ color: '#fff' }}>Mes Dashboards</DialogTitle>
+            <DialogTitle>Mes Dashboards</DialogTitle>
           </DialogHeader>
           <div className="mb-3">
-            <Input
-              value={dashboardName}
-              onChange={(e) => setDashboardName(e.target.value)}
-              placeholder="Nom du dashboard"
-              className="text-sm"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
-            />
+            <Input value={dashboardName} onChange={(e) => setDashboardName(e.target.value)} placeholder="Nom du dashboard" />
           </div>
           <div className="space-y-2 max-h-80 overflow-y-auto">
             {savedDashboards.length === 0 ? (
-              <p className="text-sm text-center py-4" style={{ color: '#6b6b80' }}>Aucun dashboard sauvegardé</p>
+              <p className="text-sm text-center py-4 text-muted-foreground">Aucun dashboard sauvegardé</p>
             ) : savedDashboards.map(d => (
-              <div
-                key={d.id}
-                className="flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer"
-                style={{ border: '1px solid rgba(255,255,255,0.06)', background: currentDashboardId === d.id ? 'rgba(0,175,240,0.1)' : 'transparent' }}
-              >
+              <div key={d.id} className="flex items-center justify-between p-3 rounded-lg border cursor-pointer hover:bg-muted/50" style={{ background: currentDashboardId === d.id ? '#e8f7ff' : 'transparent' }}>
                 <button className="text-left flex-1" onClick={() => loadDashboard(d)}>
-                  <p className="text-sm font-medium" style={{ color: '#fff' }}>{d.name}</p>
-                  <p className="text-xs" style={{ color: '#6b6b80' }}>{new Date(d.created_at).toLocaleDateString('fr-FR')}</p>
+                  <p className="text-sm font-medium">{d.name}</p>
+                  <p className="text-xs text-muted-foreground">{new Date(d.created_at).toLocaleDateString('fr-FR')}</p>
                 </button>
                 <Button size="sm" variant="ghost" onClick={() => deleteDashboard(d.id)}>
-                  <Trash2 className="w-3 h-3" style={{ color: '#ef4444' }} />
+                  <Trash2 className="w-3 h-3 text-red-500" />
                 </Button>
               </div>
             ))}
@@ -196,5 +208,14 @@ export default function Generator() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+function ToolBtn({ icon: Icon, label, onClick, accent }: { icon: any; label: string; onClick: () => void; accent?: boolean }) {
+  return (
+    <button onClick={onClick} className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium w-full text-left hover:bg-gray-50" style={{ color: accent ? '#00aff0' : '#333' }}>
+      <Icon className="w-4 h-4" />
+      {label}
+    </button>
   );
 }
