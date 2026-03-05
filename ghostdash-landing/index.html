@@ -1,0 +1,845 @@
+<!doctype html>
+<html dir="ltr" lang="en-US" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+	<title>GhostDash - Create Professional Fake Dashboards Instantly</title>
+	<meta name="description" content="Create professional Fake Dashboards instantly! Order Custom Dashboards for OnlyFans, Shopify, Infloww, MYM. Enjoy Instant Access Today. Perfect replicas!" />
+	<meta name="robots" content="max-image-preview:large" />
+	<link rel="canonical" href="https://ghostdash.com/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:site_name" content="GhostDash" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="GhostDash - One click get your fake OFM dashboard." />
+	<meta property="og:description" content="Closing feels overwhelming? Not anymore with GhostDash. Simplify everything with our MYM, OnlyFans, Infloww, Fansly fake dashboard (and much more) — effortless control, all in one place." />
+	<meta property="og:url" content="https://ghostdash.com/" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="GhostDash - One click get your fake OFM dashboard." />
+	<meta name="twitter:description" content="Closing feels overwhelming? Not anymore with GhostDash. Simplify everything with our MYM, OnlyFans, Infloww, Fansly fake dashboard (and much more) — effortless control, all in one place." />
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+	<style>
+		/* ===== RESET & BASE ===== */
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+		html { scroll-behavior: smooth; }
+		body {
+			font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			color: #ffffff;
+			background-color: #292929;
+			line-height: 1.6;
+			-webkit-font-smoothing: antialiased;
+			overflow-x: hidden;
+		}
+		a { text-decoration: none; color: inherit; }
+		img { max-width: 100%; height: auto; display: block; }
+		ul { list-style: none; }
+
+		/* ===== COLOR VARIABLES (Royal Blue Theme) ===== */
+		:root {
+			--primary: #4169E1;
+			--primary-dark: #1E3A8A;
+			--primary-light: #60A5FA;
+			--accent: #60A5FA;
+			--bg-dark: #292929;
+			--bg-card: #333333;
+			--bg-light: #f1f1e9;
+			--text-white: #ffffff;
+			--text-dark: #292929;
+			--text-muted: #a0a0a0;
+			--radius: 40px;
+			--radius-sm: 20px;
+		}
+
+		/* ===== HEADER ===== */
+		#header-outer {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 1000;
+			background: rgba(41, 41, 41, 0.92);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+			border-bottom: 1px solid rgba(255,255,255,0.06);
+			transition: background 0.3s ease;
+		}
+		.header-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 24px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 68px;
+		}
+		#logo img {
+			height: 33px;
+			width: auto;
+		}
+		.nav-menu {
+			display: flex;
+			align-items: center;
+			gap: 32px;
+		}
+		.nav-menu a {
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--text-white);
+			opacity: 0.8;
+			transition: opacity 0.2s;
+			position: relative;
+		}
+		.nav-menu a:hover { opacity: 1; }
+		.nav-menu a.active { opacity: 1; }
+		.nav-menu a::after {
+			content: '';
+			position: absolute;
+			bottom: -4px;
+			left: 0;
+			width: 0;
+			height: 2px;
+			background: var(--accent);
+			transition: width 0.3s ease;
+		}
+		.nav-menu a:hover::after { width: 100%; }
+
+		.btn-primary {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 28px;
+			background: var(--accent);
+			color: var(--bg-dark);
+			font-weight: 600;
+			font-size: 14px;
+			border-radius: 100px;
+			border: none;
+			cursor: pointer;
+			transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+			text-decoration: none;
+		}
+		.btn-primary:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 30px rgba(96, 165, 250, 0.3);
+			background: #7ab8fc;
+		}
+		.btn-primary svg {
+			width: 16px;
+			height: 16px;
+		}
+		.btn-secondary {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 10px 28px;
+			background: transparent;
+			color: var(--text-white);
+			font-weight: 600;
+			font-size: 14px;
+			border-radius: 100px;
+			border: 2px solid rgba(255,255,255,0.2);
+			cursor: pointer;
+			transition: border-color 0.2s, background 0.2s;
+			text-decoration: none;
+		}
+		.btn-secondary:hover {
+			border-color: var(--accent);
+			background: rgba(96, 165, 250, 0.08);
+		}
+
+		/* Mobile menu toggle */
+		.mobile-toggle {
+			display: none;
+			flex-direction: column;
+			gap: 5px;
+			cursor: pointer;
+			padding: 8px;
+		}
+		.mobile-toggle span {
+			width: 24px;
+			height: 2px;
+			background: var(--text-white);
+			transition: transform 0.3s;
+		}
+
+		/* ===== HERO SECTION ===== */
+		#hero {
+			padding: 120px 24px 60px;
+			background: var(--bg-dark);
+			position: relative;
+			overflow: hidden;
+		}
+		#hero::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: linear-gradient(85deg, rgb(41,41,41) 30%, rgba(124,124,124,0) 59%, rgba(78,78,78,0) 73%, rgb(41,41,41) 94%);
+			z-index: 1;
+		}
+		.hero-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			gap: 40px;
+			position: relative;
+			z-index: 2;
+		}
+		.hero-text {
+			flex: 1.4;
+			padding-right: 50px;
+		}
+		.hero-text h2 {
+			font-size: 48px;
+			line-height: 57px;
+			color: var(--text-white);
+			margin-bottom: 0;
+		}
+		.hero-text h1 {
+			font-size: 48px;
+			line-height: 57px;
+			color: var(--accent);
+			margin-bottom: 8px;
+		}
+		.hero-divider {
+			width: 250px;
+			height: 4px;
+			background: var(--accent);
+			margin: 12px 0 24px;
+			border-radius: 2px;
+		}
+		.hero-text .description {
+			background: rgba(255,255,255,0.05);
+			border-radius: 12px;
+			padding: 16px 20px;
+			margin-bottom: 24px;
+			font-size: 15px;
+			line-height: 1.7;
+			color: rgba(255,255,255,0.85);
+		}
+		.hero-text .description strong {
+			color: var(--text-white);
+		}
+		.hero-image {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+		}
+		.hero-image img {
+			max-width: 100%;
+			max-height: 550px;
+			object-fit: contain;
+		}
+
+		/* ===== STATS SECTION ===== */
+		.section-stats {
+			padding: 60px 24px;
+			background: var(--text-white);
+		}
+		.stats-card {
+			max-width: 1200px;
+			margin: 0 auto;
+			background: var(--bg-dark);
+			border-radius: var(--radius);
+			padding: 60px 40px;
+			text-align: center;
+		}
+		.stats-card h2 {
+			font-size: 48px;
+			line-height: 57px;
+			color: var(--text-white);
+			margin-bottom: 8px;
+		}
+		.stats-divider {
+			width: 300px;
+			height: 4px;
+			background: var(--accent);
+			margin: 12px auto 40px;
+			border-radius: 2px;
+		}
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 24px;
+		}
+		.stat-item .number {
+			font-size: 60px;
+			font-weight: 700;
+			color: var(--accent);
+			line-height: 1.1;
+		}
+		.stat-item .symbol {
+			font-size: 40px;
+			color: var(--accent);
+		}
+		.stat-item .subject {
+			color: rgba(255,255,255,0.7);
+			font-size: 15px;
+			padding: 0 8%;
+			margin-top: 8px;
+		}
+
+		/* ===== DESCRIPTION SECTION ===== */
+		.section-description {
+			padding: 60px 24px 0;
+			background: var(--text-white);
+		}
+		.description-card {
+			max-width: 1200px;
+			margin: 0 auto;
+			background: var(--bg-light);
+			border-radius: var(--radius);
+			padding: 50px 60px;
+		}
+		.description-card h2 {
+			font-size: 28px;
+			line-height: 1.08;
+			color: var(--text-dark);
+			margin-bottom: 20px;
+		}
+		.description-card p {
+			color: #555;
+			font-size: 15px;
+			line-height: 1.8;
+			margin-bottom: 16px;
+		}
+
+		/* ===== KEY POINTS SECTION ===== */
+		.section-keypoints {
+			padding: 60px 24px;
+			background: var(--text-white);
+		}
+		.keypoints-header {
+			text-align: center;
+			margin-bottom: 40px;
+		}
+		.keypoints-header h2 {
+			font-size: 48px;
+			line-height: 57px;
+			color: var(--text-dark);
+		}
+		.keypoints-grid {
+			max-width: 1200px;
+			margin: 0 auto;
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 32px;
+		}
+		.keypoint-item {
+			text-align: center;
+			padding: 24px;
+		}
+		.keypoint-item h3 {
+			font-size: 28px;
+			line-height: 1.08;
+			color: var(--text-dark);
+			margin-bottom: 16px;
+		}
+		.keypoint-item p {
+			color: #555;
+			font-size: 15px;
+			line-height: 1.7;
+		}
+
+		/* ===== PLATFORMS SHOWCASE ===== */
+		.section-platforms {
+			padding: 60px 24px;
+			background: var(--text-white);
+		}
+		.platforms-container {
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.platforms-container h2 {
+			font-size: 48px;
+			line-height: 57px;
+			color: var(--text-dark);
+			text-align: center;
+			margin-bottom: 40px;
+		}
+		.platforms-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 24px;
+		}
+		.platform-card {
+			background: var(--bg-dark);
+			border-radius: var(--radius-sm);
+			padding: 40px 30px;
+			text-align: center;
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+		.platform-card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+		}
+		.platform-card img {
+			max-height: 50px;
+			margin: 0 auto 16px;
+			object-fit: contain;
+		}
+		.platform-card h4 {
+			color: var(--text-white);
+			font-size: 18px;
+			margin-bottom: 8px;
+		}
+		.platform-card p {
+			color: var(--text-muted);
+			font-size: 13px;
+		}
+
+		/* ===== LIMITED SEATS CTA ===== */
+		.section-limited {
+			padding: 0 24px;
+			background: var(--text-white);
+		}
+		.limited-card {
+			max-width: 1200px;
+			margin: 0 auto;
+			background: var(--accent);
+			border-radius: var(--radius);
+			padding: 60px;
+			text-align: center;
+		}
+		.limited-card h2 {
+			font-size: 28px;
+			line-height: 1.08;
+			color: var(--text-dark);
+			margin-bottom: 16px;
+		}
+		.limited-card p {
+			color: var(--text-dark);
+			font-size: 15px;
+			line-height: 1.7;
+			max-width: 700px;
+			margin: 0 auto 30px;
+		}
+		.btn-dark {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 14px 36px;
+			background: var(--bg-dark);
+			color: var(--accent);
+			font-weight: 600;
+			font-size: 14px;
+			border-radius: 100px;
+			border: none;
+			cursor: pointer;
+			transition: transform 0.2s, box-shadow 0.2s;
+			text-decoration: none;
+		}
+		.btn-dark:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+		}
+
+		/* ===== BLOG / GUIDE SECTION ===== */
+		.section-guide {
+			padding: 80px 24px;
+			background: var(--text-white);
+		}
+		.guide-card {
+			max-width: 1200px;
+			margin: 0 auto;
+			background: var(--bg-dark);
+			border-radius: var(--radius-sm);
+			padding: 80px 18%;
+			text-align: center;
+			position: relative;
+			overflow: hidden;
+		}
+		.guide-card::before {
+			content: '';
+			position: absolute;
+			top: 0; left: 0; right: 0; bottom: 0;
+			background: linear-gradient(0deg, rgb(41,41,41) 10%, rgb(41,41,41) 90%);
+		}
+		.guide-card > * { position: relative; z-index: 1; }
+		.guide-card h3 {
+			font-size: clamp(22px, 1.8vw, 28px);
+			color: var(--text-white);
+			margin-bottom: 20px;
+			line-height: 1.3;
+		}
+		.guide-card .guide-desc {
+			background: rgba(255,255,255,0.05);
+			border-radius: 12px;
+			padding: 16px 20px;
+			margin-bottom: 30px;
+			font-size: 15px;
+			line-height: 1.7;
+			color: rgba(255,255,255,0.85);
+		}
+
+		/* ===== FOOTER ===== */
+		#footer {
+			padding: 60px 24px;
+			background: var(--bg-dark);
+			border-radius: var(--radius) var(--radius) 0 0;
+		}
+		.footer-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			display: flex;
+			gap: 60px;
+		}
+		.footer-brand {
+			flex: 1;
+		}
+		.footer-brand img {
+			height: 33px;
+			margin-bottom: 20px;
+		}
+		.footer-brand p {
+			color: rgba(255,255,255,0.6);
+			font-size: 14px;
+			line-height: 1.7;
+			max-width: 320px;
+		}
+		.footer-nav {
+			display: flex;
+			gap: 80px;
+		}
+		.footer-nav-col h4 {
+			color: var(--text-white);
+			font-size: 16px;
+			margin-bottom: 20px;
+		}
+		.footer-nav-col ul li {
+			margin-bottom: 12px;
+		}
+		.footer-nav-col ul li a {
+			color: rgba(255,255,255,0.6);
+			font-size: 14px;
+			transition: color 0.2s;
+		}
+		.footer-nav-col ul li a:hover {
+			color: var(--accent);
+		}
+
+		/* ===== RESPONSIVE ===== */
+		@media (max-width: 999px) {
+			.nav-menu { display: none; }
+			.mobile-toggle { display: flex; }
+			
+			.hero-container {
+				flex-direction: column;
+				text-align: center;
+			}
+			.hero-text {
+				padding-right: 0;
+			}
+			.hero-text h2,
+			.hero-text h1 {
+				font-size: 36px;
+				line-height: 44px;
+			}
+			.hero-divider { margin: 12px auto 24px; }
+			.hero-image img { max-height: 400px; }
+
+			.stats-grid { grid-template-columns: 1fr; gap: 40px; }
+			.stats-card { padding: 40px 24px; border-radius: var(--radius-sm); }
+			.stat-item .number { font-size: 48px; }
+
+			.description-card { padding: 30px 24px; border-radius: var(--radius-sm); }
+			.keypoints-grid { grid-template-columns: 1fr; gap: 24px; }
+			.platforms-grid { grid-template-columns: 1fr; gap: 16px; }
+			.limited-card { padding: 40px 24px; border-radius: var(--radius-sm); }
+			.guide-card { padding: 40px 24px; border-radius: var(--radius-sm); }
+
+			.footer-container { flex-direction: column; gap: 40px; }
+			.footer-nav { gap: 40px; }
+		}
+
+		@media (max-width: 690px) {
+			#hero { padding: 100px 14px 40px; }
+			.header-container { padding: 0 14px; }
+			.hero-text h2, .hero-text h1 { font-size: 28px; line-height: 36px; }
+			.stats-card h2, .keypoints-header h2, .platforms-container h2 { font-size: 32px; line-height: 40px; }
+			.description-card h2 { font-size: 22px; }
+			.footer-nav { flex-direction: column; gap: 30px; }
+			.platforms-grid { grid-template-columns: repeat(2, 1fr); }
+		}
+
+		/* ===== ANIMATIONS ===== */
+		.fade-in {
+			opacity: 0;
+			transform: translateY(20px);
+			transition: opacity 0.6s ease, transform 0.6s ease;
+		}
+		.fade-in.visible {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* Mobile nav overlay */
+		.mobile-nav-overlay {
+			display: none;
+			position: fixed;
+			top: 68px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(41, 41, 41, 0.98);
+			z-index: 999;
+			padding: 40px 24px;
+		}
+		.mobile-nav-overlay.active { display: block; }
+		.mobile-nav-overlay a {
+			display: block;
+			font-size: 18px;
+			font-weight: 500;
+			color: var(--text-white);
+			padding: 16px 0;
+			border-bottom: 1px solid rgba(255,255,255,0.08);
+		}
+		.mobile-nav-overlay .btn-primary {
+			margin-top: 24px;
+			width: 100%;
+			justify-content: center;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- ===== HEADER ===== -->
+	<div id="header-outer">
+		<div class="header-container">
+			<a id="logo" href="#">
+				<svg width="180" height="36" viewBox="0 0 180 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<text x="0" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#60A5FA">Ghost</text>
+					<text x="78" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Dash</text>
+				</svg>
+			</a>
+
+			<nav class="nav-menu">
+				<a href="#home" class="active">Home</a>
+				<a href="#stats">Stats</a>
+				<a href="#features">Features</a>
+				<a href="#platforms">Platforms</a>
+				<a href="#contact">Contact</a>
+				<a href="#" class="btn-primary">
+					<svg viewBox="0 0 32 32" fill="currentColor"><path d="M10.959 31.651c-0.093 0-0.191-0.019-0.28-0.060-0.299-0.139-0.451-0.472-0.361-0.789l3.628-12.745-8.113 1.695c-0.217 0.039-0.437-0.024-0.596-0.169-0.159-0.151-0.233-0.369-0.199-0.588l2.456-15.415c0.044-0.268 0.248-0.481 0.512-0.544l11.433-2.667c0.237-0.060 0.492 0.025 0.653 0.211 0.164 0.188 0.208 0.448 0.12 0.677l-3.319 8.601 9.243-2.399c0.268-0.075 0.552 0.031 0.713 0.257 0.159 0.225 0.164 0.528 0.008 0.752l-15.341 22.881c-0.129 0.195-0.341 0.301-0.557 0.301z"/></svg>
+					Start Now
+				</a>
+			</nav>
+
+			<div class="mobile-toggle" onclick="toggleMobileNav()">
+				<span></span><span></span><span></span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Mobile nav -->
+	<div class="mobile-nav-overlay" id="mobileNav">
+		<a href="#home" onclick="toggleMobileNav()">Home</a>
+		<a href="#stats" onclick="toggleMobileNav()">Stats</a>
+		<a href="#features" onclick="toggleMobileNav()">Features</a>
+		<a href="#platforms" onclick="toggleMobileNav()">Platforms</a>
+		<a href="#contact" onclick="toggleMobileNav()">Contact</a>
+		<a href="#" class="btn-primary" onclick="toggleMobileNav()">Start Now</a>
+	</div>
+
+	<!-- ===== HERO ===== -->
+	<section id="hero">
+		<div class="hero-container">
+			<div class="hero-text fade-in">
+				<h2>GhostDash until you</h2>
+				<h1>Make it. 👌</h1>
+				<div class="hero-divider"></div>
+				<div class="description">
+					<p>GhostDash lets you <strong>instantly create realistic fake dashboards</strong> for the world's biggest business and creator platforms—including OnlyFans, MYM, Shopify, Stripe, Fanvue, and Infloww.</p>
+					<p style="margin-top:12px"><strong>Win more clients. Recruit top models. Secure new partnerships.</strong> All with powerful, professional dashboard presentations—no coding or analytics expertise required.</p>
+				</div>
+				<a href="#" class="btn-primary" style="margin-top: 15px;">Get started</a>
+			</div>
+			<div class="hero-image fade-in">
+				<img src="https://fakedash.com/wp-content/uploads/2024/08/mobileherofakedash.png" alt="GhostDash Dashboard Preview" />
+			</div>
+		</div>
+	</section>
+
+	<!-- ===== STATS ===== -->
+	<section class="section-stats" id="stats">
+		<div class="stats-card fade-in">
+			<h2>Not fake statistics.</h2>
+			<div class="stats-divider"></div>
+			<div class="stats-grid">
+				<div class="stat-item">
+					<div class="number">80<span class="symbol">%</span></div>
+					<div class="subject">Increase in closing deals.</div>
+				</div>
+				<div class="stat-item">
+					<div class="number">10<span class="symbol">.</span></div>
+					<div class="subject">Dashboards available for all industries.</div>
+				</div>
+				<div class="stat-item">
+					<div class="number">10<span class="symbol">K</span></div>
+					<div class="subject">Maximum users, limited seats.</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ===== DESCRIPTION ===== -->
+	<section class="section-description" id="about">
+		<div class="description-card fade-in">
+			<h2>GhostDash Lets You Instantly Create Realistic Fake Dashboards</h2>
+			<p>GhostDash lets you instantly create realistic fake dashboards designed for today's most in-demand platforms—including OnlyFans, MYM, Shopify, Stripe, Fanvue, and Infloww. With just a few clicks, you can select your preferred platform template and fully customize every key metric—such as earnings, subscribers, payout histories, and revenue breakdowns. Each dashboard is expertly designed for authenticity, making it the perfect tool to impress clients, attract top talent, or close important business deals.</p>
+			<p>There's no need for technical skills or design experience: simply adjust figures, graphs, currencies, and even add your branding or profile photo for a professional, personalized result. Whether you're striving to boost your agency's credibility, recruit new models, pitch to investors, or stand out from the competition, GhostDash empowers you to showcase your best numbers—quickly, easily, and securely.</p>
+			<a href="#" class="btn-primary" style="margin-top: 30px;">Get started</a>
+		</div>
+	</section>
+
+	<!-- ===== KEY POINTS ===== -->
+	<section class="section-keypoints" id="features">
+		<div class="keypoints-header fade-in">
+			<h2>Key points.</h2>
+			<div class="stats-divider"></div>
+		</div>
+		<div class="keypoints-grid">
+			<div class="keypoint-item fade-in">
+				<h3>Instantly Create Fake Dashboards</h3>
+				<p>Easily generate an authentic fake dashboard for OnlyFans, MYM, Shopify, Stripe, Fanvue, or Infloww.</p>
+			</div>
+			<div class="keypoint-item fade-in">
+				<h3>Fully Customize Your Dashboards</h3>
+				<p>Edit earnings, subscribers, payout history, visuals, and branding for a professional presentation.</p>
+			</div>
+			<div class="keypoint-item fade-in">
+				<h3>Use Your Fake Dashboard to Impress</h3>
+				<p>Win over clients, investors, and partners with a convincing and credible fake dashboard.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- ===== PLATFORMS ===== -->
+	<section class="section-platforms" id="platforms">
+		<div class="platforms-container">
+			<h2>Available Platforms</h2>
+			<div class="platforms-grid">
+				<div class="platform-card fade-in">
+					<img src="https://fakedash.com/wp-content/uploads/2024/07/of.png" alt="OnlyFans" />
+					<h4>OnlyFans</h4>
+					<p>Complete dashboard replica</p>
+				</div>
+				<div class="platform-card fade-in">
+					<img src="https://fakedash.com/wp-content/uploads/2024/07/mymlogo.png" alt="MYM" />
+					<h4>MYM</h4>
+					<p>Full earnings dashboard</p>
+				</div>
+				<div class="platform-card fade-in">
+					<img src="https://fakedash.com/wp-content/uploads/2024/07/inflowwlogo.png" alt="Infloww" />
+					<h4>Infloww</h4>
+					<p>Analytics & revenue view</p>
+				</div>
+				<div class="platform-card fade-in">
+					<img src="https://fakedash.com/wp-content/uploads/2024/07/shopifylogo.png" alt="Shopify" />
+					<h4>Shopify</h4>
+					<p>Store analytics dashboard</p>
+				</div>
+				<div class="platform-card fade-in">
+					<img src="https://fakedash.com/wp-content/uploads/2024/07/fanvue.png" alt="Fanvue" />
+					<h4>Fanvue</h4>
+					<p>Creator dashboard replica</p>
+				</div>
+				<div class="platform-card fade-in">
+					<div style="height:50px;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+						<svg width="100" height="40" viewBox="0 0 100 40"><text x="10" y="30" font-family="Poppins" font-weight="700" font-size="24" fill="#635BFF">Stripe</text></svg>
+					</div>
+					<h4>Stripe</h4>
+					<p>Payment dashboard replica</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- ===== LIMITED SEATS CTA ===== -->
+	<section class="section-limited">
+		<div class="limited-card fade-in">
+			<h2>Limited seats.</h2>
+			<p>Spaces are limited! We release new seats only when current users leave our service. This exclusivity helps keep our tool as secret and powerful as possible. If everyone knew about it, it would lose its edge. Don't miss your chance to be part of this elite group.</p>
+			<a href="#" class="btn-dark">Get started</a>
+		</div>
+	</section>
+
+	<!-- ===== GUIDE / BLOG SECTION ===== -->
+	<section class="section-guide">
+		<div class="guide-card fade-in">
+			<h3>The Ultimate OFM/ECOM Guide (FREE)</h3>
+			<div class="guide-desc">
+				<p>Explore the GhostDash Blog for practical guides, case studies, and expert tips on OnlyFans Management (OFM), e-commerce, and fake dashboards. Find everything you need to win more clients, grow your agency, and stand out in the creator economy.</p>
+			</div>
+			<a href="#" class="btn-primary">Read Articles</a>
+		</div>
+	</section>
+
+	<!-- ===== FOOTER ===== -->
+	<footer id="footer" id="contact">
+		<div class="footer-container">
+			<div class="footer-brand">
+				<svg width="180" height="36" viewBox="0 0 180 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<text x="0" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#60A5FA">Ghost</text>
+					<text x="78" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Dash</text>
+				</svg>
+				<p style="margin-top:20px">Pioneering the industry by empowering creators, agencies and businesses with professional dashboard replicas to drive success and growth.</p>
+			</div>
+			<div class="footer-nav">
+				<div class="footer-nav-col">
+					<h4>Quick Nav</h4>
+					<ul>
+						<li><a href="#home">Home</a></li>
+						<li><a href="#stats">Stats</a></li>
+						<li><a href="#features">Features</a></li>
+						<li><a href="#platforms">Platforms</a></li>
+					</ul>
+				</div>
+				<div class="footer-nav-col">
+					<h4>Connect</h4>
+					<ul>
+						<li><a href="mailto:contact@ghostdash.com"><strong>Email:</strong> contact@ghostdash.com</a></li>
+						<li><a href="#">Terms & Conditions</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<script>
+		// Mobile nav toggle
+		function toggleMobileNav() {
+			document.getElementById('mobileNav').classList.toggle('active');
+		}
+
+		// Fade-in on scroll
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('visible');
+				}
+			});
+		}, { threshold: 0.1 });
+
+		document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+		// Header scroll effect
+		window.addEventListener('scroll', () => {
+			const header = document.getElementById('header-outer');
+			if (window.scrollY > 50) {
+				header.style.background = 'rgba(41, 41, 41, 0.98)';
+			} else {
+				header.style.background = 'rgba(41, 41, 41, 0.92)';
+			}
+		});
+	</script>
+
+</body>
+</html>
