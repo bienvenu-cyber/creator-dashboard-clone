@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "./pages/DashboardLayout";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-
+import { GhostDashLanding } from "./pages/GhostDashLanding";
 
 import { HomePage } from "@/components/dashboard/pages/HomePage";
 import { NotificationsPage } from "@/components/dashboard/pages/NotificationsPage";

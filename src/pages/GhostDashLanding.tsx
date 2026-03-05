@@ -147,3 +147,76 @@ export function GhostDashLanding() {
           </motion.div>
         </div>
       </section>
+
+      {/* Platforms */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {dashboards.map((d) => (
+              <Card key={d.name} className={`bg-gradient-to-br ${d.color} p-4 text-center text-white font-semibold border-0`}>
+                {d.name}
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">Why GhostDash?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((f) => (
+              <Card key={f.title} className="bg-blue-900/40 border-blue-800/50 p-6 text-center">
+                <div className="w-12 h-12 mx-auto mb-4 bg-blue-600/30 rounded-xl flex items-center justify-center text-blue-400">
+                  {f.icon}
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">{f.title}</h3>
+                <p className="text-gray-400 text-sm">{f.description}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Steps */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <div className="space-y-8">
+            {steps.map((s) => (
+              <div key={s.number} className="flex items-start gap-6">
+                <div className="text-4xl font-bold text-blue-500/50">{s.number}</div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-1">{s.title}</h3>
+                  <p className="text-gray-400">{s.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+          <p className="text-gray-300 mb-8">Join thousands of professionals using GhostDash to create stunning dashboards.</p>
+          <Link to="/">
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-6 text-lg">
+              <Download className="w-5 h-5 mr-2" />
+              Start Now
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-4 border-t border-blue-900/50 text-center text-gray-500 text-sm">
+        <p>© 2025 GhostDash. All rights reserved.</p>
+      </footer>
+    </div>
+  );
+}
+
+export default GhostDashLanding;
