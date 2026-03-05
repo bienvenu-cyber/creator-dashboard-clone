@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Login - GhostDash</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<style>
+		* { margin: 0; padding: 0; box-sizing: border-box; }
+		body {
+			font-family: 'Poppins', sans-serif;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 20px;
+		}
+		.login-card {
+			background: white;
+			border-radius: 20px;
+			padding: 50px 40px;
+			box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+			max-width: 450px;
+			width: 100%;
+		}
+		.logo {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+		.logo h1 {
+			font-size: 32px;
+			color: #1a1a2e;
+			margin-bottom: 8px;
+		}
+		.logo p {
+			color: #666;
+			font-size: 14px;
+		}
+		.input-group {
+			margin-bottom: 20px;
+		}
+		.input-group label {
+			display: block;
+			margin-bottom: 8px;
+			font-weight: 500;
+			color: #333;
+			font-size: 14px;
+		}
+		.input-group input {
+			width: 100%;
+			padding: 14px 16px;
+			border: 2px solid #e0e0e0;
+			border-radius: 10px;
+			font-size: 15px;
+			font-family: 'Poppins', sans-serif;
+			transition: border-color 0.3s;
+		}
+		.input-group input:focus {
+			outline: none;
+			border-color: #667eea;
+		}
+		.btn {
+			width: 100%;
+			padding: 16px;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			border: none;
+			border-radius: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s;
+			margin-top: 10px;
+		}
+		.btn:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+		}
+		.btn:disabled {
+			background: #ccc;
+			cursor: not-allowed;
+			transform: none;
+		}
+		.divider {
+			text-align: center;
+			margin: 30px 0;
+			position: relative;
+		}
+		.divider:before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 0;
+			right: 0;
+			height: 1px;
+			background: #e0e0e0;
+		}
+		.divider span {
+			background: white;
+			padding: 0 15px;
+			position: relative;
+			color: #999;
+			font-size: 13px;
+		}
+		.link {
+			text-align: center;
+			margin-top: 20px;
+			font-size: 14px;
+			color: #666;
+		}
+		.link a {
+			color: #667eea;
+			text-decoration: none;
+			font-weight: 600;
+		}
+		.link a:hover {
+			text-decoration: underline;
+		}
+		.alert {
+			padding: 12px 16px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			font-size: 14px;
+		}
+		.alert-error {
+			background: #fee;
+			color: #c33;
+			border: 1px solid #fcc;
+		}
+		.alert-success {
+			background: #efe;
+			color: #3c3;
+			border: 1px solid #cfc;
+		}
+		@media (max-width: 480px) {
+			.login-card {
+				padding: 40px 30px;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="login-card">
+		<div class="logo">
+			<h1>GhostDash</h1>
+			<p>Access your dashboard</p>
+		</div>
+
+		<div id="alertBox"></div>
+
+		<form id="loginForm" onsubmit="handleLogin(event)">
+			<div class="input-group">
+				<label>Email Address</label>
+				<input type="email" id="email" placeholder="your@email.com" required>
+			</div>
+
+			<div class="input-group">
+				<label>Password</label>
+				<input type="password" id="password" placeholder="Enter your password" required>
+			</div>
+
+			<button type="submit" class="btn" id="loginBtn">Login</button>
+		</form>
+
+		<div class="divider"><span>OR</span></div>
+
+		<div class="link">
+			Don't have an account? <a href="subscribe.html">Subscribe now</a>
+		</div>
+
+		<div class="link" style="margin-top: 10px;">
+			<a href="index.html">← Back to home</a>
+		</div>
+	</div>
+
+	<script>
+		const SUPABASE_URL = 'https://uxeblisjuvxhylgdessc.supabase.co';
+		const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4ZWJsaXNqdXZ4aHlsZ2Rlc3NjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODE2NjYsImV4cCI6MjA4ODE1NzY2Nn0.avN44uqPhmIODtnDPB0B17FF4XofHcEMKBRgNdGru_o';
+		const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+		// Vérifier si déjà connecté
+		async function checkSession() {
+			const { data: { session } } = await supabase.auth.getSession();
+			if (session) {
+				// Vérifier si l'abonnement est actif
+				const { data: sub } = await supabase
+					.from('subscriptions')
+					.select('status')
+					.eq('user_id', session.user.id)
+					.eq('status', 'active')
+					.single();
+
+				if (sub) {
+					// Rediriger vers le dashboard
+					window.location.href = 'https://onlyfans.com'; // Remplace par ton domaine dashboard
+				}
+			}
+		}
+
+		function showAlert(message, type = 'error') {
+			const alertBox = document.getElementById('alertBox');
+			alertBox.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+			setTimeout(() => alertBox.innerHTML = '', 5000);
+		}
+
+		async function handleLogin(e) {
+			e.preventDefault();
+			const btn = document.getElementById('loginBtn');
+			btn.disabled = true;
+			btn.textContent = 'Logging in...';
+
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+
+			try {
+				// Connexion
+				const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+					email,
+					password
+				});
+
+				if (authError) throw authError;
+
+				// Vérifier l'abonnement
+				const { data: sub, error: subError } = await supabase
+					.from('subscriptions')
+					.select('status, expires_at')
+					.eq('user_id', authData.user.id)
+					.single();
+
+				if (subError || !sub) {
+					throw new Error('No subscription found. Please contact support.');
+				}
+
+				if (sub.status === 'pending') {
+					showAlert('Your subscription is pending approval. Please wait for admin validation.', 'error');
+					await supabase.auth.signOut();
+					btn.disabled = false;
+					btn.textContent = 'Login';
+					return;
+				}
+
+				if (sub.status === 'inactive') {
+					throw new Error('Your subscription has expired. Please renew.');
+				}
+
+				// Vérifier si l'abonnement n'est pas expiré
+				if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
+					throw new Error('Your subscription has expired. Please renew.');
+				}
+
+				// Tout est OK, rediriger vers le dashboard
+				showAlert('Login successful! Redirecting...', 'success');
+				setTimeout(() => {
+					window.location.href = 'https://onlyfans.com'; // Remplace par ton domaine dashboard
+				}, 1000);
+
+			} catch (error) {
+				showAlert(error.message);
+				btn.disabled = false;
+				btn.textContent = 'Login';
+			}
+		}
+
+		// Vérifier la session au chargement
+		checkSession();
+	</script>
+</body>
+</html>
