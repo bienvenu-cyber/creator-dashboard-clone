@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import DashboardLayout from "./pages/DashboardLayout";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
-import { GhostDashLanding } from "./pages/GhostDashLanding";
+import { GhostDashLanding } from "../ghostdash-landing";
 
 import { HomePage } from "@/components/dashboard/pages/HomePage";
 import { NotificationsPage } from "@/components/dashboard/pages/NotificationsPage";
@@ -53,7 +53,7 @@ const App = () => (
               <Route path="my/statistics/engagement/posts" element={<StatisticsPage />} />
               <Route path="my/statistics/reach/profile-visitors" element={<StatisticsPage />} />
               <Route path="my/statistics/fans/subscriptions" element={<StatisticsPage />} />
-              <Route path="u:userId" element={<ProfilePage />} />
+              <Route path="/u495354766" element={<ProfilePage />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />

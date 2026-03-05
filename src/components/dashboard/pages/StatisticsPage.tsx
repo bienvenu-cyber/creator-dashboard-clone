@@ -34,6 +34,7 @@ function PeriodBox() {
 
 function ChartCanvas({ data, color = '#00aff0', onDataChange }: { data: number[]; color?: string; onDataChange?: (data: number[]) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [dragging, setDragging] = useState<number | null>(null);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -68,33 +69,95 @@ function ChartCanvas({ data, color = '#00aff0', onDataChange }: { data: number[]
 
   useEffect(() => { draw(); }, [draw]);
 
-  const handleInputChange = (index: number, value: string) => {
+  const handleCanvasInteraction = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!onDataChange) return;
-    const num = parseInt(value) || 0;
-    const newData = [...data];
-    newData[index] = num;
-    onDataChange(newData);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    const W = canvas.width, H = canvas.height, PAD = 12;
+    const max = Math.max(...data, 1);
+    const ptX = (i: number) => PAD + (i / (data.length - 1)) * (W - 2 * PAD);
+    const ptY = (v: number) => H - PAD - (v / max) * (H - 2 * PAD);
+
+    // Find closest point
+    let closestIdx = 0;
+    let minDist = Infinity;
+    data.forEach((v, i) => {
+      const dx = x - ptX(i);
+      const dy = y - ptY(v);
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < minDist) {
+        minDist = dist;
+        closestIdx = i;
+      }
+    });
+
+    // Update value based on y position
+    if (minDist < 20 || dragging !== null) {
+      const newValue = Math.max(0, Math.round((H - PAD - y) / (H - 2 * PAD) * max));
+      const newData = [...data];
+      newData[closestIdx] = newValue;
+      onDataChange(newData);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!onDataChange) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const x = (e.clientX - rect.left) * scaleX;
+
+    const W = canvas.width, PAD = 12;
+    const ptX = (i: number) => PAD + (i / (data.length - 1)) * (W - 2 * PAD);
+
+    let closestIdx = 0;
+    let minDist = Infinity;
+    data.forEach((_, i) => {
+      const dist = Math.abs(x - ptX(i));
+      if (dist < minDist) {
+        minDist = dist;
+        closestIdx = i;
+      }
+    });
+
+    if (minDist < 20) {
+      setDragging(closestIdx);
+      handleCanvasInteraction(e);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (dragging !== null) {
+      handleCanvasInteraction(e);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDragging(null);
   };
 
   return (
-    <>
-      <div className="stats-chart-wrap">
-        <canvas ref={canvasRef} width={600} height={140} style={{ width: '100%', height: 140, display: 'block' }} />
-      </div>
-      {onDataChange && (
-        <div className="chart-data-editor">
-          {data.map((v, i) => (
-            <input
-              key={i}
-              className="chart-data-input"
-              type="number"
-              value={v}
-              onChange={(e) => handleInputChange(i, e.target.value)}
-            />
-          ))}
-        </div>
-      )}
-    </>
+    <div className="stats-chart-wrap">
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={140}
+        style={{ width: '100%', height: 140, display: 'block', cursor: onDataChange ? 'pointer' : 'default' }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+      />
+    </div>
   );
 }
 
