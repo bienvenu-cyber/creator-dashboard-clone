@@ -195,17 +195,18 @@
 			flex: 1.4;
 			padding-right: 50px;
 		}
+		.hero-text h1 {
+			font-size: 52px;
+			line-height: 62px;
+			color: var(--text-white);
+			margin-bottom: 8px;
+			font-weight: 800;
+		}
 		.hero-text h2 {
 			font-size: 48px;
 			line-height: 57px;
-			color: var(--text-white);
-			margin-bottom: 0;
-		}
-		.hero-text h1 {
-			font-size: 48px;
-			line-height: 57px;
 			color: var(--accent);
-			margin-bottom: 8px;
+			margin-bottom: 0;
 		}
 		.hero-divider {
 			width: 250px;
@@ -237,7 +238,7 @@
 			object-fit: contain;
 		}
 
-		/* ===== STATS SECTION ===== */
+		/* ===== PERFECT FOR SECTION ===== */
 		.section-stats {
 			padding: 60px 24px;
 			background: var(--text-white);
@@ -266,23 +267,32 @@
 		.stats-grid {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			gap: 24px;
+			gap: 40px;
 		}
-		.stat-item .number {
-			font-size: 60px;
+		.stat-item {
+			background: rgba(255,255,255,0.05);
+			border-radius: var(--radius-sm);
+			padding: 40px 30px;
+			transition: transform 0.3s, background 0.3s;
+		}
+		.stat-item:hover {
+			transform: translateY(-4px);
+			background: rgba(255,255,255,0.08);
+		}
+		.stat-item .icon {
+			font-size: 48px;
+			margin-bottom: 16px;
+		}
+		.stat-item .title {
+			font-size: 24px;
 			font-weight: 700;
 			color: var(--accent);
-			line-height: 1.1;
+			margin-bottom: 12px;
 		}
-		.stat-item .symbol {
-			font-size: 40px;
-			color: var(--accent);
-		}
-		.stat-item .subject {
-			color: rgba(255,255,255,0.7);
+		.stat-item .description {
+			color: rgba(255,255,255,0.75);
 			font-size: 15px;
-			padding: 0 8%;
-			margin-top: 8px;
+			line-height: 1.6;
 		}
 
 		/* ===== DESCRIPTION SECTION ===== */
@@ -317,7 +327,7 @@
 		}
 		.keypoints-header {
 			text-align: center;
-			margin-bottom: 40px;
+			margin-bottom: 50px;
 		}
 		.keypoints-header h2 {
 			font-size: 48px;
@@ -332,19 +342,47 @@
 			gap: 32px;
 		}
 		.keypoint-item {
-			text-align: center;
-			padding: 24px;
+			background: linear-gradient(135deg, rgba(65, 105, 225, 0.05), rgba(96, 165, 250, 0.08));
+			border-radius: var(--radius-sm);
+			padding: 40px 30px;
+			position: relative;
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+		.keypoint-item:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 10px 30px rgba(65, 105, 225, 0.15);
+		}
+		.keypoint-item .step-number {
+			position: absolute;
+			top: 20px;
+			right: 20px;
+			width: 40px;
+			height: 40px;
+			background: var(--accent);
+			color: white;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 20px;
+			font-weight: 700;
+		}
+		.keypoint-item .icon {
+			font-size: 48px;
+			margin-bottom: 20px;
+			display: none;
 		}
 		.keypoint-item h3 {
-			font-size: 28px;
-			line-height: 1.08;
+			font-size: 22px;
+			line-height: 1.3;
 			color: var(--text-dark);
-			margin-bottom: 16px;
+			margin-bottom: 12px;
+			font-weight: 700;
 		}
 		.keypoint-item p {
 			color: #555;
 			font-size: 15px;
-			line-height: 1.7;
+			line-height: 1.6;
 		}
 
 		/* ===== PLATFORMS SHOWCASE ===== */
@@ -363,35 +401,142 @@
 			text-align: center;
 			margin-bottom: 40px;
 		}
-		.platforms-grid {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			gap: 24px;
-		}
-		.platform-card {
+		.platform-showcase {
 			background: var(--bg-dark);
+			border-radius: var(--radius);
+			padding: 60px;
+			box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+		}
+		.platform-showcase img {
+			width: 100%;
+			height: auto;
 			border-radius: var(--radius-sm);
-			padding: 40px 30px;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+		}
+
+		/* ===== PRICING SECTION ===== */
+		.section-pricing {
+			padding: 80px 24px;
+			background: var(--bg-dark);
+		}
+		.pricing-container {
+			max-width: 600px;
+			margin: 0 auto;
 			text-align: center;
-			transition: transform 0.3s, box-shadow 0.3s;
 		}
-		.platform-card:hover {
-			transform: translateY(-4px);
-			box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-		}
-		.platform-card img {
-			max-height: 50px;
-			margin: 0 auto 16px;
-			object-fit: contain;
-		}
-		.platform-card h4 {
+		.pricing-container h2 {
+			font-size: 48px;
+			line-height: 57px;
 			color: var(--text-white);
-			font-size: 18px;
-			margin-bottom: 8px;
+			margin-bottom: 12px;
 		}
-		.platform-card p {
-			color: var(--text-muted);
+		.pricing-subtitle {
+			color: rgba(255,255,255,0.7);
+			font-size: 16px;
+			margin-bottom: 40px;
+		}
+		.pricing-card {
+			background: rgba(255,255,255,0.05);
+			border: 2px solid rgba(96, 165, 250, 0.3);
+			border-radius: var(--radius);
+			padding: 50px 40px;
+			position: relative;
+			overflow: hidden;
+		}
+		.pricing-card::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			height: 4px;
+			background: linear-gradient(90deg, var(--primary), var(--accent));
+		}
+		.pricing-badge {
+			display: inline-block;
+			background: var(--accent);
+			color: white;
+			padding: 6px 16px;
+			border-radius: 20px;
+			font-size: 12px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			margin-bottom: 20px;
+		}
+		.pricing-amount {
+			display: flex;
+			align-items: baseline;
+			justify-content: center;
+			margin-bottom: 30px;
+		}
+		.pricing-currency {
+			font-size: 32px;
+			font-weight: 700;
+			color: var(--accent);
+			margin-right: 4px;
+		}
+		.pricing-price {
+			font-size: 72px;
+			font-weight: 800;
+			color: var(--text-white);
+			line-height: 1;
+		}
+		.pricing-period {
+			font-size: 18px;
+			color: rgba(255,255,255,0.6);
+			margin-left: 8px;
+		}
+		.pricing-features {
+			list-style: none;
+			margin: 30px 0;
+			text-align: left;
+		}
+		.pricing-features li {
+			padding: 12px 0;
+			color: rgba(255,255,255,0.85);
+			font-size: 15px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+		}
+		.pricing-features li::before {
+			content: '✓';
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 24px;
+			height: 24px;
+			background: var(--accent);
+			color: white;
+			border-radius: 50%;
+			font-weight: 700;
+			flex-shrink: 0;
+		}
+		.btn-subscribe {
+			display: inline-block;
+			background: var(--accent);
+			color: white;
+			padding: 16px 48px;
+			border-radius: 50px;
+			font-size: 16px;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+			transition: all 0.3s;
+			box-shadow: 0 10px 30px rgba(96, 165, 250, 0.3);
+			cursor: pointer;
+			border: none;
+		}
+		.btn-subscribe:hover {
+			background: var(--primary);
+			transform: translateY(-2px);
+			box-shadow: 0 15px 40px rgba(96, 165, 250, 0.4);
+		}
+		.pricing-note {
+			margin-top: 20px;
 			font-size: 13px;
+			color: rgba(255,255,255,0.5);
 		}
 
 		/* ===== LIMITED SEATS CTA ===== */
@@ -550,7 +695,9 @@
 
 			.description-card { padding: 30px 24px; border-radius: var(--radius-sm); }
 			.keypoints-grid { grid-template-columns: 1fr; gap: 24px; }
-			.platforms-grid { grid-template-columns: 1fr; gap: 16px; }
+			.platform-showcase { padding: 30px; border-radius: var(--radius-sm); }
+			.pricing-card { padding: 40px 24px; border-radius: var(--radius-sm); }
+			.pricing-price { font-size: 60px; }
 			.limited-card { padding: 40px 24px; border-radius: var(--radius-sm); }
 			.guide-card { padding: 40px 24px; border-radius: var(--radius-sm); }
 
@@ -562,10 +709,13 @@
 			#hero { padding: 100px 14px 40px; }
 			.header-container { padding: 0 14px; }
 			.hero-text h2, .hero-text h1 { font-size: 28px; line-height: 36px; }
-			.stats-card h2, .keypoints-header h2, .platforms-container h2 { font-size: 32px; line-height: 40px; }
+			.stats-card h2, .keypoints-header h2, .platforms-container h2, .pricing-container h2 { font-size: 32px; line-height: 40px; }
 			.description-card h2 { font-size: 22px; }
 			.footer-nav { flex-direction: column; gap: 30px; }
-			.platforms-grid { grid-template-columns: repeat(2, 1fr); }
+			.platform-showcase { padding: 20px; }
+			.pricing-card { padding: 30px 20px; }
+			.pricing-price { font-size: 48px; }
+			.pricing-currency { font-size: 24px; }
 		}
 
 		/* ===== ANIMATIONS ===== */
@@ -614,9 +764,14 @@
 	<div id="header-outer">
 		<div class="header-container">
 			<a id="logo" href="#">
-				<svg width="180" height="36" viewBox="0 0 180 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<text x="0" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#60A5FA">Ghost</text>
-					<text x="78" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Dash</text>
+				<svg width="200" height="36" viewBox="0 0 200 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<!-- Ghost icon -->
+					<path d="M8 12C8 8.68629 10.6863 6 14 6H22C25.3137 6 28 8.68629 28 12V26C28 26 26 24 24 24C22 24 20 26 18 26C16 26 14 24 12 24C10 24 8 26 8 26V12Z" fill="#60A5FA"/>
+					<circle cx="15" cy="14" r="1.5" fill="#292929"/>
+					<circle cx="21" cy="14" r="1.5" fill="#292929"/>
+					<!-- Text -->
+					<text x="36" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#60A5FA">Ghost</text>
+					<text x="120" y="28" font-family="Poppins, sans-serif" font-weight="700" font-size="26" fill="#ffffff">Dash</text>
 				</svg>
 			</a>
 
@@ -652,17 +807,15 @@
 	<section id="hero">
 		<div class="hero-container">
 			<div class="hero-text fade-in">
-				<h2>GhostDash until you</h2>
-				<h1>Make it. 👌</h1>
+				<h1>Your Shortcut to Closed Deals</h1>
 				<div class="hero-divider"></div>
 				<div class="description">
-					<p>GhostDash lets you <strong>instantly create realistic fake dashboards</strong> for the world's biggest business and creator platforms—including OnlyFans, MYM, Shopify, Stripe, Fanvue, and Infloww.</p>
-					<p style="margin-top:12px"><strong>Win more clients. Recruit top models. Secure new partnerships.</strong> All with powerful, professional dashboard presentations—no coding or analytics expertise required.</p>
+					<p>Generate high-converting OnlyFans dashboard mockups instantly. Control earnings, subscribers, and analytics to showcase massive potential. The ultimate tool for agencies closing deals and onboarding models at scale.</p>
 				</div>
-				<a href="#" class="btn-primary" style="margin-top: 15px;">Get started</a>
+				<a href="#" class="btn-primary" style="margin-top: 15px;">Create Your Dashboard</a>
 			</div>
 			<div class="hero-image fade-in">
-				<img src="https://fakedash.com/wp-content/uploads/2024/08/mobileherofakedash.png" alt="GhostDash Dashboard Preview" />
+				<img src="heroghost.png" alt="GhostDash Dashboard Preview" />
 			</div>
 		</div>
 	</section>
@@ -670,20 +823,23 @@
 	<!-- ===== STATS ===== -->
 	<section class="section-stats" id="stats">
 		<div class="stats-card fade-in">
-			<h2>Not fake statistics.</h2>
+			<h2>Perfect For</h2>
 			<div class="stats-divider"></div>
 			<div class="stats-grid">
 				<div class="stat-item">
-					<div class="number">80<span class="symbol">%</span></div>
-					<div class="subject">Increase in closing deals.</div>
+					<div class="icon">💼</div>
+					<div class="title">Agencies</div>
+					<div class="description">Impress clients and close deals faster with professional dashboard presentations</div>
 				</div>
 				<div class="stat-item">
-					<div class="number">10<span class="symbol">.</span></div>
-					<div class="subject">Dashboards available for all industries.</div>
+					<div class="icon">👥</div>
+					<div class="title">Recruiters</div>
+					<div class="description">Attract top talent by showcasing impressive performance metrics</div>
 				</div>
 				<div class="stat-item">
-					<div class="number">10<span class="symbol">K</span></div>
-					<div class="subject">Maximum users, limited seats.</div>
+					<div class="icon">📊</div>
+					<div class="title">Entrepreneurs</div>
+					<div class="description">Pitch to investors with compelling data and secure funding</div>
 				</div>
 			</div>
 		</div>
@@ -692,9 +848,9 @@
 	<!-- ===== DESCRIPTION ===== -->
 	<section class="section-description" id="about">
 		<div class="description-card fade-in">
-			<h2>GhostDash Lets You Instantly Create Realistic Fake Dashboards</h2>
-			<p>GhostDash lets you instantly create realistic fake dashboards designed for today's most in-demand platforms—including OnlyFans, MYM, Shopify, Stripe, Fanvue, and Infloww. With just a few clicks, you can select your preferred platform template and fully customize every key metric—such as earnings, subscribers, payout histories, and revenue breakdowns. Each dashboard is expertly designed for authenticity, making it the perfect tool to impress clients, attract top talent, or close important business deals.</p>
-			<p>There's no need for technical skills or design experience: simply adjust figures, graphs, currencies, and even add your branding or profile photo for a professional, personalized result. Whether you're striving to boost your agency's credibility, recruit new models, pitch to investors, or stand out from the competition, GhostDash empowers you to showcase your best numbers—quickly, easily, and securely.</p>
+			<h2>Create Professional OnlyFans Dashboard in Seconds</h2>
+			<p>GhostDash is your go-to solution for building pixel-perfect dashboard mockups across the most popular platforms—OnlyFans, MYM, Shopify, Stripe, Fanvue, Infloww, and more. Choose your template, customize every detail—from revenue figures and subscriber counts to transaction histories and analytics—and generate a professional-looking dashboard that captures attention. Perfect for closing deals, winning clients, or showcasing your business potential.</p>
+			<p>No coding required, no design skills needed. Simply pick your numbers, adjust the visuals, add your branding, and you're done. Whether you're an agency owner looking to impress prospects, a recruiter attracting top-tier talent, or an entrepreneur pitching to investors, GhostDash gives you the credibility boost you need—fast, simple, and completely secure.</p>
 			<a href="#" class="btn-primary" style="margin-top: 30px;">Get started</a>
 		</div>
 	</section>
@@ -702,21 +858,24 @@
 	<!-- ===== KEY POINTS ===== -->
 	<section class="section-keypoints" id="features">
 		<div class="keypoints-header fade-in">
-			<h2>Key points.</h2>
+			<h2>Simple 3-Step Process</h2>
 			<div class="stats-divider"></div>
 		</div>
 		<div class="keypoints-grid">
 			<div class="keypoint-item fade-in">
-				<h3>Instantly Create Fake Dashboards</h3>
-				<p>Easily generate an authentic fake dashboard for OnlyFans, MYM, Shopify, Stripe, Fanvue, or Infloww.</p>
+				<div class="step-number">1</div>
+				<h3>Choose Your Platform</h3>
+				<p>Select from 10+ professional templates including OnlyFans, Shopify, Stripe, and more</p>
 			</div>
 			<div class="keypoint-item fade-in">
-				<h3>Fully Customize Your Dashboards</h3>
-				<p>Edit earnings, subscribers, payout history, visuals, and branding for a professional presentation.</p>
+				<div class="step-number">2</div>
+				<h3>Customize Everything</h3>
+				<p>Edit metrics, revenue, subscribers, charts, and add your branding in seconds</p>
 			</div>
 			<div class="keypoint-item fade-in">
-				<h3>Use Your Fake Dashboard to Impress</h3>
-				<p>Win over clients, investors, and partners with a convincing and credible fake dashboard.</p>
+				<div class="step-number">3</div>
+				<h3>Download & Impress</h3>
+				<p>Export your dashboard and use it to close deals, attract talent, or pitch investors</p>
 			</div>
 		</div>
 	</section>
@@ -724,61 +883,63 @@
 	<!-- ===== PLATFORMS ===== -->
 	<section class="section-platforms" id="platforms">
 		<div class="platforms-container">
-			<h2>Available Platforms</h2>
-			<div class="platforms-grid">
-				<div class="platform-card fade-in">
-					<img src="https://fakedash.com/wp-content/uploads/2024/07/of.png" alt="OnlyFans" />
-					<h4>OnlyFans</h4>
-					<p>Complete dashboard replica</p>
-				</div>
-				<div class="platform-card fade-in">
-					<img src="https://fakedash.com/wp-content/uploads/2024/07/mymlogo.png" alt="MYM" />
-					<h4>MYM</h4>
-					<p>Full earnings dashboard</p>
-				</div>
-				<div class="platform-card fade-in">
-					<img src="https://fakedash.com/wp-content/uploads/2024/07/inflowwlogo.png" alt="Infloww" />
-					<h4>Infloww</h4>
-					<p>Analytics & revenue view</p>
-				</div>
-				<div class="platform-card fade-in">
-					<img src="https://fakedash.com/wp-content/uploads/2024/07/shopifylogo.png" alt="Shopify" />
-					<h4>Shopify</h4>
-					<p>Store analytics dashboard</p>
-				</div>
-				<div class="platform-card fade-in">
-					<img src="https://fakedash.com/wp-content/uploads/2024/07/fanvue.png" alt="Fanvue" />
-					<h4>Fanvue</h4>
-					<p>Creator dashboard replica</p>
-				</div>
-				<div class="platform-card fade-in">
-					<div style="height:50px;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
-						<svg width="100" height="40" viewBox="0 0 100 40"><text x="10" y="30" font-family="Poppins" font-weight="700" font-size="24" fill="#635BFF">Stripe</text></svg>
-					</div>
-					<h4>Stripe</h4>
-					<p>Payment dashboard replica</p>
-				</div>
+			<h2>What You Will Get</h2>
+			<div class="platform-showcase fade-in">
+				<img src="platforms-showcase.jpeg" alt="Available Platforms Dashboard" />
 			</div>
 		</div>
 	</section>
 
-	<!-- ===== LIMITED SEATS CTA ===== -->
+	<!-- ===== PRICING SECTION ===== -->
+	<section class="section-pricing" id="pricing">
+		<div class="pricing-container fade-in">
+			<h2>Simple Pricing</h2>
+			<p class="pricing-subtitle">Everything you need to create professional dashboards</p>
+			
+			<div class="pricing-card">
+				<span class="pricing-badge">Most Popular</span>
+				
+				<div class="pricing-amount">
+					<span class="pricing-currency">€</span>
+					<span class="pricing-price">79</span>
+					<span class="pricing-period">/month</span>
+				</div>
+				
+				<ul class="pricing-features">
+					<li>Unlimited dashboard creation</li>
+					<li>10+ platform templates (OnlyFans, Shopify, Stripe...)</li>
+					<li>Full customization of all metrics</li>
+					<li>High-resolution exports</li>
+					<li>Add your own branding & logo</li>
+					<li>Instant access & updates</li>
+					<li>Priority email support</li>
+					<li>Cancel anytime</li>
+				</ul>
+				
+				<button class="btn-subscribe" onclick="alert('TODO: Implement subscription')">Subscribe Now</button>
+				
+				<p class="pricing-note">No setup fees • Cancel anytime • Secure payment</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- ===== CTA SECTION ===== -->
 	<section class="section-limited">
 		<div class="limited-card fade-in">
-			<h2>Limited seats.</h2>
-			<p>Spaces are limited! We release new seats only when current users leave our service. This exclusivity helps keep our tool as secret and powerful as possible. If everyone knew about it, it would lose its edge. Don't miss your chance to be part of this elite group.</p>
-			<a href="#" class="btn-dark">Get started</a>
+			<h2>Ready to Get Started?</h2>
+			<p>Join thousands of agencies, recruiters, and entrepreneurs using GhostDash to close more deals and impress clients.</p>
+			<a href="#" class="btn-dark">Get Started Now</a>
 		</div>
 	</section>
 
 	<!-- ===== GUIDE / BLOG SECTION ===== -->
 	<section class="section-guide">
 		<div class="guide-card fade-in">
-			<h3>The Ultimate OFM/ECOM Guide (FREE)</h3>
+			<h3>Free Resources & Guides</h3>
 			<div class="guide-desc">
-				<p>Explore the GhostDash Blog for practical guides, case studies, and expert tips on OnlyFans Management (OFM), e-commerce, and fake dashboards. Find everything you need to win more clients, grow your agency, and stand out in the creator economy.</p>
+				<p>Access our library of practical guides, case studies, and expert strategies for OnlyFans Management, e-commerce, and creator platforms. Learn proven tactics to grow your agency, attract clients, and maximize your results.</p>
 			</div>
-			<a href="#" class="btn-primary">Read Articles</a>
+			<a href="#" class="btn-primary">Explore Resources</a>
 		</div>
 	</section>
 
