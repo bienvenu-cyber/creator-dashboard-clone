@@ -36,7 +36,6 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/welcome" element={<GhostDashLanding />} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             
             {/* Dashboard routes */}
