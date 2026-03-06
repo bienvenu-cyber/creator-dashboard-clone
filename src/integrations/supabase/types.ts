@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          btc_address: string | null
+          created_at: string | null
+          eth_address: string | null
+          id: string
+          telegram_username: string
+          updated_at: string | null
+          usdt_address: string | null
+        }
+        Insert: {
+          btc_address?: string | null
+          created_at?: string | null
+          eth_address?: string | null
+          id?: string
+          telegram_username: string
+          updated_at?: string | null
+          usdt_address?: string | null
+        }
+        Update: {
+          btc_address?: string | null
+          created_at?: string | null
+          eth_address?: string | null
+          id?: string
+          telegram_username?: string
+          updated_at?: string | null
+          usdt_address?: string | null
+        }
+        Relationships: []
+      }
+      dashboard_user_data: {
+        Row: {
+          created_at: string | null
+          data: Json
+          id: string
+          page_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json
+          id?: string
+          page_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json
+          id?: string
+          page_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       dashboards: {
         Row: {
           config: Json
@@ -72,36 +129,45 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          crypto_address: string | null
+          crypto_currency: string | null
           crypto_tx_hash: string | null
           currency: string
           expires_at: string | null
           id: string
           payment_method: string | null
           status: Database["public"]["Enums"]["subscription_status"]
+          telegram_username: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           amount?: number
           created_at?: string
+          crypto_address?: string | null
+          crypto_currency?: string | null
           crypto_tx_hash?: string | null
           currency?: string
           expires_at?: string | null
           id?: string
           payment_method?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          telegram_username?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           amount?: number
           created_at?: string
+          crypto_address?: string | null
+          crypto_currency?: string | null
           crypto_tx_hash?: string | null
           currency?: string
           expires_at?: string | null
           id?: string
           payment_method?: string | null
           status?: Database["public"]["Enums"]["subscription_status"]
+          telegram_username?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -128,11 +194,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string | null
+          expires_at: string
+          id: string
+          session_token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at: string
+          id?: string
+          session_token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string
+          id?: string
+          session_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_sessions: { Args: never; Returns: undefined }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
     }
