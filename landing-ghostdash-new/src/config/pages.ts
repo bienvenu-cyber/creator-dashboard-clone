@@ -15,7 +15,7 @@ export const pagesConfig = {
         _slug: "hero",
         _analyticsKey: "hero",
         customerSatisfactionBanner: {
-          text: "Trusted by 1000+ creators",
+          text: "Trusted by content creators worldwide",
           avatars: {
             items: [
               {
@@ -49,19 +49,19 @@ export const pagesConfig = {
             ],
           },
         },
-        title: "Professional Dashboard Replicas for Content Creators",
-        subtitle: "Create convincing dashboard screenshots for OnlyFans, MYM, Shopify, Stripe and more. Perfect for agencies and content creators.",
+        title: "Create Professional Fake Dashboards Instantly",
+        subtitle: "Generate realistic dashboard screenshots for OnlyFans, MYM, Shopify, Stripe and more. Unlimited customization for content creators and agencies.",
         actions: [
           {
             _id: "action-1",
-            href: "/dashboard",
-            label: "Get Started Free",
+            href: "/subscribe",
+            label: "Subscribe Now",
             type: "primary" as const,
           },
           {
             _id: "action-2",
-            href: "/#dashboards",
-            label: "View Dashboards",
+            href: "/login",
+            label: "Login",
             type: "secondary" as const,
           },
         ],
@@ -109,27 +109,39 @@ export const pagesConfig = {
           items: [
             {
               _id: "feature-1",
-              _title: "Realistic Design",
-              description: "Pixel-perfect replicas of real dashboards",
-              icon: "✨",
+              _title: "Unlimited Dashboard Creation",
+              description: "Create as many dashboards as you need with no limits",
+              icon: "∞",
             },
             {
               _id: "feature-2",
-              _title: "Easy to Use",
-              description: "Simple interface, no technical skills required",
-              icon: "🎯",
+              _title: "Full Customization",
+              description: "Customize all metrics, dates, names and data fields",
+              icon: "🎨",
             },
             {
               _id: "feature-3",
-              _title: "Fast Export",
-              description: "Download your screenshots instantly",
-              icon: "⚡",
+              _title: "High-Resolution Exports",
+              description: "Download professional quality screenshots instantly",
+              icon: "📸",
             },
             {
               _id: "feature-4",
-              _title: "Multiple Platforms",
-              description: "OnlyFans, MYM, Shopify, Stripe and more",
-              icon: "🚀",
+              _title: "Add Your Branding",
+              description: "Personalize dashboards with your own branding",
+              icon: "🏷️",
+            },
+            {
+              _id: "feature-5",
+              _title: "Priority Email Support",
+              description: "Get help when you need it with priority support",
+              icon: "💬",
+            },
+            {
+              _id: "feature-6",
+              _title: "Cancel Anytime",
+              description: "No long-term commitment, cancel your subscription anytime",
+              icon: "✓",
             },
           ],
         },
@@ -139,37 +151,26 @@ export const pagesConfig = {
         _id: "pricing-1",
         _slug: "pricing",
         title: "Simple Pricing",
-        subtitle: "Choose the plan that fits your needs",
+        subtitle: "Monthly subscription with full access",
         plans: {
           items: [
             {
               _id: "plan-1",
-              _title: "Free",
-              price: "$0",
-              description: "Perfect for trying out",
-              features: ["1 dashboard", "Basic features", "Watermark"],
-              cta: {
-                _id: "cta-plan-1",
-                href: "/dashboard",
-                label: "Get Started",
-                type: "secondary" as const,
-              },
-            },
-            {
-              _id: "plan-2",
-              _title: "Pro",
-              price: "$29",
-              description: "For professionals",
+              _title: "Monthly Subscription",
+              price: "€79",
+              description: "Per month - Cancel anytime",
               features: [
-                "All dashboards",
-                "No watermark",
-                "Priority support",
-                "Custom branding",
+                "Unlimited dashboard creation",
+                "Full customization of all metrics",
+                "High-resolution exports",
+                "Add your own branding",
+                "Priority email support",
+                "Cancel anytime",
               ],
               cta: {
-                _id: "cta-plan-2",
-                href: "/dashboard",
-                label: "Start Free Trial",
+                _id: "cta-plan-1",
+                href: "/subscribe",
+                label: "Subscribe Now",
                 type: "primary" as const,
               },
             },
@@ -189,25 +190,37 @@ export const pagesConfig = {
               _id: "q-1",
               _title: "What is GhostDash?",
               answer:
-                "GhostDash is a tool that allows you to create professional dashboard replicas for various platforms like OnlyFans, MYM, Shopify, and Stripe.",
+                "GhostDash is a tool that allows you to create professional fake dashboard screenshots for various platforms like OnlyFans, MYM, Shopify, and Stripe. Perfect for content creators and agencies.",
             },
             {
               _id: "q-2",
-              _title: "Is it legal to use?",
+              _title: "How does the payment work?",
               answer:
-                "Yes, GhostDash is designed for legitimate purposes such as portfolio showcases, presentations, and educational content.",
+                "We accept cryptocurrency payments (BTC, ETH, USDT). After payment, upload a screenshot and we'll activate your account within 24 hours.",
             },
             {
               _id: "q-3",
               _title: "Can I customize the data?",
               answer:
-                "Absolutely! You can customize all data fields including numbers, dates, names, and more.",
+                "Absolutely! You have full customization of all metrics, dates, names, amounts, and any data fields displayed on the dashboards.",
             },
             {
               _id: "q-4",
-              _title: "Do you offer refunds?",
+              _title: "Can I cancel my subscription?",
               answer:
-                "Yes, we offer a 30-day money-back guarantee if you're not satisfied with the service.",
+                "Yes, you can cancel your subscription at any time. No long-term commitment required.",
+            },
+            {
+              _id: "q-5",
+              _title: "What platforms are supported?",
+              answer:
+                "We support OnlyFans, MYM, Shopify, Stripe, and more platforms. New dashboards are added regularly.",
+            },
+            {
+              _id: "q-6",
+              _title: "How do I get support?",
+              answer:
+                "All subscribers get priority email support. You can also contact us on Telegram for faster assistance.",
             },
           ],
         },
@@ -217,12 +230,12 @@ export const pagesConfig = {
         _id: "callout-1",
         _slug: "cta",
         title: "Ready to get started?",
-        subtitle: "Join thousands of creators using GhostDash",
+        subtitle: "Get instant access to professional dashboard mockups",
         actions: [
           {
             _id: "cta-final-1",
-            href: "/dashboard",
-            label: "Start Free Trial",
+            href: "/subscribe",
+            label: "Subscribe Now - €79/month",
             type: "primary" as const,
             icon: null,
           },

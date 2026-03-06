@@ -3,8 +3,8 @@ export const siteConfig = {
   settings: {
     sitename: "GhostDash",
     titleTemplate: "%s | GhostDash",
-    defaultTitle: "GhostDash - Professional Dashboard Replicas",
-    defaultDescription: "Create professional dashboard replicas for OnlyFans, MYM, Shopify, Stripe and more. Perfect for content creators and agencies.",
+        defaultTitle: "GhostDash - Create Professional Fake Dashboards Instantly",
+        defaultDescription: "Create professional dashboard replicas for OnlyFans, MYM, Shopify, Stripe and more. Unlimited dashboard creation with full customization. Perfect for content creators and agencies.",
     logo: {
       light: {
         url: "/logo-light.svg",
@@ -62,14 +62,20 @@ export const siteConfig = {
           href: "/#faq",
           sublinks: { items: [] },
         },
+            {
+                _id: "nav-5",
+                _title: "Login",
+                href: "/login",
+                sublinks: { items: [] },
+            },
       ],
     },
     rightCtas: {
       items: [
         {
           _id: "cta-1",
-          href: "/dashboard",
-          label: "Get Started",
+              href: "/subscribe",
+              label: "Subscribe",
           type: "primary" as const,
           icon: null,
         },
@@ -81,21 +87,16 @@ export const siteConfig = {
     navbar: {
       items: [
         { _title: "Features", url: "/#features" },
+            { _title: "Dashboards", url: "/#dashboards" },
         { _title: "Pricing", url: "/#pricing" },
-        { _title: "FAQ", url: "/#faq" },
-        { _title: "Contact", url: "/contact" },
+            { _title: "FAQ", url: "/#faq" },
       ],
     },
     socialLinks: [
       {
-        _title: "Twitter",
-        url: "https://twitter.com/ghostdash",
-        icon: { url: "/icons/twitter.svg" },
-      },
-      {
-        _title: "GitHub",
-        url: "https://github.com/ghostdash",
-        icon: { url: "/icons/github.svg" },
+            _title: "Telegram",
+            url: "https://t.me/ghostdash",
+            icon: { url: "/icons/telegram.svg" },
       },
     ],
     newsletter: {
