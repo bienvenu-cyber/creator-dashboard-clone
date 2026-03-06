@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd landing-ghostdash-new && pnpm install && pnpm build",
-  "outputDirectory": "landing-ghostdash-new/.next",
-  "installCommand": "cd landing-ghostdash-new && pnpm install"
-}
