@@ -5,7 +5,7 @@ import type { ImageProps } from "next/image";
 
 type DarkLightImageProps = {
   dark?: { url: string; alt?: string | null; width: number; height: number; blurDataURL?: string };
-  light: { url: string; alt?: string | null; width: number; height: number; aspectRatio: string; blurDataURL?: string };
+  light: { url: string; alt?: string | null; width: number; height: number; aspectRatio?: string; blurDataURL?: string };
 } & Omit<ImageProps, "src" | "alt"> & {
     alt?: string;
     withPlaceholder?: boolean;
@@ -58,9 +58,11 @@ export function DarkLightImage({
 }
 
 export function DarkLightImageAutoscale(props: DarkLightImageProps) {
-  const [aspectRatioWidth, aspectRatioHeight] = props.light.aspectRatio.split("/").map(Number);
-  const aspectRatio = (aspectRatioWidth ?? 0) / (aspectRatioHeight ?? 0);
-  let logoStyle;
+  const [aspectRatioWidth, aspectRatioHeight] = (props.light.aspectRatio ?? "1/1")
+    .split("/")
+    .map(Number);
+  const aspectRatio = (aspectRatioWidth ?? 1) / (aspectRatioHeight ?? 1);
+  let logoStyle: "square" | "4/3" | "portrait" | "landscape";
 
   switch (true) {
     case aspectRatio <= 1.2:
