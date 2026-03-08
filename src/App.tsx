@@ -8,10 +8,6 @@ import DashboardLayout from "./pages/DashboardLayout";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
-import { NotificationsPage } from "@/components/dashboard/pages/NotificationsPage";
-import { DeclarationsPage } from "@/components/dashboard/pages/DeclarationsPage";
-import { StatisticsPage } from "@/components/dashboard/pages/StatisticsPage";
-
 const queryClient = new QueryClient();
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
@@ -30,15 +26,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
-            
-            <Route path="/" element={<DashboardLayout />}>
-              <Route index element={<Navigate to="/my/statistics/overview/earnings" replace />} />
-              <Route path="my/notifications" element={<NotificationsPage />} />
-              <Route path="my/statements/earnings" element={<DeclarationsPage />} />
-              <Route path="my/statistics/*" element={<StatisticsPage />} />
-            </Route>
-            
-            <Route path="*" element={<NotFound />} />
+            <Route path="/*" element={<DashboardLayout />} />
           </Routes>
         </AuthProvider>
       </BrowserRouter>

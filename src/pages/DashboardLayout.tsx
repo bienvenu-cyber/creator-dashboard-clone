@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { IframePage } from '@/components/dashboard/IframePage';
+
+const PAGES = [
+  { path: '/my/notifications', src: '/notifications.html', title: 'Notifications' },
+  { path: '/my/statements/earnings', src: '/statements.html', title: 'Statements' },
+  { path: '/my/statistics', src: '/statistics.html', title: 'Statistics' },
+];
 
 const NAV_ROUTES: Record<string, string> = {
   Home: '/my/statistics/overview/earnings',
@@ -10,6 +17,14 @@ const NAV_ROUTES: Record<string, string> = {
 
 export default function DashboardLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Redirect root to statistics
+    if (location.pathname === '/') {
+      navigate('/my/statistics/overview/earnings', { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -21,9 +36,29 @@ export default function DashboardLayout() {
     return () => window.removeEventListener('message', handler);
   }, [navigate]);
 
+  const currentPath = location.pathname;
+
   return (
-    <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
-      <Outlet />
+    <div style={{ width: '100%', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      {PAGES.map((page) => {
+        const isActive = currentPath.startsWith(page.path);
+        return (
+          <div
+            key={page.path}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              visibility: isActive ? 'visible' : 'hidden',
+              pointerEvents: isActive ? 'auto' : 'none',
+            }}
+          >
+            <IframePage src={page.src} title={page.title} />
+          </div>
+        );
+      })}
     </div>
   );
 }
