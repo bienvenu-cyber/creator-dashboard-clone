@@ -10,6 +10,11 @@ const NAV_SCRIPT = `
 (function() {
   if (window.__navInjected) return;
   window.__navInjected = true;
+
+  // Fix mobile bottom nav: make it sticky at bottom of viewport
+  var style = document.createElement('style');
+  style.textContent = '.l-header__menu { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #fff !important; box-shadow: 0 -1px 4px rgba(0,0,0,0.1) !important; } body { padding-bottom: 60px !important; }';
+  document.head.appendChild(style);
   
   var routes = {
     Home: '/my/statistics/overview/earnings',
