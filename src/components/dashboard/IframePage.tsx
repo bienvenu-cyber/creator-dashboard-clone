@@ -14,9 +14,9 @@ const NAV_SCRIPT = `
   // Fix mobile bottom nav: make it sticky at bottom of viewport + add missing mobile styles
   var style = document.createElement('style');
   style.textContent = [
-    '.l-header__menu { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #fff !important; box-shadow: 0 -1px 4px rgba(0,0,0,0.1) !important; display: flex !important; flex-direction: row !important; justify-content: space-around !important; align-items: center !important; padding: 4px 8px !important; height: 56px !important; overflow: hidden !important; }',
-    'body { padding-bottom: 60px !important; }',
     '@media (max-width: 499.98px) {',
+    '  .l-header__menu { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999 !important; background-color: #fff !important; box-shadow: 0 -1px 4px rgba(0,0,0,0.1) !important; display: flex !important; flex-direction: row !important; justify-content: space-around !important; align-items: center !important; padding: 4px 8px !important; height: 56px !important; overflow: hidden !important; }',
+    '  body { padding-bottom: 60px !important; }',
     '  .l-header__menu .l-header__menu__item { flex: 1 !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; min-width: 0 !important; padding: 0 !important; }',
     '  .l-header__menu .l-header__menu__item .l-header__menu__item__text { font-size: 10px !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 100% !important; }',
     '  .l-header__menu .l-header__menu__item[data-name="Collections"],',
