@@ -15,8 +15,8 @@ export async function Header() {
       ]}
     >
       {async ([{ site }]) => {
-        const { header, settings } = site;
         "use server";
+        const { header, settings } = site;
 
         return (
           <header className="sticky left-0 top-0 z-100 flex w-full flex-col border-b border-border bg-surface-primary dark:border-dark-border dark:bg-dark-surface-primary">
