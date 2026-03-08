@@ -5,6 +5,34 @@ import { siteConfig } from "@/config/site";
 import { DesktopMenu, MobileMenu } from "./navigation-menu";
 import { DarkLightImageAutoscale } from "@/common/dark-light-image";
 
+export type HeaderLiksFragment = {
+  _id: string;
+  _title: string;
+  href: string;
+  sublinks: {
+    items: Array<{
+      _id: string;
+      _title: string;
+      link:
+        | { __typename: "PageReferenceComponent"; page: { pathname: string; _title: string } }
+        | { __typename: "ExternalLinkComponent"; text: string };
+    }>;
+  };
+};
+
+export type HeaderFragment = {
+  navbar: { items: HeaderLiksFragment[] };
+  rightCtas: {
+    items: Array<{
+      _id: string;
+      href: string;
+      label: string;
+      type: "primary" | "secondary";
+      icon: any;
+    }>;
+  };
+};
+
 export async function Header() {
   return (
     <Pump
