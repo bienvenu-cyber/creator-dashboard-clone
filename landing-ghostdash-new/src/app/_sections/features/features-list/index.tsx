@@ -2,31 +2,26 @@ import { CheckIcon } from "@radix-ui/react-icons";
 
 import { Section } from "@/common/layout";
 import { Heading } from "@/common/heading";
-import { fragmentOn } from "basehub";
-import { darkLightImageFragment } from "@/lib/basehub/fragments";
+import type { DarkLightImageFragment } from "@/lib/basehub/fragments";
 import { DarkLightImage } from "@/common/dark-light-image";
 
-export const featureCardFragment = fragmentOn("FeaturesCardsListItem", {
-  _title: true,
-  description: true,
-  image: darkLightImageFragment,
-  characteristics: {
-    items: { _title: true },
-  },
-});
-
-export const featureCardsComponent = fragmentOn("FeaturesCardsComponent", {
+export type FeatureCard = {
   heading: {
-    subtitle: true,
-    tag: true,
-    title: true,
-  },
+    subtitle?: string | null;
+    tag?: string | null;
+    title: string;
+  };
   featuresCardsList: {
-    items: featureCardFragment,
-  },
-});
-
-type FeatureCard = fragmentOn.infer<typeof featureCardsComponent>;
+    items: {
+      _title: string;
+      description: string;
+      image: DarkLightImageFragment;
+      characteristics: {
+        items: { _title: string }[];
+      };
+    }[];
+  };
+};
 
 export async function FeaturesList({ featuresCardsList, heading }: FeatureCard) {
   return (

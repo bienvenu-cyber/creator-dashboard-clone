@@ -1,22 +1,20 @@
-import { CodeBlock, type Language, createCssVariablesTheme } from "basehub/react-code-block";
-
-import { fragmentOn } from "basehub";
+import { type Language, CodeBlock, createCssVariablesTheme } from "@/lib/static-code-block";
 
 import { CopyButton } from "./copy-button";
 import { languagesIcons } from "./language";
 import { FileIcon } from "@radix-ui/react-icons";
 import s from "./code-snippet.module.scss";
 
-export const codeSnippetFragment = fragmentOn("CodeSnippetComponent", {
-  _id: true,
+export type CodeSnippetFragment = {
+  _id: string;
   code: {
-    code: true,
-    language: true,
-  },
-  _title: true,
-});
+    code: string;
+    language: string;
+  };
+  _title: string;
+};
 
-export type CodeSnippetFragment = fragmentOn.infer<typeof codeSnippetFragment>;
+export const codeSnippetFragment = {} as any; // kept for compatibility
 
 export function CodeSnippet({ code, _id, _title = "Untitled" }: CodeSnippetFragment) {
   return (

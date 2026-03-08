@@ -1,27 +1,27 @@
 import Link from "next/link";
 import clsx from "clsx";
 
-import { fragmentOn } from "basehub";
 import { AvatarsGroup } from "@/common/avatars-group";
 import { Author } from "@/common/avatar";
-import { authorFragment, darkLightImageFragment } from "@/lib/basehub/fragments";
+import type { AuthorFragment, DarkLightImageFragment } from "@/lib/basehub/fragments";
 import { formatDate } from "@/utils/dates";
 import { DarkLightImage } from "@/common/dark-light-image";
 import { ButtonLink } from "@/common/button";
 import { SimpleTooltip } from "@/common/tooltip";
 
-export const blogpostCardFragment = fragmentOn("BlogPostComponent", {
-  _id: true,
-  _title: true,
-  _slug: true,
-  description: true,
-  publishedAt: true,
-  authors: authorFragment,
-  image: darkLightImageFragment,
-  categories: true,
-});
+export type BlogpostCardFragment = {
+  _id: string;
+  _title: string;
+  _slug: string;
+  description: string;
+  publishedAt: string;
+  authors: AuthorFragment[];
+  image: DarkLightImageFragment;
+  categories: string[];
+};
 
-type BlogpostCardFragment = fragmentOn.infer<typeof blogpostCardFragment>;
+export const blogpostCardFragment = {} as any; // kept for compatibility
+
 type BlogPostCard = {
   type?: "card" | "list";
   className?: string;
@@ -38,7 +38,6 @@ export function BlogpostCard({ type = "list", className, ...post }: BlogPostCard
             className="lg:text-md grid w-full grid-cols-[auto_auto] place-content-start items-center justify-items-start rounded-lg p-4 text-text-secondary outline-hidden transition-colors hover:bg-surface-secondary dark:text-dark-text-secondary dark:hover:bg-dark-surface-secondary max-md:justify-items-start md:grid-cols-[50%_repeat(3,1fr)] md:first:*:place-items-start md:last:*:place-items-end"
             href={`/blog/${post._slug}`}
           >
-            {/* <article className={clsx("", className)}> */}
             <h3 className="relative col-span-2 max-w-full justify-self-start pr-4 font-medium text-text-primary dark:text-dark-text-primary max-lg:line-clamp-2 md:col-span-1 lg:truncate">
               {post._title}
             </h3>
@@ -57,7 +56,6 @@ export function BlogpostCard({ type = "list", className, ...post }: BlogPostCard
                 ))}
               </AvatarsGroup>
             </div>
-            {/* </article> */}
           </ButtonLink>
         </article>
       );

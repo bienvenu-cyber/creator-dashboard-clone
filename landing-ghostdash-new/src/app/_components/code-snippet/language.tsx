@@ -1,4 +1,4 @@
-import { type Language } from "basehub/react-code-block";
+export type Language = string;
 
 // Define PartialBundledLanguage as Partial of BundledLanguage
 type PartialBundledLanguage = Partial<Record<Language, React.ReactNode>>;

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 import clsx from "clsx";
 
 import { ButtonLink } from "@/common/button";
@@ -22,23 +22,17 @@ export function ChangelogList({ changelogPosts }: { changelogPosts: ChangelogLis
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const postId = entry.target.getAttribute("data-post-id");
-
             if (postId) {
               setActivePostId(postId);
             }
           }
         });
       },
-      {
-        threshold: 1,
-      },
+      { threshold: 1 },
     );
 
     document.querySelectorAll("[data-post-id]").forEach((el) => observer.observe(el));
-
     return () => observer.disconnect();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [changelogPosts]);
 
   React.useEffect(() => {
@@ -96,7 +90,6 @@ export function ChangelogList({ changelogPosts }: { changelogPosts: ChangelogLis
               blurDataURL={post.image.blurDataURL}
               className="rounded-lg border border-border dark:border-dark-border"
               height={480}
-              placeholder="blur"
               priority={idx === 0}
               src={post.image.url}
               width={647}

@@ -1,16 +1,13 @@
 import { Section } from "@/common/layout";
 import { Heading } from "@/common/heading";
-import { fragmentOn } from "basehub";
-import { headingFragment, quoteFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment, QuoteFragment } from "@/lib/basehub/fragments";
 
 import { Slider } from "./slider";
 
-export const testimonialsSliderFragment = fragmentOn("TestimonialSliderComponent", {
-  heading: headingFragment,
-  quotes: quoteFragment,
-});
-
-export type TestimonialsSlider = fragmentOn.infer<typeof testimonialsSliderFragment>;
+export type TestimonialsSlider = {
+  heading: HeadingFragment;
+  quotes: QuoteFragment[];
+};
 
 export function Testimonials({ heading, quotes }: TestimonialsSlider) {
   return (

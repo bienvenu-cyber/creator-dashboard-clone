@@ -1,34 +1,31 @@
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { headingFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment } from "@/lib/basehub/fragments";
 import { TrackedButtonLink } from "@/app/_components/tracked_button";
-import { GeneralEvents } from "@/../basehub-types";
+import type { GeneralEvents } from "@/../basehub-types";
 
-export const featuresSideBySideFragment = fragmentOn("FeaturesSideBySideComponent", {
+export type FeaturesGrid = {
   featuresSideBySideList: {
     items: {
-      _title: true,
-      subtitle: true,
+      _title: string;
+      subtitle: string;
       icon: {
-        alt: true,
-        url: true,
-      },
-    },
-  },
-  heading: headingFragment,
-  actions: {
-    _analyticsKey: true,
-    _id: true,
-    href: true,
-    label: true,
-    type: true,
-  },
-});
-
-type FeaturesGrid = fragmentOn.infer<typeof featuresSideBySideFragment>;
+        alt?: string | null;
+        url: string;
+      };
+    }[];
+  };
+  heading: HeadingFragment;
+  actions?: {
+    _analyticsKey?: string;
+    _id: string;
+    href: string;
+    label: string;
+    type: "primary" | "secondary" | "tertiary";
+  }[];
+};
 
 export function SideFeatures({
   featuresSideBySideList,

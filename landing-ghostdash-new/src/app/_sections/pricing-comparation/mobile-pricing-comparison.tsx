@@ -179,7 +179,7 @@ function FeatureValue({
           {value.value.text}
         </span>
       ) : (
-        <span className="text-text-secondary dark:text-dark-text-secondary">{value.value}</span>
+        <span className="text-text-secondary dark:text-dark-text-secondary">{String(value.value ?? "")}</span>
       )}
     </td>
   );

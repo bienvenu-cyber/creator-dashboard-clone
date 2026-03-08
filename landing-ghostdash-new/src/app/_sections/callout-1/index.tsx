@@ -1,20 +1,23 @@
 import clsx from "clsx";
 
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
 
 import s from "./callout-1.module.scss";
 import { TrackedButtonLink } from "@/app/_components/tracked_button";
-import { buttonFragment } from "@/lib/basehub/fragments";
-import { GeneralEvents } from "@/../basehub-types";
+import type { GeneralEvents } from "@/../basehub-types";
 
-export const calloutFragment = fragmentOn("CalloutComponent", {
-  _analyticsKey: true,
-  title: true,
-  subtitle: true,
-  actions: buttonFragment,
-});
-type Callout = fragmentOn.infer<typeof calloutFragment>;
+type Callout = {
+  _analyticsKey?: string;
+  title: string;
+  subtitle: string;
+  actions: {
+    _id: string;
+    href: string;
+    label: string;
+    type: "primary" | "secondary" | "tertiary";
+    icon?: string | null;
+  }[];
+};
 
 export function Callout(callout: Callout & { eventsKey: GeneralEvents["ingestKey"] }) {
   return (

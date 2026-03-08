@@ -1,7 +1,8 @@
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 import Link from "next/link";
 
-import { Pump } from "basehub/react-pump";
+import { Pump } from "@/lib/static-pump";
+import { siteConfig } from "@/config/site";
 
 interface ChangelogLayoutProps {
   className?: string;
@@ -24,53 +25,29 @@ export function ChangelogLayout({
       >
         {children}
 
-        <Pump
-          queries={[
-            {
-              site: {
-                changelog: {
-                  socialLinksTitle: true,
-                  socialLinks: { icon: { url: true }, url: true, _title: true, _id: true },
-                },
-              },
-            },
-          ]}
-        >
-          {async ([
-            {
-              site: { changelog },
-            },
-          ]) => {
-            "use server";
-            const socialLinks = changelog.socialLinks;
-
-            return (
-              <div className="flex items-center gap-2 md:flex-col">
-                <p className="text-sm text-text-tertiary dark:text-dark-text-tertiary">
-                  {changelog.socialLinksTitle}
-                </p>
-                <div className="flex gap-2">
-                  {socialLinks.map((link) => (
-                    <Link
-                      key={link._id}
-                      className="aspect-square hover:brightness-90"
-                      href={link.url}
-                      target="_blank"
-                    >
-                      <BaseHubImage
-                        priority
-                        alt={link._title}
-                        height={18}
-                        src={link.icon?.url ?? ""}
-                        width={18}
-                      />
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          }}
-        </Pump>
+        <div className="flex items-center gap-2 md:flex-col">
+          <p className="text-sm text-text-tertiary dark:text-dark-text-tertiary">
+            Follow us
+          </p>
+          <div className="flex gap-2">
+            {siteConfig.footer.socialLinks.map((link) => (
+              <Link
+                key={link._title}
+                className="aspect-square hover:brightness-90"
+                href={link.url}
+                target="_blank"
+              >
+                <BaseHubImage
+                  priority
+                  alt={link._title}
+                  height={18}
+                  src={link.icon?.url ?? ""}
+                  width={18}
+                />
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

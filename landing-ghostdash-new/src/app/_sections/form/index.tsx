@@ -1,30 +1,30 @@
 import NextForm from "next/form";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { buttonFragment } from "@/lib/basehub/fragments";
+import type { ButtonFragment } from "@/lib/basehub/fragments";
 import { FormLayout, RichTextFormWrapper } from "@/app/_components/form-layout";
 import { Button } from "@/common/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { LabeledInput, LabeledTextarea, LabeledWrapper } from "@/app/_components/labeled-input";
-import { sendEvent, parseFormData } from "basehub/events";
+import { sendEvent, parseFormData } from "@/lib/static-events";
 import { Select } from "@/app/_components/select";
 
-export const formFragment = fragmentOn("FormComponent", {
-  title: true,
-  subtitle: {
+export type FormType = {
+  title: string;
+  subtitle?: {
     json: {
-      content: true,
-    },
-  },
-  cta: buttonFragment,
+      content: any;
+    };
+  } | null;
+  cta: ButtonFragment;
   submissions: {
-    ingestKey: true,
-    schema: true,
-  },
-});
-type Form = fragmentOn.infer<typeof formFragment>;
+    ingestKey: string;
+    schema: any[];
+  };
+};
 
-export function Form(props: Form) {
+export const formFragment = {} as any; // kept for compatibility
+
+export function Form(props: FormType) {
   return (
     <Section>
       <FormLayout
@@ -47,14 +47,10 @@ export function Form(props: Form) {
             if (!parsedData.success) {
               throw new Error(JSON.stringify(parsedData.errors));
             }
-            await sendEvent(
-              props.submissions.ingestKey,
-              // @ts-expect-error -- basehub events are typed based on the schema, but this Form component should be generic
-              parsedData.data,
-            );
+            await sendEvent(props.submissions.ingestKey, parsedData.data);
           }}
         >
-          {props.submissions.schema.map((field) => {
+          {props.submissions.schema.map((field: any) => {
             if (field.type === "textarea") {
               return (
                 <LabeledTextarea key={field.id} rows={8} className="max-h-64 min-h-16" {...field} />
@@ -63,7 +59,7 @@ export function Form(props: Form) {
               return (
                 <LabeledWrapper key={field.id} label={field.label} id={field.id}>
                   <Select id={field.id} name={field.name} required={field.required}>
-                    {field.options.map((option) => (
+                    {field.options.map((option: string) => (
                       <option key={option} value={option}>
                         {option}
                       </option>

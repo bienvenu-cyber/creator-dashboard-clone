@@ -1,16 +1,19 @@
-import { fragmentOn } from "basehub";
 import { Section } from "@/common/layout";
 import { TrackedButtonLink } from "@/app/_components/tracked_button";
-import { buttonFragment } from "@/lib/basehub/fragments";
-import { GeneralEvents } from "@/../basehub-types";
+import type { GeneralEvents } from "@/../basehub-types";
 
-export const calloutv2Fragment = fragmentOn("CalloutV2Component", {
-  title: true,
-  subtitle: true,
-  _analyticsKey: true,
-  actions: buttonFragment,
-});
-type Callout2 = fragmentOn.infer<typeof calloutv2Fragment>;
+export type Callout2 = {
+  title: string;
+  subtitle: string;
+  _analyticsKey?: string;
+  actions?: {
+    _id: string;
+    href: string;
+    label: string;
+    type: "primary" | "secondary" | "tertiary";
+    icon?: string | null;
+  }[];
+};
 
 export function Callout2(callout: Callout2 & { eventsKey: GeneralEvents["ingestKey"] }) {
   return (

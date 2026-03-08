@@ -1,23 +1,18 @@
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 import clsx from "clsx";
 
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
 
 import s from "./companies.module.scss";
 
-export const companiesFragment = fragmentOn("CompaniesComponent", {
-  subtitle: true,
+export type Companies = {
+  subtitle: string;
   companies: {
-    _title: true,
-    url: true,
-    image: {
-      url: true,
-    },
-  },
-});
-
-type Companies = fragmentOn.infer<typeof companiesFragment>;
+    _title: string;
+    url?: string | null;
+    image?: { url: string } | null;
+  }[];
+};
 
 export function Companies(props: Companies) {
   return (

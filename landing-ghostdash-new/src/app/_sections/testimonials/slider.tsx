@@ -2,7 +2,7 @@
 import { type EmblaCarouselType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
 import * as React from "react";
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import clsx from "clsx";
@@ -60,7 +60,6 @@ export function Slider({
 
   React.useEffect(() => {
     if (!emblaApi) return;
-
     onSelect(emblaApi);
     emblaApi.on("reInit", onSelect);
     emblaApi.on("select", onSelect);
@@ -68,7 +67,6 @@ export function Slider({
 
   React.useEffect(() => {
     if (!emblaApi) return;
-
     onInit(emblaApi);
     onSelect(emblaApi);
     emblaApi.on("reInit", onInit);
@@ -138,7 +136,7 @@ export function VainillaCard({ quote, author }: TestimonialsSlider["quotes"][0])
       <article className="embla__slide flex h-full w-full min-w-0 transform touch-pan-y touch-pinch-zoom select-none flex-col rounded-xl border border-border [backface-visibility:hidden] last:visible! dark:border-dark-border">
         <div className="flex flex-1 items-start border-b border-border px-5 py-[18px] dark:border-dark-border md:px-8 md:py-7">
           <blockquote className="text-pretty text-xl font-extralight leading-[135%] text-text-primary dark:text-dark-text-primary sm:text-2xl md:text-4xl">
-            “{quote}”
+            &ldquo;{quote}&rdquo;
           </blockquote>
         </div>
         <div className="flex items-center gap-4 pl-5">
