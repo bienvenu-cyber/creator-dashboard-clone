@@ -124,8 +124,12 @@ export default async function DynamicPage({
       {async ([data]) => {
         "use server";
 
-        const pages = data!.site.pages;
-        const generalEvents = data!.site.generalEvents;
+        if (!data?.site?.pages?.items?.[0]) {
+          return null;
+        }
+
+        const pages = data.site.pages;
+        const generalEvents = data.site.generalEvents;
         const currentPage = pages.items[0];
         const sections = currentPage.sections;
 
