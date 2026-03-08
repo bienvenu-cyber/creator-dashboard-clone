@@ -756,9 +756,10 @@
   .queue-cal-panel { max-width: 100%; }
   .queue-day-panel { display: none; }
 
-  /* Declarations */
-  .decl-left { width: 100%; }
-  .decl-right { display: none; }
+  /* Declarations - show both panels stacked on mobile */
+  .decl-layout { flex-direction: column; }
+  .decl-left { width: 100%; border-right: none; border-bottom: 1px solid var(--of-border); }
+  .decl-right { border-top: 1px solid var(--of-border); }
 
   /* Home */
   .home-center { max-width: 100%; border-right: none; }
