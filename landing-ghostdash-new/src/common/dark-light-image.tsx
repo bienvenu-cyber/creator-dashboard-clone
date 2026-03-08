@@ -61,6 +61,8 @@ export function DarkLightImageAutoscale(props: DarkLightImageProps) {
   const [aspectRatioWidth, aspectRatioHeight] = (props.light.aspectRatio ?? "1/1")
     .split("/")
     .map(Number);
+  const aspectRatio = (aspectRatioWidth ?? 1) / (aspectRatioHeight ?? 1);
+  let logoStyle: "square" | "4/3" | "portrait" | "landscape";
 
   switch (true) {
     case aspectRatio <= 1.2:
