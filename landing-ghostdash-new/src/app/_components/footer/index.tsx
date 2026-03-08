@@ -23,8 +23,8 @@ export async function Footer() {
       ]}
     >
       {async ([{ site }]) => {
-        const { footer, settings } = site;
         "use server";
+        const { footer, settings } = site;
 
         return (
           <footer className="border-t border-border py-16 dark:border-dark-border">
