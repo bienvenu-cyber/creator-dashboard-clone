@@ -124,13 +124,12 @@ export default async function DynamicPage({
       {async ([data]) => {
         "use server";
 
-        if (!data?.site?.pages?.items?.[0]) {
+        const currentPage = data?.site?.pages?.items?.[0];
+        if (!currentPage) {
           return null;
         }
 
-        const pages = data.site.pages;
         const generalEvents = data.site.generalEvents;
-        const currentPage = pages.items[0];
         const sections = currentPage.sections;
 
         return (
