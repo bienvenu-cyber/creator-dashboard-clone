@@ -1,28 +1,25 @@
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { darkLightImageFragment, headingFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment, DarkLightImageFragment } from "@/lib/basehub/fragments";
 import { DarkLightImage } from "@/common/dark-light-image";
 
-export const bigFeatureFragment = fragmentOn("FeaturesBigImageComponent", {
-  _analyticsKey: true,
+export type BigFeature = {
+  _analyticsKey?: string;
   featuresBigImageList: {
     items: {
-      _title: true,
-      description: true,
+      _title: string;
+      description: string;
       icon: {
-        alt: true,
-        url: true,
-      },
-    },
-  },
-  heading: headingFragment,
-  image: darkLightImageFragment,
-});
-
-type BigFeature = fragmentOn.infer<typeof bigFeatureFragment>;
+        alt?: string | null;
+        url: string;
+      };
+    }[];
+  };
+  heading: HeadingFragment;
+  image: DarkLightImageFragment;
+};
 
 export function BigFeature({ featuresBigImageList, heading, image }: BigFeature) {
   return (

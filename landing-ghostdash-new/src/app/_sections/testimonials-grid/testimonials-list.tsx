@@ -5,7 +5,7 @@ import * as React from "react";
 import { Button } from "@/common/button";
 import type { QuoteFragment } from "@/lib/basehub/fragments";
 import { cx } from "class-variance-authority";
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 
 const ITEMS_PER_COLUMN = 3;
 
@@ -14,12 +14,10 @@ export function TestimonialsGridClient({ quotes }: { quotes: QuoteFragment[] }) 
 
   const filteredItems = React.useMemo(() => {
     if (showMore) return quotes;
-    // split in three
     const chunkSize = Math.ceil(quotes.length / 3);
     const itemsToDisplay: QuoteFragment[] = [];
 
     for (let i = 0; i < 3; i++) {
-      // Push the first 3 items for each column
       itemsToDisplay.push(
         ...quotes.slice(i * chunkSize, (i + 1) * chunkSize).slice(0, ITEMS_PER_COLUMN),
       );

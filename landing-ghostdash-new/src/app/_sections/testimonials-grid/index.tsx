@@ -1,16 +1,13 @@
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { headingFragment, quoteFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment, QuoteFragment } from "@/lib/basehub/fragments";
 
 import { TestimonialsGridClient } from "./testimonials-list";
 
-export const testimonialsGridFragment = fragmentOn("TestimonialsGridComponent", {
-  heading: headingFragment,
-  quotes: quoteFragment,
-});
-
-type TestimonialsGrid = fragmentOn.infer<typeof testimonialsGridFragment>;
+export type TestimonialsGrid = {
+  heading: HeadingFragment;
+  quotes: QuoteFragment[];
+};
 
 export function TestimonialsGrid({ heading, quotes }: TestimonialsGrid) {
   return (

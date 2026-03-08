@@ -5,35 +5,32 @@ import clsx from "clsx";
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
 import { ButtonLink } from "@/common/button";
-import { fragmentOn } from "basehub";
-import { headingFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment } from "@/lib/basehub/fragments";
 
 import s from "./pricing.module.scss";
 
-export const pricingPlanItemFragment = fragmentOn("PlanComponent", {
+export type PricingPlanItem = {
   plan: {
-    _id: true,
-    _title: true,
-    price: true,
-    billed: true,
-    isMostPopular: true,
+    _id: string;
+    _title: string;
+    price: string;
+    billed?: string;
+    isMostPopular?: boolean;
     list: {
       items: {
-        _title: true,
-        _id: true,
-      },
-    },
-  },
-});
+        _title: string;
+        _id: string;
+      }[];
+    };
+  };
+};
 
-export const pricingFragment = fragmentOn("PricingComponent", {
-  heading: headingFragment,
+export type Pricing = {
+  heading: HeadingFragment;
   plans: {
-    items: pricingPlanItemFragment,
-  },
-});
-
-type Pricing = fragmentOn.infer<typeof pricingFragment>;
+    items: PricingPlanItem[];
+  };
+};
 
 export function Pricing(pricing: Pricing) {
   return (
@@ -49,8 +46,6 @@ export function Pricing(pricing: Pricing) {
     </Section>
   );
 }
-
-type PricingPlanItem = fragmentOn.infer<typeof pricingPlanItemFragment>;
 
 function PricingCard(item: PricingPlanItem["plan"]) {
   return (
