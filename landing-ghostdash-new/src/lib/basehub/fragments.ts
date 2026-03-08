@@ -8,7 +8,7 @@ export type HeadingFragment = {
   title: string;
   subtitle?: string | null;
   tag?: string | null;
-  align?: string | null;
+  align?: "center" | "left" | "right" | "none" | null;
 };
 
 /* -------------------------------------------------------------------------- */
