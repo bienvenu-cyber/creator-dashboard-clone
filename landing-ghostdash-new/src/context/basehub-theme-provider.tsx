@@ -25,10 +25,16 @@ function anyColorToRgb(color: string) {
 export function BaseHubThemeProvider() {
   return (
     <Pump queries={[{ site: { settings: { theme: themeFragment } } }]}>
-      {async ([data]) => {
+      {async (pumpData) => {
         "use server";
-        const accent = colors[data.site.settings.theme.accent];
-        const grayScale = colors[data.site.settings.theme.grayScale];
+        const data = pumpData?.[0];
+        const theme = data?.site?.settings?.theme;
+        if (!theme) {
+          return null;
+        }
+
+        const accent = colors[theme.accent];
+        const grayScale = colors[theme.grayScale];
 
         const css = Object.entries(accent).map(([key, value]) => {
           const rgb = anyColorToRgb(value);
