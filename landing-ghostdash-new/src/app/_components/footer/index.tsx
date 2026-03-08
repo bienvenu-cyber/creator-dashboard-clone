@@ -22,8 +22,13 @@ export async function Footer() {
         },
       ]}
     >
-      {async ([{ site }]) => {
+      {async (data) => {
         "use server";
+        const site = data?.[0]?.site;
+        if (!site) {
+          return null;
+        }
+
         const { footer, settings } = site;
 
         return (

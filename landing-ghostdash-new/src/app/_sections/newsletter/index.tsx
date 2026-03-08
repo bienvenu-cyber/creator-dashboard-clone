@@ -15,8 +15,13 @@ export function Newsletter() {
         },
       ]}
     >
-      {async ([{ site }]) => {
+      {async (data) => {
         "use server";
+
+        const site = data?.[0]?.site;
+        if (!site) {
+          return null;
+        }
 
         const emailInput = site.footer.newsletter.submissions.schema.find(
           (field) => field.type === "email",
