@@ -1,45 +1,38 @@
-import { fragmentOn } from "basehub";
-import { headingFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment } from "@/lib/basehub/fragments";
 
-export const planFragment = fragmentOn("PricingPlanComponent", {
-  _id: true,
-  _title: true,
-  price: true,
-  isMostPopular: true,
-});
+export type PlanFragment = {
+  _id: string;
+  _title: string;
+  price: string;
+  isMostPopular?: boolean;
+};
 
-export const valueFragment = fragmentOn("ValueComponent", {
-  _id: true,
-  plan: planFragment,
-  value: {
-    __typename: true,
-    on_BooleanComponent: {
-      _id: true,
-      boolean: true,
-    },
-    on_CustomTextComponent: {
-      _id: true,
-      text: true,
-    },
-  },
-});
+export type ValueFragment = {
+  _id: string;
+  plan: PlanFragment;
+  value?: {
+    __typename: string;
+    boolean?: boolean;
+    text?: string;
+  } | null;
+};
 
-export const pricingTableFragment = fragmentOn("PricingTableComponent", {
-  heading: headingFragment,
+export type PricingTableFragment = {
+  heading: HeadingFragment;
   categories: {
     items: {
-      _id: true,
-      _title: true,
+      _id: string;
+      _title: string;
       features: {
         items: {
-          _id: true,
-          _title: true,
-          tooltip: true,
+          _id: string;
+          _title: string;
+          tooltip?: string | null;
           values: {
-            items: valueFragment,
-          },
-        },
-      },
-    },
-  },
-});
+            items: ValueFragment[];
+          };
+        }[];
+      };
+    }[];
+  };
+};

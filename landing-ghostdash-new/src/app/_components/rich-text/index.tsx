@@ -1,8 +1,6 @@
-import { RichText, type RichTextProps } from "basehub/react-rich-text";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { cva } from "class-variance-authority";
 
-import { fragmentOn } from "basehub";
 import s from "./rich-text.module.scss";
 import Image from "next/image";
 import clsx from "clsx";
@@ -22,13 +20,12 @@ export const richTextClasses = clsx(
   s["rich-text"],
 );
 
-// @ts-expect-error Code won't match props
-export const richTextBaseComponents: RichTextProps["components"] = {
+export const richTextBaseComponents: Record<string, React.ComponentType<any>> = {
   code: Code,
-  pre: ({ children }) => <>{children}</>,
-  b: ({ children }) => <strong>{children}</strong>,
-  img: (props) => <RichTextImage {...props} />,
-  video: (props) => <RichTextVideo {...props} />,
+  pre: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  b: ({ children }: { children: React.ReactNode }) => <strong>{children}</strong>,
+  img: (props: any) => <RichTextImage {...props} />,
+  video: (props: any) => <RichTextVideo {...props} />,
 };
 
 function Code({
@@ -50,16 +47,16 @@ function Code({
     return <pre className="rounded-lg border border-border dark:border-dark-border">{code}</pre>;
 }
 
-export const FaqItemComponentFragment = fragmentOn("FaqItemComponent", {
-  _id: true,
-  _idPath: true,
-  _title: true,
-  answer: true,
-});
+export type FaqItemComponentType = {
+  _id: string;
+  _idPath?: string;
+  _title: string;
+  answer: string;
+};
 
-type FaqItemComponentRichText = fragmentOn.infer<typeof FaqItemComponentFragment>;
+export const FaqItemComponentFragment = {} as any; // kept for compatibility
 
-export function FaqRichtextComponent({ answer, _title }: FaqItemComponentRichText) {
+export function FaqRichtextComponent({ answer, _title }: FaqItemComponentType) {
   return (
     <details className="group mb-2 flex flex-col gap-4 overflow-hidden rounded-lg border border-border bg-surface-secondary pb-1 dark:border-dark-border dark:bg-dark-surface-secondary">
       <summary className="flex cursor-pointer items-start text-pretty rounded-md p-3 pb-2 pl-6 font-medium text-text-primary outline-hidden ring-inset ring-accent-500 focus-visible:ring-3 dark:text-dark-text-primary">
@@ -73,21 +70,21 @@ export function FaqRichtextComponent({ answer, _title }: FaqItemComponentRichTex
   );
 }
 
-export const richTextCalloutComponentFragment = fragmentOn("RichTextCalloutComponent", {
-  _title: true,
-  type: true,
-  _id: true,
-  size: true,
-  content: {
+export type RichTextCalloutComponentType = {
+  _title: string;
+  type: string;
+  _id: string;
+  size?: string | null;
+  content?: {
     json: {
-      content: true,
-    },
-  },
-  __typename: true,
-  _idPath: true,
-});
+      content: any;
+    };
+  };
+  __typename?: string;
+  _idPath?: string;
+};
 
-type RichTextCalloutComponentFragment = fragmentOn.infer<typeof richTextCalloutComponentFragment>;
+export const richTextCalloutComponentFragment = {} as any; // kept for compatibility
 
 const $richTextCallout = cva(
   "gap-2 border border-accent-500/40 bg-accent-500/5 p-4 pl-3 rounded-xl",
@@ -108,13 +105,13 @@ export function RichTextCalloutComponent({
   _title,
   size,
   content,
-}: RichTextCalloutComponentFragment) {
+}: RichTextCalloutComponentType) {
   switch (size) {
     case "large":
       return (
         <article className={$richTextCallout({ size })} id={_title}>
           <div className={richTextClasses}>
-            <RichText components={richTextBaseComponents}>{content?.json.content}</RichText>
+            {content?.json.content ?? null}
           </div>
         </article>
       );
@@ -136,7 +133,7 @@ export function RichTextCalloutComponent({
             </svg>
           </div>
           <div className={clsx(richTextClasses)}>
-            <RichText components={richTextBaseComponents}>{content?.json.content}</RichText>
+            {content?.json.content ?? null}
           </div>
         </article>
       );

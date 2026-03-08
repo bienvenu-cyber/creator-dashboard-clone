@@ -6,13 +6,13 @@ import clsx from "clsx";
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
 import { ButtonLink } from "@/common/button";
-import { type fragmentOn } from "basehub";
 import { SimpleTooltip } from "@/common/tooltip";
 
 import { MobilePricingComparison } from "./mobile-pricing-comparison";
-import { type planFragment, type pricingTableFragment, type valueFragment } from "./fragments";
+import { type PlanFragment, type PricingTableFragment, type ValueFragment } from "./fragments";
 
-export type PricingTableProps = fragmentOn.infer<typeof pricingTableFragment>;
+export type PricingTableProps = PricingTableFragment;
+export type { PlanFragment };
 
 export function PricingTable(props: PricingTableProps) {
   const { heading, categories } = props;
@@ -57,11 +57,6 @@ export function PricingTable(props: PricingTableProps) {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                 Components                                 */
-/* -------------------------------------------------------------------------- */
-
-/* ------------------------------- Generic cell ------------------------------- */
 const $tableCell = cva("min-h-16 px-3 text-base flex items-center gap-1.5 font-normal", {
   variants: {
     align: {
@@ -105,8 +100,6 @@ function TableCell<T extends React.ElementType = "td">({
   );
 }
 
-/* ------------------------------ Feature Title ----------------------------- */
-
 function FeatureTitle(
   feature: PricingTableProps["categories"]["items"][0]["features"]["items"][0],
 ) {
@@ -128,8 +121,6 @@ function FeatureTitle(
     </th>
   );
 }
-
-/* ------------------------------ Category header ---------------------------- */
 
 function CategoryHeader({
   category,
@@ -157,10 +148,6 @@ function CategoryHeader({
   );
 }
 
-/* --------------------------------- Plan Header --------------------------------- */
-
-type ValueFragment = fragmentOn.infer<typeof valueFragment>;
-
 function PlanHeader({ plan }: { plan: PlanFragment | null }) {
   return plan ? (
     <th className="w-[1fr] pt-6 pb-2">
@@ -180,8 +167,6 @@ function PlanHeader({ plan }: { plan: PlanFragment | null }) {
     <th className="w-auto" />
   );
 }
-
-/* --------------------------------- Cell td (value) -------------------------------- */
 
 function FeatureValue({ value }: { value?: ValueFragment }) {
   return (
@@ -206,12 +191,6 @@ function FeatureValue({ value }: { value?: ValueFragment }) {
     </td>
   );
 }
-
-/* -------------------------------------------------------------------------- */
-/*                                    Utils                                   */
-/* -------------------------------------------------------------------------- */
-
-export type PlanFragment = fragmentOn.infer<typeof planFragment>;
 
 const extractPlans = (categories: PricingTableProps["categories"]) => {
   const plans = new Map<string, PlanFragment>();
