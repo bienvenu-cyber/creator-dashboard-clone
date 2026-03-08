@@ -1,30 +1,30 @@
-import { BaseHubImage } from "basehub/next-image";
+import { BaseHubImage } from "@/lib/static-image";
 
 import { Heading } from "@/common/heading";
 import { Section } from "@/common/layout";
-import { fragmentOn } from "basehub";
-import { buttonFragment, headingFragment } from "@/lib/basehub/fragments";
+import type { HeadingFragment } from "@/lib/basehub/fragments";
 import { TrackedButtonLink } from "@/app/_components/tracked_button";
-import { GeneralEvents } from "@/../basehub-types";
+import type { GeneralEvents } from "@/../basehub-types";
 
-export const featuresGridFragment = fragmentOn("FeaturesGridComponent", {
-  _analyticsKey: true,
+type FeaturesGrid = {
+  _analyticsKey?: string;
   featuresGridList: {
     items: {
-      _id: true,
-      _title: true,
-      description: true,
-      icon: {
-        alt: true,
-        url: true,
-      },
-    },
-  },
-  heading: headingFragment,
-  actions: buttonFragment,
-});
-
-type FeaturesGrid = fragmentOn.infer<typeof featuresGridFragment>;
+      _id: string;
+      _title: string;
+      description: string;
+      icon: any;
+    }[];
+  };
+  heading: HeadingFragment;
+  actions?: {
+    _id: string;
+    href: string;
+    label: string;
+    type: "primary" | "secondary" | "tertiary";
+    icon?: string | null;
+  }[];
+};
 
 export function FeaturesGrid({
   heading,

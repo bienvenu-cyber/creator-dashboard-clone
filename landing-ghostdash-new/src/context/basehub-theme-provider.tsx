@@ -1,11 +1,7 @@
-import { Pump } from "basehub/react-pump";
-import { fragmentOn } from "basehub";
-import colors from "tailwindcss/colors";
-import { oklch, rgb } from "culori";
-
-export const themeFragment = fragmentOn("Theme", { accent: true, grayScale: true });
-
-export type BaseHubTheme = fragmentOn.infer<typeof themeFragment>;
+export type BaseHubTheme = {
+  accent: string;
+  grayScale: string;
+};
 
 const CONTRAST_WARNING_COLORS: (keyof typeof colors)[] = [
   "amber",

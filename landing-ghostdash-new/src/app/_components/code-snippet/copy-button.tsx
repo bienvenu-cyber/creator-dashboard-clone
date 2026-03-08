@@ -1,6 +1,6 @@
 "use client";
 
-import { useCopyToClipboard } from "basehub/react-code-block/client";
+import * as React from "react";
 import { Button } from "@/common/button";
 import { ClipboardCopyIcon, CheckIcon } from "@radix-ui/react-icons";
 
