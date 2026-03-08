@@ -1,14 +1,11 @@
-import { fragmentOn } from "basehub";
-import { authorFragment, optimizedImageFragment } from "@/lib/basehub/fragments";
+import type { AuthorFragment, OptimizedImageFragment } from "@/lib/basehub/fragments";
 
-export const changelogListFragment = fragmentOn("ChangelogPostComponent", {
-  _id: true,
-  _title: true,
-  image: optimizedImageFragment,
-  authors: authorFragment,
-  excerpt: true,
-  _slug: true,
-  publishedAt: true,
-});
-
-export type ChangelogListFragment = fragmentOn.infer<typeof changelogListFragment>;
+export type ChangelogListFragment = {
+  _id: string;
+  _title: string;
+  image: OptimizedImageFragment;
+  authors: AuthorFragment[];
+  excerpt: string;
+  _slug: string;
+  publishedAt: string;
+};
