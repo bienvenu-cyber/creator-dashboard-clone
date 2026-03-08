@@ -50,7 +50,8 @@ export const pagesConfig = {
           },
         },
         title: "Create Professional Fake Dashboards Instantly",
-        subtitle: "Generate realistic dashboard screenshots for OnlyFans, MYM, Shopify, Stripe and more. Unlimited customization for content creators and agencies.",
+        subtitle:
+          "Generate realistic dashboard screenshots for OnlyFans, MYM, Shopify, Stripe and more. Unlimited customization for content creators and agencies.",
         actions: [
           {
             _id: "action-1",
@@ -73,25 +74,21 @@ export const pagesConfig = {
         subtitle: "Compatible with all major platforms",
         companies: [
           {
-            _id: "company-1",
             _title: "OnlyFans",
             image: { url: "/platforms/onlyfans.svg", alt: "OnlyFans" },
             url: null,
           },
           {
-            _id: "company-2",
             _title: "MYM",
             image: { url: "/platforms/mym.svg", alt: "MYM" },
             url: null,
           },
           {
-            _id: "company-3",
             _title: "Shopify",
             image: { url: "/platforms/shopify.svg", alt: "Shopify" },
             url: null,
           },
           {
-            _id: "company-4",
             _title: "Stripe",
             image: { url: "/platforms/stripe.svg", alt: "Stripe" },
             url: null,
@@ -103,75 +100,92 @@ export const pagesConfig = {
         _id: "features-1",
         _slug: "features",
         _analyticsKey: "features",
-        title: "Everything you need",
-        subtitle: "Powerful features for professional results",
-        features: {
+        heading: {
+          title: "Everything you need",
+          subtitle: "Powerful features for professional results",
+          tag: null,
+          align: "center" as const,
+        },
+        featuresGridList: {
           items: [
             {
               _id: "feature-1",
               _title: "Unlimited Dashboard Creation",
-              description: "Create as many dashboards as you need with no limits",
-              icon: "∞",
+              description:
+                "Create as many dashboards as you need with no limits",
+              icon: { url: "/icons/infinity.svg", alt: "Unlimited" },
             },
             {
               _id: "feature-2",
               _title: "Full Customization",
-              description: "Customize all metrics, dates, names and data fields",
-              icon: "🎨",
+              description:
+                "Customize all metrics, dates, names and data fields",
+              icon: { url: "/icons/customize.svg", alt: "Customize" },
             },
             {
               _id: "feature-3",
               _title: "High-Resolution Exports",
-              description: "Download professional quality screenshots instantly",
-              icon: "📸",
+              description:
+                "Download professional quality screenshots instantly",
+              icon: { url: "/icons/export.svg", alt: "Export" },
             },
             {
               _id: "feature-4",
               _title: "Add Your Branding",
-              description: "Personalize dashboards with your own branding",
-              icon: "🏷️",
+              description:
+                "Personalize dashboards with your own branding",
+              icon: { url: "/icons/brand.svg", alt: "Brand" },
             },
             {
               _id: "feature-5",
               _title: "Priority Email Support",
-              description: "Get help when you need it with priority support",
-              icon: "💬",
+              description:
+                "Get help when you need it with priority support",
+              icon: { url: "/icons/support.svg", alt: "Support" },
             },
             {
               _id: "feature-6",
               _title: "Cancel Anytime",
-              description: "No long-term commitment, cancel your subscription anytime",
-              icon: "✓",
+              description:
+                "No long-term commitment, cancel your subscription anytime",
+              icon: { url: "/icons/cancel.svg", alt: "Cancel" },
             },
           ],
         },
+        actions: [],
       },
       {
         __typename: "PricingComponent" as const,
         _id: "pricing-1",
         _slug: "pricing",
-        title: "Simple Pricing",
-        subtitle: "Monthly subscription with full access",
+        heading: {
+          title: "Simple Pricing",
+          subtitle: "Monthly subscription with full access",
+          tag: null,
+          align: "center" as const,
+        },
         plans: {
           items: [
             {
-              _id: "plan-1",
-              _title: "Monthly Subscription",
-              price: "€79",
-              description: "Per month - Cancel anytime",
-              features: [
-                "Unlimited dashboard creation",
-                "Full customization of all metrics",
-                "High-resolution exports",
-                "Add your own branding",
-                "Priority email support",
-                "Cancel anytime",
-              ],
-              cta: {
-                _id: "cta-plan-1",
-                href: "/subscribe",
-                label: "Subscribe Now",
-                type: "primary" as const,
+              plan: {
+                _id: "plan-1",
+                _title: "Monthly Subscription",
+                price: "€79",
+                billed: "Per month - Cancel anytime",
+                isMostPopular: true,
+                list: {
+                  items: [
+                    { _title: "Unlimited dashboard creation", _id: "f1" },
+                    {
+                      _title: "Full customization of all metrics",
+                      _id: "f2",
+                    },
+                    { _title: "High-resolution exports", _id: "f3" },
+                    { _title: "Add your own branding", _id: "f4" },
+                    { _title: "Priority email support", _id: "f5" },
+                    { _title: "Cancel anytime", _id: "f6" },
+                  ],
+                },
               },
             },
           ],
@@ -181,43 +195,40 @@ export const pagesConfig = {
         __typename: "FaqComponent" as const,
         _id: "faq-1",
         _slug: "faq",
-        layout: "accordion" as const,
-        title: "Frequently Asked Questions",
-        subtitle: "Everything you need to know",
+        heading: {
+          title: "Frequently Asked Questions",
+          subtitle: "Everything you need to know",
+          tag: null,
+          align: "center" as const,
+        },
         questions: {
           items: [
             {
-              _id: "q-1",
               _title: "What is GhostDash?",
               answer:
                 "GhostDash is a tool that allows you to create professional fake dashboard screenshots for various platforms like OnlyFans, MYM, Shopify, and Stripe. Perfect for content creators and agencies.",
             },
             {
-              _id: "q-2",
               _title: "How does the payment work?",
               answer:
                 "We accept cryptocurrency payments (BTC, ETH, USDT). After payment, upload a screenshot and we'll activate your account within 24 hours.",
             },
             {
-              _id: "q-3",
               _title: "Can I customize the data?",
               answer:
                 "Absolutely! You have full customization of all metrics, dates, names, amounts, and any data fields displayed on the dashboards.",
             },
             {
-              _id: "q-4",
               _title: "Can I cancel my subscription?",
               answer:
                 "Yes, you can cancel your subscription at any time. No long-term commitment required.",
             },
             {
-              _id: "q-5",
               _title: "What platforms are supported?",
               answer:
                 "We support OnlyFans, MYM, Shopify, Stripe, and more platforms. New dashboards are added regularly.",
             },
             {
-              _id: "q-6",
               _title: "How do I get support?",
               answer:
                 "All subscribers get priority email support. You can also contact us on Telegram for faster assistance.",
