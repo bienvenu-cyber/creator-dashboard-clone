@@ -25,6 +25,3 @@ dist-ssr
 
 # Dashboard screenshots (too large for git)
 dashboard-screenshots/
-
-# My-board local development files
-my-board/
