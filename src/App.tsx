@@ -32,14 +32,10 @@ const App = () => (
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             
             <Route path="/" element={<DashboardLayout />}>
-              <Route index element={<Navigate to="/my/notifications" replace />} />
+              <Route index element={<Navigate to="/my/statistics/overview/earnings" replace />} />
               <Route path="my/notifications" element={<NotificationsPage />} />
               <Route path="my/statements/earnings" element={<DeclarationsPage />} />
-              <Route path="my/statistics/statements/earnings" element={<StatisticsPage />} />
-              <Route path="my/statistics/overview/earnings" element={<StatisticsPage />} />
-              <Route path="my/statistics/engagement/posts" element={<StatisticsPage />} />
-              <Route path="my/statistics/reach/profile-visitors" element={<StatisticsPage />} />
-              <Route path="my/statistics/fans/subscriptions" element={<StatisticsPage />} />
+              <Route path="my/statistics/*" element={<StatisticsPage />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />
