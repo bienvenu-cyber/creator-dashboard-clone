@@ -11,17 +11,46 @@ const NAV_SCRIPT = `
   if (window.__navInjected) return;
   window.__navInjected = true;
   
-  var routes = ${JSON.stringify({
+  var routes = {
     Home: '/my/statistics/overview/earnings',
     Notifications: '/my/notifications',
     Statements: '/my/statements/earnings',
     Statistics: '/my/statistics/overview/earnings',
-  })};
+  };
 
   document.addEventListener('click', function(e) {
     var el = e.target;
     while (el && el !== document.body) {
+      // Check data-name attribute
       var name = el.getAttribute && el.getAttribute('data-name');
+      
+      // If element is a nav menu item, try to resolve by data-name or text content
+      if (el.classList && el.classList.contains('l-header__menu__item')) {
+        // Resolve route: by data-name first, then by text content
+        var route = null;
+        if (name && routes[name]) {
+          route = routes[name];
+        } else {
+          // Fallback: check text content of the menu item
+          var textEl = el.querySelector('.l-header__menu__item__text');
+          if (textEl) {
+            var text = textEl.textContent.trim();
+            if (routes[text]) route = routes[text];
+          }
+        }
+        if (route) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.parent.postMessage({ type: 'navigate', route: route }, '*');
+          return;
+        }
+        // Even if no route matched, prevent external navigation
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+      
+      // Legacy: check data-name on non-menu elements (sidebar)
       if (name && routes[name]) {
         e.preventDefault();
         e.stopPropagation();
