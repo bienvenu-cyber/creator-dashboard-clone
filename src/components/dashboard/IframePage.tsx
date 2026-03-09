@@ -417,7 +417,14 @@ const GHOSTDASH_SCRIPT = `
      }, 50);
    }
 
+  function isPanelOpen() {
+    var panel = document.getElementById('ghostdash-editor-panel');
+    return !!(panel && panel.getAttribute('data-open') === '1');
+  }
+
   function closePanel() {
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    pendingClickEvent = null;
     var panel = document.getElementById('ghostdash-editor-panel');
     if (panel) panel.removeAttribute('data-open');
     activeFields.forEach(function (f) { f.element.removeAttribute('data-gd-active'); });
