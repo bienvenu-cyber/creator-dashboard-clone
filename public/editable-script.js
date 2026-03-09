@@ -1,26 +1,42 @@
-(function() {
-  if (window.__navInjected) return;
-  window.__navInjected = true;
+(function () {
+  if (window.__ghostdashInjected) return;
+  window.__ghostdashInjected = true;
 
-  // ==========================================
-  // 1. CLEANUP: Hide artifacts & override FakeDash green styles
-  // ==========================================
+  // =====================================================
+  // GhostDash Inline Editor (iframe-safe)
+  // - keeps the nav bridge
+  // - adds Edit Mode to make MOST dashboard texts editable
+  // - persists values per page via localStorage
+  // =====================================================
+
+  // ---------- 1) Global cleanup styles (remove FakeDash green highlight, hide SingleFile infobar)
   var cleanupStyle = document.createElement('style');
+  cleanupStyle.id = 'ghostdash-cleanup-style';
   cleanupStyle.textContent = [
-    // Hide SingleFile infobar
-    'single-file-infobar { display: none !important; }',
-    // Override FakeDash green contenteditable styles with subtle, native-looking ones
-    '[contenteditable="true"] { border-radius: 3px !important; transition: background 0.15s ease !important; cursor: text !important; outline: none !important; border: none !important; box-shadow: none !important; }',
-    '[contenteditable="true"]:hover { background-color: rgba(0, 145, 234, 0.08) !important; box-shadow: none !important; border: none !important; }',
-    '[contenteditable="true"]:focus { background-color: rgba(0, 145, 234, 0.12) !important; box-shadow: 0 0 0 1.5px rgba(0, 145, 234, 0.4) !important; border: none !important; }',
-    // Kill the old green styles completely
-    '.editable[contenteditable="true"]:focus, a[contenteditable="true"]:focus { background-color: rgba(0, 145, 234, 0.12) !important; box-shadow: 0 0 0 1.5px rgba(0, 145, 234, 0.4) !important; border: none !important; }',
+    'single-file-infobar{display:none!important;}',
+
+    // Neutralize any existing green focus styles from old editors
+    '[contenteditable="true"]{outline:none!important;border:none!important;box-shadow:none!important;}',
+
+    // Our subtle editor styling (applies only while edit-mode is ON)
+    'html[data-ghostdash-edit-mode="on"] [contenteditable="true"]{border-radius:3px!important;cursor:text!important;}',
+    'html[data-ghostdash-edit-mode="on"] [contenteditable="true"]:hover{background-color:rgba(0,145,234,0.08)!important;}',
+    'html[data-ghostdash-edit-mode="on"] [contenteditable="true"]:focus{background-color:rgba(0,145,234,0.12)!important;box-shadow:0 0 0 1.5px rgba(0,145,234,0.4)!important;}',
+
+    // Toolbar
+    '#ghostdash-toolbar{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;gap:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
+    '#ghostdash-toolbar button{display:flex;align-items:center;gap:6px;padding:10px 14px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(0,0,0,.25);}',
+    '#ghostdash-edit-toggle{background:#252936;color:#e8eaed;border:1px solid #3a3f52;}',
+    '#ghostdash-edit-toggle[data-state="on"]{background:#00aff0;color:#fff;border-color:#00aff0;}',
+    '#ghostdash-save{background:#00aff0;color:#fff;}',
+    '#ghostdash-save:hover{background:#0091ea;transform:translateY(-1px);}',
+    '#ghostdash-reset{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
+    '#ghostdash-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
+    '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}}',
   ].join('\n');
   document.head.appendChild(cleanupStyle);
 
-  // ==========================================
-  // 2. NAVIGATION BRIDGE (iframe → parent React Router)
-  // ==========================================
+  // ---------- 2) Nav bridge (keep)
   var routes = {
     Home: '/my/statistics/overview/earnings',
     Notifications: '/my/notifications',
@@ -28,190 +44,279 @@
     Statistics: '/my/statistics/overview/earnings',
   };
 
-  document.addEventListener('click', function(e) {
-    var el = e.target;
-    // Don't intercept clicks on contenteditable elements
-    if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
-    while (el && el !== document.body) {
-      if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
-      var name = el.getAttribute && el.getAttribute('data-name');
-      if (el.classList && el.classList.contains('l-header__menu__item')) {
-        var route = null;
-        if (name && routes[name]) {
-          route = routes[name];
-        } else {
-          var textEl = el.querySelector('.l-header__menu__item__text');
-          if (textEl) {
-            var text = textEl.textContent.trim();
-            if (routes[text]) route = routes[text];
-          }
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
-        return;
-      }
-      if (name && routes[name]) {
-        e.preventDefault();
-        e.stopPropagation();
-        window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true);
+  document.addEventListener(
+    'click',
+    function (e) {
+      var target = e.target;
+      // Never intercept editing clicks
+      if (target && target.closest && target.closest('[contenteditable="true"]')) return;
 
-  // ==========================================
-  // 3. EDITABLE DATA PERSISTENCE (localStorage)
-  // ==========================================
-  var STORAGE_PREFIX = 'ghostdash_';
+      var el = target;
+      while (el && el !== document.body) {
+        if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
+
+        var name = el.getAttribute && el.getAttribute('data-name');
+        if (el.classList && el.classList.contains('l-header__menu__item')) {
+          var route = null;
+          if (name && routes[name]) {
+            route = routes[name];
+          } else {
+            var textEl = el.querySelector && el.querySelector('.l-header__menu__item__text');
+            if (textEl) {
+              var text = (textEl.textContent || '').trim();
+              if (routes[text]) route = routes[text];
+            }
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
+          return;
+        }
+        if (name && routes[name]) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
+          return;
+        }
+        el = el.parentElement;
+      }
+    },
+    true
+  );
+
+  // ---------- 3) Editor core
+  var STORAGE_PREFIX = 'ghostdash_editor_v2_';
   var pageName = getPageName();
+  var storageKey = STORAGE_PREFIX + pageName;
+  var editMode = false;
+  var saveTimer = null;
 
   function getPageName() {
     var path = window.location.pathname;
     if (path.indexOf('statistics') !== -1) return 'statistics';
     if (path.indexOf('statements') !== -1) return 'statements';
     if (path.indexOf('notifications') !== -1) return 'notifications';
-    // Fallback: use filename
     var parts = path.split('/');
     var file = parts[parts.length - 1] || 'page';
-    return file.replace('.html', '');
+    return file.replace('.html', '') || 'page';
   }
 
-  function getStorageKey() {
-    return STORAGE_PREFIX + pageName;
-  }
-
-  function getElementKey(el, index) {
-    // Build a stable key from tag + position + nearby class/id info
+  function isExcluded(el) {
+    if (!el || el.nodeType !== 1) return true;
     var tag = el.tagName.toLowerCase();
-    var parent = el.parentElement;
-    var parentClass = parent ? (parent.className || '').split(' ')[0] : '';
-    var parentId = parent ? (parent.id || '') : '';
-    var text = (el.textContent || '').trim().substring(0, 30);
-    // Use a combination for stability
-    return tag + '_' + (parentId || parentClass || 'root') + '_' + index;
+
+    // Ignore obvious non-text / risky nodes
+    if (
+      tag === 'script' ||
+      tag === 'style' ||
+      tag === 'noscript' ||
+      tag === 'svg' ||
+      tag === 'path' ||
+      tag === 'img' ||
+      tag === 'video' ||
+      tag === 'canvas' ||
+      tag === 'input' ||
+      tag === 'textarea' ||
+      tag === 'select' ||
+      tag === 'option'
+    )
+      return true;
+
+    // Keep navigation usable: don't make menu items editable
+    if (el.closest && el.closest('.l-sidebar__menu,.l-sidebar__menu__item,.l-header__menu,.l-header__menu__item')) return true;
+
+    // Avoid our toolbar
+    if (el.closest && el.closest('#ghostdash-toolbar')) return true;
+
+    return false;
   }
 
-  function getAllEditables() {
-    return document.querySelectorAll('[contenteditable="true"]');
+  function isLeafTextElement(el) {
+    if (!el) return false;
+    // Safer editing: require no element-children (only text nodes)
+    if (el.childElementCount && el.childElementCount > 0) return false;
+    var txt = (el.textContent || '').trim();
+    if (!txt) return false;
+    if (txt.length > 120) return false;
+
+    // Heuristics: numbers, currency, percent, dates, months, or short labels
+    var hasNumeric = /[0-9]/.test(txt);
+    var hasMoneyOrPct = /[$€£¥%]/.test(txt);
+    var looksLikeYear = /\b20\d{2}\b/.test(txt);
+    var looksLikeMonth = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\b/i.test(txt);
+    var looksLikeDate = /\b\d{1,2}[\/-]\d{1,2}([\/-]\d{2,4})?\b/.test(txt);
+    var shortText = txt.length <= 30;
+
+    return hasNumeric || hasMoneyOrPct || looksLikeYear || looksLikeMonth || looksLikeDate || shortText;
   }
 
-  function saveAllValues() {
-    var elements = getAllEditables();
-    var data = {};
-    elements.forEach(function(el, i) {
-      var key = getElementKey(el, i);
-      data[key] = el.innerHTML;
-    });
-    try {
-      localStorage.setItem(getStorageKey(), JSON.stringify(data));
-    } catch(e) {
-      console.warn('GhostDash: Failed to save', e);
+  function getDomPath(el) {
+    var parts = [];
+    var cur = el;
+    var depth = 0;
+    while (cur && cur.nodeType === 1 && cur !== document.body && depth < 8) {
+      var part = cur.tagName.toLowerCase();
+
+      if (cur.id) {
+        part += '#' + cssEscape(cur.id);
+        parts.unshift(part);
+        break;
+      }
+
+      // nth-of-type
+      var idx = 1;
+      var sib = cur;
+      while ((sib = sib.previousElementSibling)) {
+        if (sib.tagName === cur.tagName) idx++;
+      }
+      part += ':nth-of-type(' + idx + ')';
+      parts.unshift(part);
+
+      cur = cur.parentElement;
+      depth++;
     }
-    return Object.keys(data).length;
+    return parts.join('>');
   }
 
-  function loadAllValues() {
+  function cssEscape(s) {
+    // Minimal escape for ids
+    return String(s).replace(/([ #;?%&,.+*~\\':"!^$\[\]()=>|\/])/g, '\\$1');
+  }
+
+  function collectCandidates() {
+    var selector = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6';
+    var nodes = document.querySelectorAll(selector);
+    var out = [];
+    nodes.forEach(function (el) {
+      if (isExcluded(el)) return;
+      if (!isLeafTextElement(el)) return;
+      out.push(el);
+    });
+    return out;
+  }
+
+  function indexCandidates(candidates) {
+    // attach stable key for persistence
+    candidates.forEach(function (el) {
+      if (!el.getAttribute('data-gd-key')) {
+        el.setAttribute('data-gd-key', getDomPath(el));
+      }
+    });
+  }
+
+  function applySavedValues(candidates) {
     var raw;
     try {
-      raw = localStorage.getItem(getStorageKey());
-    } catch(e) {
+      raw = localStorage.getItem(storageKey);
+    } catch (e) {
       return 0;
     }
     if (!raw) return 0;
+
     var data;
     try {
       data = JSON.parse(raw);
-    } catch(e) {
+    } catch (e) {
       return 0;
     }
-    var elements = getAllEditables();
+
     var count = 0;
-    elements.forEach(function(el, i) {
-      var key = getElementKey(el, i);
-      if (data[key] !== undefined && data[key] !== el.innerHTML) {
-        el.innerHTML = data[key];
+    candidates.forEach(function (el) {
+      var k = el.getAttribute('data-gd-key');
+      if (!k) return;
+      if (data[k] !== undefined && data[k] !== (el.textContent || '')) {
+        el.textContent = data[k];
         count++;
       }
     });
     return count;
   }
 
-  function resetAllValues() {
+  function saveValuesDebounced() {
+    if (saveTimer) window.clearTimeout(saveTimer);
+    saveTimer = window.setTimeout(function () {
+      saveValues();
+    }, 200);
+  }
+
+  function saveValues() {
+    var data = {};
+    var candidates = collectCandidates();
+    indexCandidates(candidates);
+    candidates.forEach(function (el) {
+      var k = el.getAttribute('data-gd-key');
+      if (!k) return;
+      data[k] = el.textContent || '';
+    });
     try {
-      localStorage.removeItem(getStorageKey());
-    } catch(e) {}
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    } catch (e) {
+      console.warn('GhostDash: save failed', e);
+    }
+    showToast('✅ Sauvegardé');
+    return Object.keys(data).length;
+  }
+
+  function resetValues() {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (e) {}
     location.reload();
   }
 
-  // ==========================================
-  // 4. FLOATING TOOLBAR (Save / Reset)
-  // ==========================================
+  function setEditMode(on) {
+    editMode = !!on;
+    document.documentElement.setAttribute('data-ghostdash-edit-mode', editMode ? 'on' : 'off');
+
+    var candidates = collectCandidates();
+    indexCandidates(candidates);
+
+    candidates.forEach(function (el) {
+      if (editMode) {
+        el.setAttribute('contenteditable', 'true');
+        el.setAttribute('spellcheck', 'false');
+      } else {
+        el.removeAttribute('contenteditable');
+      }
+    });
+
+    var toggle = document.getElementById('ghostdash-edit-toggle');
+    if (toggle) toggle.setAttribute('data-state', editMode ? 'on' : 'off');
+
+    showToast(editMode ? '✏️ Edit mode ON' : '🔒 Edit mode OFF');
+  }
+
   function createToolbar() {
-    var toolbar = document.createElement('div');
-    toolbar.id = 'ghostdash-toolbar';
-    toolbar.innerHTML = [
-      '<button id="ghostdash-save" title="Sauvegarder les modifications">',
-      '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+    if (document.getElementById('ghostdash-toolbar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'ghostdash-toolbar';
+    bar.innerHTML = [
+      '<button id="ghostdash-edit-toggle" data-state="off" title="Activer/Désactiver le mode édition">',
+      '  <span>Edit</span>',
+      '</button>',
+      '<button id="ghostdash-save" title="Sauvegarder">',
       '  <span>Sauvegarder</span>',
       '</button>',
-      '<button id="ghostdash-reset" title="Réinitialiser">',
-      '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>',
+      '<button id="ghostdash-reset" title="Réinitialiser cette page">',
       '  <span>Reset</span>',
       '</button>',
     ].join('');
 
-    var toolbarStyle = document.createElement('style');
-    toolbarStyle.textContent = [
-      '#ghostdash-toolbar {',
-      '  position: fixed; bottom: 20px; right: 20px; z-index: 9999;',
-      '  display: flex; gap: 8px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;',
-      '}',
-      '#ghostdash-toolbar button {',
-      '  display: flex; align-items: center; gap: 6px;',
-      '  padding: 10px 18px; border: none; border-radius: 10px;',
-      '  font-size: 13px; font-weight: 600; cursor: pointer;',
-      '  transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.3);',
-      '}',
-      '#ghostdash-save {',
-      '  background: #00aff0; color: white;',
-      '}',
-      '#ghostdash-save:hover {',
-      '  background: #0091ea; transform: translateY(-1px);',
-      '  box-shadow: 0 6px 20px rgba(0,175,240,0.4);',
-      '}',
-      '#ghostdash-reset {',
-      '  background: #252936; color: #9ca3af; border: 1px solid #3a3f52 !important;',
-      '}',
-      '#ghostdash-reset:hover {',
-      '  background: #ef4444; color: white; border-color: #ef4444 !important;',
-      '}',
-      '@media (max-width: 640px) {',
-      '  #ghostdash-toolbar { bottom: 70px; right: 12px; }',
-      '  #ghostdash-toolbar button { padding: 8px 14px; font-size: 12px; }',
-      '  #ghostdash-toolbar button span { display: none; }',
-      '}',
-    ].join('\n');
+    document.body.appendChild(bar);
 
-    document.head.appendChild(toolbarStyle);
-    document.body.appendChild(toolbar);
-
-    document.getElementById('ghostdash-save').addEventListener('click', function() {
-      var count = saveAllValues();
-      showToast('✅ ' + count + ' éléments sauvegardés');
+    document.getElementById('ghostdash-edit-toggle').addEventListener('click', function () {
+      setEditMode(!editMode);
     });
 
-    document.getElementById('ghostdash-reset').addEventListener('click', function() {
-      if (confirm('Réinitialiser toutes les modifications de cette page ?')) {
-        resetAllValues();
-      }
+    document.getElementById('ghostdash-save').addEventListener('click', function () {
+      saveValues();
+    });
+
+    document.getElementById('ghostdash-reset').addEventListener('click', function () {
+      if (confirm('Réinitialiser toutes les modifications de cette page ?')) resetValues();
     });
   }
 
-  // ==========================================
-  // 5. TOAST NOTIFICATION
-  // ==========================================
   function showToast(msg) {
     var existing = document.getElementById('ghostdash-toast');
     if (existing) existing.remove();
@@ -219,52 +324,59 @@
     var toast = document.createElement('div');
     toast.id = 'ghostdash-toast';
     toast.textContent = msg;
-    toast.style.cssText = [
-      'position:fixed; bottom:80px; right:20px; z-index:10001;',
-      'background:#10b981; color:white; padding:12px 20px;',
-      'border-radius:8px; font-size:14px; font-weight:500;',
-      'box-shadow:0 8px 24px rgba(0,0,0,0.3);',
-      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;',
-      'animation:ghostdash-toast-in 0.25s ease;',
-    ].join('');
-
-    if (!document.getElementById('ghostdash-toast-anim')) {
-      var animStyle = document.createElement('style');
-      animStyle.id = 'ghostdash-toast-anim';
-      animStyle.textContent = '@keyframes ghostdash-toast-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(animStyle);
-    }
-
+    toast.style.cssText =
+      'position:fixed;bottom:80px;right:20px;z-index:10001;background:#10b981;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
     document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 2500);
+    setTimeout(function () {
+      toast.remove();
+    }, 1800);
   }
 
-  // ==========================================
-  // 6. INIT
-  // ==========================================
+  function attachAutosave() {
+    document.addEventListener(
+      'input',
+      function (e) {
+        if (!editMode) return;
+        var t = e.target;
+        if (t && t.getAttribute && t.getAttribute('contenteditable') === 'true') {
+          saveValuesDebounced();
+        }
+      },
+      true
+    );
+
+    document.addEventListener(
+      'focusout',
+      function (e) {
+        if (!editMode) return;
+        var t = e.target;
+        if (t && t.getAttribute && t.getAttribute('contenteditable') === 'true') {
+          saveValuesDebounced();
+        }
+      },
+      true
+    );
+  }
+
   function init() {
-    // Load saved values
-    var restored = loadAllValues();
-    if (restored > 0) {
-      console.log('💎 GhostDash: ' + restored + ' valeurs restaurées (' + pageName + ')');
-    }
+    document.documentElement.setAttribute('data-ghostdash-edit-mode', 'off');
 
-    // Create toolbar
     createToolbar();
+    attachAutosave();
 
-    // Auto-save on blur of any contenteditable
-    document.addEventListener('focusout', function(e) {
-      if (e.target && e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') {
-        saveAllValues();
-      }
-    }, true);
+    // Index  apply saved values (without turning edit mode on)
+    var candidates = collectCandidates();
+    indexCandidates(candidates);
+    var restored = applySavedValues(candidates);
 
-    console.log('💎 GhostDash Editor ready (' + pageName + ', ' + getAllEditables().length + ' editable elements)');
+    console.log('💎 GhostDash Editor v2 ready:', { pageName: pageName, candidates: candidates.length, restored: restored });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 300); });
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(init, 350);
+    });
   } else {
-    setTimeout(init, 300);
+    setTimeout(init, 350);
   }
 })();
