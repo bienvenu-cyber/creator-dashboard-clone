@@ -145,16 +145,24 @@ const GHOSTDASH_SCRIPT = `
       if (parts.length !== 2) return;
       var sel = parts[0], idx = parseInt(parts[1], 10);
       if (!sel || isNaN(idx)) return;
-      try {
-        var el = document.querySelector(sel);
-        if (!el) return;
-        var nodes = getTextNodes(el);
-        if (!nodes[idx]) return;
-        var orig = nodes[idx].nodeValue || '';
-        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-        nodes[idx].nodeValue = ((m && m[1]) || '') + String(patches[k]) + ((m && m[3]) || '');
-        applied++;
-      } catch(e) {}
+       try {
+         var el = document.querySelector(sel);
+         if (!el) return;
+         var nodes = getTextNodes(el);
+         var newVal = String(patches[k]);
+         if (nodes[idx]) {
+           var orig = nodes[idx].nodeValue || '';
+           var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+           nodes[idx].nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
+           // Also set textContent for simple elements
+           if (el.childElementCount === 0 && el.childNodes.length === 1) {
+             el.textContent = newVal;
+           }
+         } else if (el.childElementCount === 0) {
+           el.textContent = newVal;
+         }
+         applied++;
+       } catch(e) {}
     });
     return applied;
   }
