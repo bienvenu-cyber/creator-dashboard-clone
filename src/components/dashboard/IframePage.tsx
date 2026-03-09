@@ -417,7 +417,14 @@ const GHOSTDASH_SCRIPT = `
      }, 50);
    }
 
+  function isPanelOpen() {
+    var panel = document.getElementById('ghostdash-editor-panel');
+    return !!(panel && panel.getAttribute('data-open') === '1');
+  }
+
   function closePanel() {
+    if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+    pendingClickEvent = null;
     var panel = document.getElementById('ghostdash-editor-panel');
     if (panel) panel.removeAttribute('data-open');
     activeFields.forEach(function (f) { f.element.removeAttribute('data-gd-active'); });
@@ -519,31 +526,40 @@ const GHOSTDASH_SCRIPT = `
        handleEditTrigger(e);
      }, true);
 
-     // Single click: delayed edit (to distinguish from dblclick and nav clicks)
-     document.addEventListener('click', function (e) {
-       var target = e.target;
-       // Skip toolbar/panel/nav elements
-       if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
-       // Skip nav elements
-       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
-       // Skip links
-       var link = target && target.closest && target.closest('a[href]');
-       if (link) return;
-       // Only trigger on candidates
-       var candidate = target && target.closest && target.closest('[data-gd-candidate="1"]');
-       if (!candidate) return;
+    // Single click: close panel on outside click OR delayed edit on candidate
+    document.addEventListener('click', function (e) {
+      var target = e.target;
+      var inPanel = target && target.closest && target.closest('#ghostdash-editor-panel');
+      var inToolbar = target && target.closest && target.closest('#ghostdash-toolbar');
 
-       // Use a delay to let dblclick cancel single click
-       pendingClickEvent = e;
-       if (clickTimer) clearTimeout(clickTimer);
-       clickTimer = setTimeout(function () {
-         if (pendingClickEvent) {
-           handleEditTrigger(pendingClickEvent);
-           pendingClickEvent = null;
-         }
-         clickTimer = null;
-       }, 300);
-     }, true);
+      // Close when clicking anywhere outside panel/toolbar
+      if (isPanelOpen() && !inPanel && !inToolbar) {
+        closePanel();
+      }
+
+      // Skip toolbar/panel/nav elements for edit trigger
+      if (inPanel || inToolbar) return;
+      if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
+
+      // Skip links
+      var link = target && target.closest && target.closest('a[href]');
+      if (link) return;
+
+      // Only trigger edit on candidates
+      var candidate = target && target.closest && target.closest('[data-gd-candidate="1"]');
+      if (!candidate) return;
+
+      // Use a delay to let dblclick cancel single click
+      pendingClickEvent = e;
+      if (clickTimer) clearTimeout(clickTimer);
+      clickTimer = setTimeout(function () {
+        if (pendingClickEvent) {
+          handleEditTrigger(pendingClickEvent);
+          pendingClickEvent = null;
+        }
+        clickTimer = null;
+      }, 300);
+    }, true);
 
      document.addEventListener('keydown', function (e) {
        if (e.key === 'Escape') closePanel();
