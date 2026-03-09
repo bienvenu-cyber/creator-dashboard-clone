@@ -594,7 +594,7 @@ const GHOSTDASH_SCRIPT = `
     var applied = applyPatches();
     var marked = markCandidates();
     showHint();
-    console.log('\\ud83d\\udc8e GhostDash Editor v5 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
+    console.log('\\ud83d\\udc8e GhostDash Editor v6 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
   }
 
   if (document.readyState === 'loading') {
