@@ -9,6 +9,7 @@ const NAV_SCRIPT = `
 (function() {
   if (window.__navInjected) return;
   window.__navInjected = true;
+  console.log('[NAV_SCRIPT] Injected successfully');
 
   var routes = {
     Home: '/my/statistics/overview/earnings',
@@ -18,9 +19,11 @@ const NAV_SCRIPT = `
   };
 
   document.addEventListener('click', function(e) {
+    console.log('[NAV_SCRIPT] Click detected on:', e.target);
     var el = e.target;
     while (el && el !== document.body) {
       var name = el.getAttribute && el.getAttribute('data-name');
+      console.log('[NAV_SCRIPT] Checking element:', el.tagName, 'data-name:', name, 'classes:', el.className);
       if (el.classList && el.classList.contains('l-header__menu__item')) {
         var route = null;
         if (name && routes[name]) {
@@ -32,12 +35,14 @@ const NAV_SCRIPT = `
             if (routes[text]) route = routes[text];
           }
         }
+        console.log('[NAV_SCRIPT] Menu item clicked, route:', route);
         e.preventDefault();
         e.stopPropagation();
         if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
         return;
       }
       if (name && routes[name]) {
+        console.log('[NAV_SCRIPT] data-name matched, route:', routes[name]);
         e.preventDefault();
         e.stopPropagation();
         window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
