@@ -502,16 +502,35 @@
         if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor')) return;
 
         var textNode = getTextNodeFromPoint(e);
+        if (!textNode) {
+          // Fallback: if caretFromPoint missed, try getting text from e.target directly
+          if (target && !isExcludedElement(target)) {
+            var texts = getTextNodes(target);
+            if (texts.length === 1) textNode = texts[0];
+          }
+        }
         if (!textNode) return;
 
-        // Choose a safe anchor element close to the text node
-        var anchor = textNode.parentElement;
-        while (anchor && anchor !== document.body) {
-          if (anchor.getAttribute && anchor.getAttribute('data-gd-candidate') === '1') break;
-          if (isExcludedElement(anchor)) return;
-          anchor = anchor.parentElement;
+        // Use the text node's direct parent as anchor (most precise for patching)
+        var directParent = textNode.parentElement;
+        var anchor = null;
+
+        // Walk up to find a candidate ancestor
+        var walk = directParent;
+        while (walk && walk !== document.body) {
+          if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') {
+            anchor = walk;
+            break;
+          }
+          walk = walk.parentElement;
         }
-        if (!anchor || anchor === document.body) return;
+
+        // Fallback: use direct parent if it's a reasonable element
+        if (!anchor && directParent && !isExcludedElement(directParent)) {
+          anchor = directParent;
+        }
+
+        if (!anchor) return;
 
         e.preventDefault();
         e.stopPropagation();
