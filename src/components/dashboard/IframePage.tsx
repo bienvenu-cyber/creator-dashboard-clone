@@ -25,29 +25,29 @@ const GHOSTDASH_SCRIPT = `
     '#ghostdash-toolbar button{display:flex;align-items:center;gap:6px;padding:10px 14px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(0,0,0,.25);}',
     '#ghostdash-reset{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
     '#ghostdash-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
-    '#ghostdash-editor-panel{position:fixed;z-index:10002;min-width:260px;max-width:380px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
-    '#ghostdash-editor-panel[data-open="1"]{display:block;}',
-    '#ghostdash-editor-panel .gd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;border-bottom:1px solid #2a2e3d;}',
-    '#ghostdash-editor-panel .gd-header-title{font-size:13px;font-weight:800;color:#00aff0;}',
-    '#ghostdash-editor-panel .gd-header-close{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:2px 6px;border-radius:6px;}',
-    '#ghostdash-editor-panel .gd-header-close:hover{background:#252936;color:#e8eaed;}',
-    '#ghostdash-editor-panel .gd-fields{padding:10px 14px;max-height:300px;overflow-y:auto;}',
-    '#ghostdash-editor-panel .gd-field{margin-bottom:10px;}',
-    '#ghostdash-editor-panel .gd-field:last-child{margin-bottom:0;}',
-    '#ghostdash-editor-panel .gd-field-label{font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}',
-    '#ghostdash-editor-panel .gd-field-input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:9px 12px;font-size:14px;outline:none;}',
-    '#ghostdash-editor-panel .gd-field-input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15);}',
-    '#ghostdash-editor-panel .gd-footer{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 12px;border-top:1px solid #2a2e3d;}',
-    '#ghostdash-editor-panel .gd-btn{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:all .15s ease;}',
-    '#ghostdash-editor-panel .gd-btn-save{background:#00aff0;color:#fff;}',
-    '#ghostdash-editor-panel .gd-btn-save:hover{background:#0091ea;}',
-    '#ghostdash-editor-panel .gd-btn-reset{background:transparent;color:#ef4444;border-color:#3a3f52;}',
-    '#ghostdash-editor-panel .gd-btn-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
-    '#ghostdash-editor-panel .gd-btn-close{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
-    '#ghostdash-editor-panel .gd-btn-close:hover{background:#252936;color:#e8eaed;}',
-    '#ghostdash-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#252936;color:#9ca3af;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
-    '#ghostdash-hint[data-show="1"]{opacity:1;}',
-    '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:10px!important;right:10px!important;max-width:none!important;}}',
+     '#ghostdash-editor-panel{position:fixed;z-index:10002;min-width:240px;max-width:380px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;}',
+     '#ghostdash-editor-panel[data-open="1"]{display:flex;}',
+     '#ghostdash-editor-panel .gd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;border-bottom:1px solid #2a2e3d;flex-shrink:0;}',
+     '#ghostdash-editor-panel .gd-header-title{font-size:13px;font-weight:800;color:#00aff0;}',
+     '#ghostdash-editor-panel .gd-header-close{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:2px 6px;border-radius:6px;}',
+     '#ghostdash-editor-panel .gd-header-close:hover{background:#252936;color:#e8eaed;}',
+     '#ghostdash-editor-panel .gd-fields{padding:10px 14px;overflow-y:auto;flex:1;min-height:0;}',
+     '#ghostdash-editor-panel .gd-field{margin-bottom:10px;}',
+     '#ghostdash-editor-panel .gd-field:last-child{margin-bottom:0;}',
+     '#ghostdash-editor-panel .gd-field-label{font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}',
+     '#ghostdash-editor-panel .gd-field-input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:9px 12px;font-size:14px;outline:none;}',
+     '#ghostdash-editor-panel .gd-field-input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15);}',
+     '#ghostdash-editor-panel .gd-footer{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 12px;border-top:1px solid #2a2e3d;flex-shrink:0;}',
+     '#ghostdash-editor-panel .gd-btn{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:all .15s ease;}',
+     '#ghostdash-editor-panel .gd-btn-save{background:#00aff0;color:#fff;}',
+     '#ghostdash-editor-panel .gd-btn-save:hover{background:#0091ea;}',
+     '#ghostdash-editor-panel .gd-btn-reset{background:transparent;color:#ef4444;border-color:#3a3f52;}',
+     '#ghostdash-editor-panel .gd-btn-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
+     '#ghostdash-editor-panel .gd-btn-close{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
+     '#ghostdash-editor-panel .gd-btn-close:hover{background:#252936;color:#e8eaed;}',
+     '#ghostdash-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#252936;color:#9ca3af;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
+     '#ghostdash-hint[data-show="1"]{opacity:1;}',
+     '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;max-width:none!important;max-height:70vh!important;border-radius:14px 14px 14px 14px;}}',
   ].join('\\n');
   document.head.appendChild(s);
 
@@ -145,16 +145,24 @@ const GHOSTDASH_SCRIPT = `
       if (parts.length !== 2) return;
       var sel = parts[0], idx = parseInt(parts[1], 10);
       if (!sel || isNaN(idx)) return;
-      try {
-        var el = document.querySelector(sel);
-        if (!el) return;
-        var nodes = getTextNodes(el);
-        if (!nodes[idx]) return;
-        var orig = nodes[idx].nodeValue || '';
-        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-        nodes[idx].nodeValue = ((m && m[1]) || '') + String(patches[k]) + ((m && m[3]) || '');
-        applied++;
-      } catch(e) {}
+       try {
+         var el = document.querySelector(sel);
+         if (!el) return;
+         var nodes = getTextNodes(el);
+         var newVal = String(patches[k]);
+         if (nodes[idx]) {
+           var orig = nodes[idx].nodeValue || '';
+           var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+           nodes[idx].nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
+           // Also set textContent for simple elements
+           if (el.childElementCount === 0 && el.childNodes.length === 1) {
+             el.textContent = newVal;
+           }
+         } else if (el.childElementCount === 0) {
+           el.textContent = newVal;
+         }
+         applied++;
+       } catch(e) {}
     });
     return applied;
   }
@@ -337,48 +345,77 @@ const GHOSTDASH_SCRIPT = `
     });
   }
 
-  function openPanel(fields, x, y) {
-    createEditorPanel();
-    activeFields = fields;
-    // Mark active elements
-    fields.forEach(function (f) { f.element.setAttribute('data-gd-active', '1'); });
+   function openPanel(fields, x, y) {
+     createEditorPanel();
+     activeFields = fields;
+     // Mark active elements
+     fields.forEach(function (f) { f.element.setAttribute('data-gd-active', '1'); });
 
-    var container = document.getElementById('gd-fields-container');
-    container.innerHTML = '';
-    fields.forEach(function (f, i) {
-      var div = document.createElement('div');
-      div.className = 'gd-field';
-      var labelDiv = document.createElement('div');
-      labelDiv.className = 'gd-field-label';
-      labelDiv.textContent = f.label;
-      labelDiv.title = f.label;
-      var input = document.createElement('input');
-      input.className = 'gd-field-input';
-      input.type = 'text';
-      input.value = f.value;
-      input.setAttribute('data-field-index', String(i));
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); commitPanel(); }
-        if (e.key === 'Escape') { e.preventDefault(); closePanel(); }
-      });
-      div.appendChild(labelDiv);
-      div.appendChild(input);
-      container.appendChild(div);
-    });
+     var container = document.getElementById('gd-fields-container');
+     container.innerHTML = '';
+     fields.forEach(function (f, i) {
+       var div = document.createElement('div');
+       div.className = 'gd-field';
+       var labelDiv = document.createElement('div');
+       labelDiv.className = 'gd-field-label';
+       labelDiv.textContent = f.label;
+       labelDiv.title = f.label;
+       var input = document.createElement('input');
+       input.className = 'gd-field-input';
+       input.type = 'text';
+       input.value = f.value;
+       input.setAttribute('data-field-index', String(i));
+       input.addEventListener('keydown', function (e) {
+         if (e.key === 'Enter') { e.preventDefault(); commitPanel(); }
+         if (e.key === 'Escape') { e.preventDefault(); closePanel(); }
+       });
+       div.appendChild(labelDiv);
+       div.appendChild(input);
+       container.appendChild(div);
+     });
 
-    var panel = document.getElementById('ghostdash-editor-panel');
-    panel.setAttribute('data-open', '1');
-    var left = Math.min(window.innerWidth - 400, Math.max(10, x - 190));
-    var top = Math.min(window.innerHeight - 200, Math.max(10, y + 16));
-    panel.style.left = left + 'px';
-    panel.style.top = top + 'px';
+     var panel = document.getElementById('ghostdash-editor-panel');
+     panel.setAttribute('data-open', '1');
 
-    // Focus clicked field
-    setTimeout(function () {
-      var firstInput = container.querySelector('.gd-field-input');
-      if (firstInput) { firstInput.focus(); firstInput.select(); }
-    }, 50);
-  }
+     // Smart positioning: ensure panel stays within viewport
+     var isMobile = window.innerWidth <= 640;
+     if (!isMobile) {
+       // Reset for measurement
+       panel.style.left = '0px';
+       panel.style.top = '0px';
+       panel.style.right = 'auto';
+       panel.style.bottom = 'auto';
+       var pRect = panel.getBoundingClientRect();
+       var pw = pRect.width || 300;
+       var ph = pRect.height || 200;
+       var vw = window.innerWidth;
+       var vh = window.innerHeight;
+       var left = x - pw / 2;
+       var top = y + 16;
+       // If panel would overflow bottom, show above click point
+       if (top + ph > vh - 10) top = Math.max(10, y - ph - 16);
+       // Clamp horizontal
+       if (left + pw > vw - 10) left = vw - pw - 10;
+       if (left < 10) left = 10;
+       // Clamp vertical
+       if (top + ph > vh - 10) top = vh - ph - 10;
+       if (top < 10) top = 10;
+       panel.style.left = left + 'px';
+       panel.style.top = top + 'px';
+     } else {
+       // Mobile: bottom sheet style (handled by CSS)
+       panel.style.left = '';
+       panel.style.top = '';
+       panel.style.right = '';
+       panel.style.bottom = '';
+     }
+
+     // Focus clicked field
+     setTimeout(function () {
+       var firstInput = container.querySelector('.gd-field-input');
+       if (firstInput) { firstInput.focus(); firstInput.select(); }
+     }, 50);
+   }
 
   function closePanel() {
     var panel = document.getElementById('ghostdash-editor-panel');
@@ -387,89 +424,131 @@ const GHOSTDASH_SCRIPT = `
     activeFields = [];
   }
 
-  function commitPanel() {
-    var patches = readPatches();
-    var inputs = document.querySelectorAll('#gd-fields-container .gd-field-input');
-    var changed = 0;
-    inputs.forEach(function (input) {
-      var idx = parseInt(input.getAttribute('data-field-index'), 10);
-      var field = activeFields[idx];
-      if (!field) return;
-      var newVal = String(input.value).trim();
-      var oldVal = field.value;
-      if (newVal !== oldVal) {
-        var orig = field.textNode.nodeValue || '';
-        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-        field.textNode.nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
-        patches[field.patchKey] = newVal;
-        changed++;
-      }
-    });
-    if (changed > 0) {
-      writePatches(patches);
-      showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
-    }
-    closePanel();
-  }
+   function commitPanel() {
+     var patches = readPatches();
+     var inputs = document.querySelectorAll('#gd-fields-container .gd-field-input');
+     var changed = 0;
+     inputs.forEach(function (input) {
+       var idx = parseInt(input.getAttribute('data-field-index'), 10);
+       var field = activeFields[idx];
+       if (!field) return;
+       var newVal = String(input.value).trim();
+       var oldVal = field.value;
+       if (newVal !== oldVal) {
+         // Update the text node
+         var orig = field.textNode.nodeValue || '';
+         var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+         field.textNode.nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
+         // Also try to update the element directly if text node didn't visually change
+         // This handles cases where innerText is used for rendering
+         var el = field.element;
+         if (el && el.childNodes.length === 1 && el.childNodes[0] === field.textNode) {
+           // Already handled via textNode
+         } else if (el && el.childElementCount === 0) {
+           // Simple text-only element, set textContent directly
+           el.textContent = newVal;
+         }
+         patches[field.patchKey] = newVal;
+         field.value = newVal;
+         changed++;
+       }
+     });
+     if (changed > 0) {
+       writePatches(patches);
+       showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
+     }
+     closePanel();
+   }
 
-  // ---------- 8) Double-click handler
-  function getTextNodeFromPoint(e) {
-    var x = e.clientX, y = e.clientY, node = null;
-    if (document.caretPositionFromPoint) {
-      var pos = document.caretPositionFromPoint(x, y);
-      node = pos && pos.offsetNode;
-    } else if (document.caretRangeFromPoint) {
-      var range = document.caretRangeFromPoint(x, y);
-      node = range && range.startContainer;
-    }
-    if (!node) return null;
-    if (node.nodeType === Node.TEXT_NODE) return node;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      var texts = getTextNodes(node);
-      if (texts.length) return texts[0];
-    }
-    return null;
-  }
+   // ---------- 8) Click & Double-click handlers
+   var clickTimer = null;
+   var pendingClickEvent = null;
 
-  function attachDblClickEdit() {
-    document.addEventListener('dblclick', function (e) {
-      var target = e.target;
-      if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+   function getTextNodeFromPoint(e) {
+     var x = e.clientX, y = e.clientY, node = null;
+     if (document.caretPositionFromPoint) {
+       var pos = document.caretPositionFromPoint(x, y);
+       node = pos && pos.offsetNode;
+     } else if (document.caretRangeFromPoint) {
+       var range = document.caretRangeFromPoint(x, y);
+       node = range && range.startContainer;
+     }
+     if (!node) return null;
+     if (node.nodeType === Node.TEXT_NODE) return node;
+     if (node.nodeType === Node.ELEMENT_NODE) {
+       var texts = getTextNodes(node);
+       if (texts.length) return texts[0];
+     }
+     return null;
+   }
 
-      var textNode = getTextNodeFromPoint(e);
-      if (!textNode && target && !isExcluded(target)) {
-        var texts = getTextNodes(target);
-        if (texts.length === 1) textNode = texts[0];
-      }
-      if (!textNode) return;
+   function handleEditTrigger(e) {
+     var target = e.target;
+     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
 
-      var directParent = textNode.parentElement;
-      var anchor = null;
-      var walk = directParent;
-      while (walk && walk !== document.body) {
-        if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') { anchor = walk; break; }
-        walk = walk.parentElement;
-      }
-      if (!anchor && directParent && !isExcluded(directParent)) anchor = directParent;
-      if (!anchor) return;
+     var textNode = getTextNodeFromPoint(e);
+     if (!textNode && target && !isExcluded(target)) {
+       var texts = getTextNodes(target);
+       if (texts.length === 1) textNode = texts[0];
+     }
+     if (!textNode) return;
 
-      e.preventDefault();
-      e.stopPropagation();
+     var directParent = textNode.parentElement;
+     var anchor = null;
+     var walk = directParent;
+     while (walk && walk !== document.body) {
+       if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') { anchor = walk; break; }
+       walk = walk.parentElement;
+     }
+     if (!anchor && directParent && !isExcluded(directParent)) anchor = directParent;
+     if (!anchor) return;
 
-      // Close any existing panel
-      closePanel();
+     e.preventDefault();
+     e.stopPropagation();
 
-      // Find related fields
-      var fields = findRelatedFields(anchor, textNode);
-      if (!fields.length) return;
+     closePanel();
+     var fields = findRelatedFields(anchor, textNode);
+     if (!fields.length) return;
+     openPanel(fields, e.clientX, e.clientY);
+   }
 
-      openPanel(fields, e.clientX, e.clientY);
-    }, true);
+   function attachClickEdit() {
+     // Double-click: immediate edit
+     document.addEventListener('dblclick', function (e) {
+       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; pendingClickEvent = null; }
+       handleEditTrigger(e);
+     }, true);
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closePanel();
-    }, true);
-  }
+     // Single click: delayed edit (to distinguish from dblclick and nav clicks)
+     document.addEventListener('click', function (e) {
+       var target = e.target;
+       // Skip toolbar/panel/nav elements
+       if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+       // Skip nav elements
+       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
+       // Skip links
+       var link = target && target.closest && target.closest('a[href]');
+       if (link) return;
+       // Only trigger on candidates
+       var candidate = target && target.closest && target.closest('[data-gd-candidate="1"]');
+       if (!candidate) return;
+
+       // Use a delay to let dblclick cancel single click
+       pendingClickEvent = e;
+       if (clickTimer) clearTimeout(clickTimer);
+       clickTimer = setTimeout(function () {
+         if (pendingClickEvent) {
+           handleEditTrigger(pendingClickEvent);
+           pendingClickEvent = null;
+         }
+         clickTimer = null;
+       }, 300);
+     }, true);
+
+     document.addEventListener('keydown', function (e) {
+       if (e.key === 'Escape') closePanel();
+     }, true);
+   }
 
   // ---------- 9) Toolbar (simplified - just Reset button + hint)
   function createToolbar() {
@@ -487,7 +566,7 @@ const GHOSTDASH_SCRIPT = `
     if (document.getElementById('ghostdash-hint')) return;
     var hint = document.createElement('div');
     hint.id = 'ghostdash-hint';
-    hint.textContent = '\\ud83d\\udca1 Double-cliquez sur un texte ou montant pour le modifier';
+    hint.textContent = '\\ud83d\\udca1 Cliquez ou double-cliquez sur un texte pour le modifier';
     document.body.appendChild(hint);
     setTimeout(function () { hint.setAttribute('data-show', '1'); }, 300);
     setTimeout(function () { hint.removeAttribute('data-show'); }, 4000);
@@ -511,11 +590,11 @@ const GHOSTDASH_SCRIPT = `
     disableNativeContentEditable();
     createToolbar();
     createEditorPanel();
-    attachDblClickEdit();
+    attachClickEdit();
     var applied = applyPatches();
     var marked = markCandidates();
     showHint();
-    console.log('\\ud83d\\udc8e GhostDash Editor v5 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
+    console.log('\\ud83d\\udc8e GhostDash Editor v6 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
   }
 
   if (document.readyState === 'loading') {
