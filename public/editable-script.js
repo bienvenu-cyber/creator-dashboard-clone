@@ -396,7 +396,7 @@
     if (isExcludedElement(anchorEl)) return;
 
     var value = (textNode.nodeValue || '').trim();
-    if (!isEligibleText(value)) return;
+    if (!value) return;
 
     createEditor();
 
