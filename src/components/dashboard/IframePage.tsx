@@ -416,89 +416,131 @@ const GHOSTDASH_SCRIPT = `
     activeFields = [];
   }
 
-  function commitPanel() {
-    var patches = readPatches();
-    var inputs = document.querySelectorAll('#gd-fields-container .gd-field-input');
-    var changed = 0;
-    inputs.forEach(function (input) {
-      var idx = parseInt(input.getAttribute('data-field-index'), 10);
-      var field = activeFields[idx];
-      if (!field) return;
-      var newVal = String(input.value).trim();
-      var oldVal = field.value;
-      if (newVal !== oldVal) {
-        var orig = field.textNode.nodeValue || '';
-        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-        field.textNode.nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
-        patches[field.patchKey] = newVal;
-        changed++;
-      }
-    });
-    if (changed > 0) {
-      writePatches(patches);
-      showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
-    }
-    closePanel();
-  }
+   function commitPanel() {
+     var patches = readPatches();
+     var inputs = document.querySelectorAll('#gd-fields-container .gd-field-input');
+     var changed = 0;
+     inputs.forEach(function (input) {
+       var idx = parseInt(input.getAttribute('data-field-index'), 10);
+       var field = activeFields[idx];
+       if (!field) return;
+       var newVal = String(input.value).trim();
+       var oldVal = field.value;
+       if (newVal !== oldVal) {
+         // Update the text node
+         var orig = field.textNode.nodeValue || '';
+         var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+         field.textNode.nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
+         // Also try to update the element directly if text node didn't visually change
+         // This handles cases where innerText is used for rendering
+         var el = field.element;
+         if (el && el.childNodes.length === 1 && el.childNodes[0] === field.textNode) {
+           // Already handled via textNode
+         } else if (el && el.childElementCount === 0) {
+           // Simple text-only element, set textContent directly
+           el.textContent = newVal;
+         }
+         patches[field.patchKey] = newVal;
+         field.value = newVal;
+         changed++;
+       }
+     });
+     if (changed > 0) {
+       writePatches(patches);
+       showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
+     }
+     closePanel();
+   }
 
-  // ---------- 8) Double-click handler
-  function getTextNodeFromPoint(e) {
-    var x = e.clientX, y = e.clientY, node = null;
-    if (document.caretPositionFromPoint) {
-      var pos = document.caretPositionFromPoint(x, y);
-      node = pos && pos.offsetNode;
-    } else if (document.caretRangeFromPoint) {
-      var range = document.caretRangeFromPoint(x, y);
-      node = range && range.startContainer;
-    }
-    if (!node) return null;
-    if (node.nodeType === Node.TEXT_NODE) return node;
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      var texts = getTextNodes(node);
-      if (texts.length) return texts[0];
-    }
-    return null;
-  }
+   // ---------- 8) Click & Double-click handlers
+   var clickTimer = null;
+   var pendingClickEvent = null;
 
-  function attachDblClickEdit() {
-    document.addEventListener('dblclick', function (e) {
-      var target = e.target;
-      if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+   function getTextNodeFromPoint(e) {
+     var x = e.clientX, y = e.clientY, node = null;
+     if (document.caretPositionFromPoint) {
+       var pos = document.caretPositionFromPoint(x, y);
+       node = pos && pos.offsetNode;
+     } else if (document.caretRangeFromPoint) {
+       var range = document.caretRangeFromPoint(x, y);
+       node = range && range.startContainer;
+     }
+     if (!node) return null;
+     if (node.nodeType === Node.TEXT_NODE) return node;
+     if (node.nodeType === Node.ELEMENT_NODE) {
+       var texts = getTextNodes(node);
+       if (texts.length) return texts[0];
+     }
+     return null;
+   }
 
-      var textNode = getTextNodeFromPoint(e);
-      if (!textNode && target && !isExcluded(target)) {
-        var texts = getTextNodes(target);
-        if (texts.length === 1) textNode = texts[0];
-      }
-      if (!textNode) return;
+   function handleEditTrigger(e) {
+     var target = e.target;
+     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
 
-      var directParent = textNode.parentElement;
-      var anchor = null;
-      var walk = directParent;
-      while (walk && walk !== document.body) {
-        if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') { anchor = walk; break; }
-        walk = walk.parentElement;
-      }
-      if (!anchor && directParent && !isExcluded(directParent)) anchor = directParent;
-      if (!anchor) return;
+     var textNode = getTextNodeFromPoint(e);
+     if (!textNode && target && !isExcluded(target)) {
+       var texts = getTextNodes(target);
+       if (texts.length === 1) textNode = texts[0];
+     }
+     if (!textNode) return;
 
-      e.preventDefault();
-      e.stopPropagation();
+     var directParent = textNode.parentElement;
+     var anchor = null;
+     var walk = directParent;
+     while (walk && walk !== document.body) {
+       if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') { anchor = walk; break; }
+       walk = walk.parentElement;
+     }
+     if (!anchor && directParent && !isExcluded(directParent)) anchor = directParent;
+     if (!anchor) return;
 
-      // Close any existing panel
-      closePanel();
+     e.preventDefault();
+     e.stopPropagation();
 
-      // Find related fields
-      var fields = findRelatedFields(anchor, textNode);
-      if (!fields.length) return;
+     closePanel();
+     var fields = findRelatedFields(anchor, textNode);
+     if (!fields.length) return;
+     openPanel(fields, e.clientX, e.clientY);
+   }
 
-      openPanel(fields, e.clientX, e.clientY);
-    }, true);
+   function attachClickEdit() {
+     // Double-click: immediate edit
+     document.addEventListener('dblclick', function (e) {
+       if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; pendingClickEvent = null; }
+       handleEditTrigger(e);
+     }, true);
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closePanel();
-    }, true);
-  }
+     // Single click: delayed edit (to distinguish from dblclick and nav clicks)
+     document.addEventListener('click', function (e) {
+       var target = e.target;
+       // Skip toolbar/panel/nav elements
+       if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+       // Skip nav elements
+       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
+       // Skip links
+       var link = target && target.closest && target.closest('a[href]');
+       if (link) return;
+       // Only trigger on candidates
+       var candidate = target && target.closest && target.closest('[data-gd-candidate="1"]');
+       if (!candidate) return;
+
+       // Use a delay to let dblclick cancel single click
+       pendingClickEvent = e;
+       if (clickTimer) clearTimeout(clickTimer);
+       clickTimer = setTimeout(function () {
+         if (pendingClickEvent) {
+           handleEditTrigger(pendingClickEvent);
+           pendingClickEvent = null;
+         }
+         clickTimer = null;
+       }, 300);
+     }, true);
+
+     document.addEventListener('keydown', function (e) {
+       if (e.key === 'Escape') closePanel();
+     }, true);
+   }
 
   // ---------- 9) Toolbar (simplified - just Reset button + hint)
   function createToolbar() {
