@@ -206,33 +206,56 @@
     if (!text) return false;
     var t = String(text).trim();
     if (!t) return false;
-    if (t.length > 160) return false;
+    // Allow up to 200 chars (covers long banners like "YOU ARE IN THE TOP 100%...")
+    if (t.length > 200) return false;
 
     var hasNumeric = /[0-9]/.test(t);
     var hasMoneyOrPct = /[$€£¥%]/.test(t);
     var looksLikeYear = /\b20\d{2}\b/.test(t);
     var looksLikeMonth = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\b/i.test(t);
     var looksLikeDate = /\b\d{1,2}[\/-]\d{1,2}([\/-]\d{2,4})?\b/.test(t);
-    var shortText = t.length <= 40;
+    // Accept any text up to 80 chars (covers labels like "Current balance", "Pending balance", names, etc.)
+    var shortText = t.length <= 80;
 
     return hasNumeric || hasMoneyOrPct || looksLikeYear || looksLikeMonth || looksLikeDate || shortText;
   }
 
   function markCandidates() {
-    // Mark parent elements that contain eligible text nodes
-    var selector = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6';
+    // Strategy: find ALL text nodes on the page, then mark their closest eligible ancestor
+    var selector = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6,li';
     var nodes = document.querySelectorAll(selector);
     var marked = 0;
 
     nodes.forEach(function (el) {
       if (isExcludedElement(el)) return;
-      if (el.childElementCount > 4) return; // keep it safe
+      // Skip huge containers (likely layout divs) but allow moderate nesting
+      if (el.childElementCount > 8) return;
 
-      var txt = (el.innerText || el.textContent || '').trim();
-      if (!isEligibleText(txt)) return;
+      // Check if this element has at least one direct text node with eligible content
+      var hasDirectText = false;
+      for (var i = 0; i < el.childNodes.length; i++) {
+        var cn = el.childNodes[i];
+        if (cn.nodeType === Node.TEXT_NODE) {
+          var t = (cn.nodeValue || '').trim();
+          if (t && isEligibleText(t)) {
+            hasDirectText = true;
+            break;
+          }
+        }
+      }
 
-      el.setAttribute('data-gd-candidate', '1');
-      marked++;
+      // Also mark if innerText is eligible and element is relatively small
+      if (!hasDirectText) {
+        var txt = (el.innerText || el.textContent || '').trim();
+        if (isEligibleText(txt) && el.childElementCount <= 3) {
+          hasDirectText = true;
+        }
+      }
+
+      if (hasDirectText) {
+        el.setAttribute('data-gd-candidate', '1');
+        marked++;
+      }
     });
 
     return marked;
