@@ -2,6 +2,11 @@
   if (window.__navInjected) return;
   window.__navInjected = true;
 
+  // Hide SingleFile infobar widget
+  var style = document.createElement('style');
+  style.textContent = 'single-file-infobar { display: none !important; }';
+  document.head.appendChild(style);
+
   var routes = {
     Home: '/my/statistics/overview/earnings',
     Notifications: '/my/notifications',
