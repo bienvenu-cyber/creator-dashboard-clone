@@ -12,39 +12,50 @@ const GHOSTDASH_SCRIPT = `
   if (window.__ghostdashInjected) return;
   window.__ghostdashInjected = true;
 
-  // ---------- 1) Cleanup styles
-  var cleanupStyle = document.createElement('style');
-  cleanupStyle.id = 'ghostdash-cleanup-style';
-  cleanupStyle.textContent = [
+  // ---------- 1) Styles
+  var s = document.createElement('style');
+  s.id = 'ghostdash-cleanup-style';
+  s.textContent = [
     'single-file-infobar{display:none!important;}',
     '[contenteditable="true"],[contenteditable="plaintext-only"]{outline:none!important;border:none!important;box-shadow:none!important;}',
-    'html[data-ghostdash-edit-mode="on"] [data-gd-candidate="1"]:hover{background-color:rgba(0,145,234,0.08)!important;border-radius:3px!important;cursor:text!important;}',
-    'html[data-ghostdash-edit-mode="on"] [data-gd-active="1"]{background-color:rgba(0,145,234,0.12)!important;box-shadow:0 0 0 1.5px rgba(0,145,234,0.4)!important;border-radius:3px!important;}',
+    '[data-gd-candidate="1"]{cursor:pointer!important;transition:background .15s ease;}',
+    '[data-gd-candidate="1"]:hover{background-color:rgba(0,145,234,0.08)!important;border-radius:3px!important;}',
+    '[data-gd-active="1"]{background-color:rgba(0,145,234,0.12)!important;box-shadow:0 0 0 1.5px rgba(0,145,234,0.4)!important;border-radius:3px!important;}',
     '#ghostdash-toolbar{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;gap:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
     '#ghostdash-toolbar button{display:flex;align-items:center;gap:6px;padding:10px 14px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(0,0,0,.25);}',
-    '#ghostdash-edit-toggle{background:#252936;color:#e8eaed;border:1px solid #3a3f52;}',
-    '#ghostdash-edit-toggle[data-state="on"]{background:#00aff0;color:#fff;border-color:#00aff0;}',
-    '#ghostdash-save{background:#00aff0;color:#fff;}',
-    '#ghostdash-save:hover{background:#0091ea;transform:translateY(-1px);}',
     '#ghostdash-reset{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
     '#ghostdash-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
-    '#ghostdash-editor{position:fixed;z-index:10002;min-width:220px;max-width:320px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.45);padding:10px;display:none;}',
-    '#ghostdash-editor[data-open="1"]{display:block;}',
-    '#ghostdash-editor .gd-title{font-size:12px;font-weight:800;color:#9ca3af;margin:0 0 6px 0;}',
-    '#ghostdash-editor input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;}',
-    '#ghostdash-editor input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15)}',
-    '#ghostdash-editor .gd-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}',
-    '#ghostdash-editor .gd-btn{padding:8px 10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;}',
-    '#ghostdash-editor .gd-btn-primary{background:#00aff0;color:#fff;}',
-    '#ghostdash-editor .gd-btn-secondary{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
-    '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}}',
+    '#ghostdash-editor-panel{position:fixed;z-index:10002;min-width:260px;max-width:380px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
+    '#ghostdash-editor-panel[data-open="1"]{display:block;}',
+    '#ghostdash-editor-panel .gd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;border-bottom:1px solid #2a2e3d;}',
+    '#ghostdash-editor-panel .gd-header-title{font-size:13px;font-weight:800;color:#00aff0;}',
+    '#ghostdash-editor-panel .gd-header-close{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:2px 6px;border-radius:6px;}',
+    '#ghostdash-editor-panel .gd-header-close:hover{background:#252936;color:#e8eaed;}',
+    '#ghostdash-editor-panel .gd-fields{padding:10px 14px;max-height:300px;overflow-y:auto;}',
+    '#ghostdash-editor-panel .gd-field{margin-bottom:10px;}',
+    '#ghostdash-editor-panel .gd-field:last-child{margin-bottom:0;}',
+    '#ghostdash-editor-panel .gd-field-label{font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}',
+    '#ghostdash-editor-panel .gd-field-input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:9px 12px;font-size:14px;outline:none;}',
+    '#ghostdash-editor-panel .gd-field-input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15);}',
+    '#ghostdash-editor-panel .gd-footer{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 12px;border-top:1px solid #2a2e3d;}',
+    '#ghostdash-editor-panel .gd-btn{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:all .15s ease;}',
+    '#ghostdash-editor-panel .gd-btn-save{background:#00aff0;color:#fff;}',
+    '#ghostdash-editor-panel .gd-btn-save:hover{background:#0091ea;}',
+    '#ghostdash-editor-panel .gd-btn-reset{background:transparent;color:#ef4444;border-color:#3a3f52;}',
+    '#ghostdash-editor-panel .gd-btn-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
+    '#ghostdash-editor-panel .gd-btn-close{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
+    '#ghostdash-editor-panel .gd-btn-close:hover{background:#252936;color:#e8eaed;}',
+    '#ghostdash-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#252936;color:#9ca3af;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
+    '#ghostdash-hint[data-show="1"]{opacity:1;}',
+    '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:10px!important;right:10px!important;max-width:none!important;}}',
   ].join('\\n');
-  document.head.appendChild(cleanupStyle);
+  document.head.appendChild(s);
 
   // ---------- 2) Disable native contenteditable
   function disableNativeContentEditable() {
-    var els = document.querySelectorAll('[contenteditable="true"],[contenteditable="plaintext-only"]');
-    els.forEach(function (el) { el.setAttribute('contenteditable', 'false'); });
+    document.querySelectorAll('[contenteditable="true"],[contenteditable="plaintext-only"]').forEach(function (el) {
+      el.setAttribute('contenteditable', 'false');
+    });
   }
 
   // ---------- 3) Nav bridge
@@ -57,105 +68,73 @@ const GHOSTDASH_SCRIPT = `
 
   document.addEventListener('click', function (e) {
     var target = e.target;
-    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor')) return;
-    if (target && target.closest && target.closest('[data-gd-candidate="1"]') && isEditModeOn()) return;
+    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
 
     var el = target;
     while (el && el !== document.body) {
       if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
       var name = el.getAttribute && el.getAttribute('data-name');
-
-      // Sidebar menu items
       if (name && routes[name]) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
         return;
       }
-
-      // Mobile bottom nav
       if (el.classList && el.classList.contains('l-header__menu__item')) {
         var route = null;
-        if (name && routes[name]) {
-          route = routes[name];
-        } else {
+        if (name && routes[name]) { route = routes[name]; }
+        else {
           var textEl = el.querySelector && el.querySelector('.l-header__menu__item__text');
-          if (textEl) {
-            var text = (textEl.textContent || '').trim();
-            if (routes[text]) route = routes[text];
-          }
+          if (textEl) { var txt = (textEl.textContent || '').trim(); if (routes[txt]) route = routes[txt]; }
         }
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
         return;
       }
-
-      // Catch-all: any link going to internal pages
       if (el.tagName === 'A' && el.href) {
         var href = el.getAttribute('href') || '';
         if (href.indexOf('/my/') === 0 || href.indexOf('/my/') > 0) {
-          e.preventDefault();
-          e.stopPropagation();
-          // Try to map to a known route
+          e.preventDefault(); e.stopPropagation();
           for (var rName in routes) {
             if (href.indexOf(routes[rName]) !== -1) {
               window.parent.postMessage({ type: 'navigate', route: routes[rName] }, '*');
               return;
             }
           }
-          // Default: go to statistics
           window.parent.postMessage({ type: 'navigate', route: '/my/statistics/overview/earnings' }, '*');
           return;
         }
       }
-
       el = el.parentElement;
     }
   }, true);
 
   // ---------- 4) Persistence
   var STORAGE_PREFIX = 'ghostdash_patches_v3_';
-  var pageName = getPageName();
+  var pageName = (function () {
+    var p = window.location.pathname;
+    if (p.indexOf('statistics') !== -1) return 'statistics';
+    if (p.indexOf('statements') !== -1) return 'statements';
+    if (p.indexOf('notifications') !== -1) return 'notifications';
+    return p.split('/').pop().replace('.html', '') || 'page';
+  })();
   var storageKey = STORAGE_PREFIX + pageName;
 
-  function getPageName() {
-    var path = window.location.pathname;
-    if (path.indexOf('statistics') !== -1) return 'statistics';
-    if (path.indexOf('statements') !== -1) return 'statements';
-    if (path.indexOf('notifications') !== -1) return 'notifications';
-    var parts = path.split('/');
-    var file = parts[parts.length - 1] || 'page';
-    return file.replace('.html', '') || 'page';
-  }
-
   function readPatches() {
-    try {
-      var raw = localStorage.getItem(storageKey);
-      if (!raw) return {};
-      return JSON.parse(raw) || {};
-    } catch (e) { return {}; }
+    try { var r = localStorage.getItem(storageKey); return r ? JSON.parse(r) : {}; } catch (e) { return {}; }
   }
-
-  function writePatches(patches) {
-    try { localStorage.setItem(storageKey, JSON.stringify(patches)); }
-    catch (e) {}
+  function writePatches(p) {
+    try { localStorage.setItem(storageKey, JSON.stringify(p)); } catch (e) {}
   }
-
   function getTextNodes(el) {
     var out = [];
     var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-      acceptNode: function (node) {
-        if (!node || !node.nodeValue) return NodeFilter.FILTER_REJECT;
-        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_ACCEPT;
-      },
+      acceptNode: function (n) {
+        return (n && n.nodeValue && n.nodeValue.trim()) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
     });
-    var n;
-    while ((n = w.nextNode())) out.push(n);
+    var n; while ((n = w.nextNode())) out.push(n);
     return out;
   }
-
   function applyPatches() {
     var patches = readPatches();
     var keys = Object.keys(patches);
@@ -171,197 +150,271 @@ const GHOSTDASH_SCRIPT = `
         if (!el) return;
         var nodes = getTextNodes(el);
         if (!nodes[idx]) return;
-        var original = nodes[idx].nodeValue || '';
-        var m = original.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-        var lead = (m && m[1]) || '';
-        var tail = (m && m[3]) || '';
-        nodes[idx].nodeValue = lead + String(patches[k]) + tail;
+        var orig = nodes[idx].nodeValue || '';
+        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+        nodes[idx].nodeValue = ((m && m[1]) || '') + String(patches[k]) + ((m && m[3]) || '');
         applied++;
       } catch(e) {}
     });
     return applied;
   }
-
   function resetPatches() {
     try { localStorage.removeItem(storageKey); } catch (e) {}
     location.reload();
   }
 
   // ---------- 5) Candidate detection
-  function isExcludedElement(el) {
+  function isExcluded(el) {
     if (!el || el.nodeType !== 1) return true;
     var tag = el.tagName.toLowerCase();
     if ('script,style,noscript,svg,path,img,video,canvas,input,textarea,select,option'.indexOf(tag) !== -1) return true;
-    if (el.closest && el.closest('#ghostdash-toolbar,#ghostdash-editor')) return true;
+    if (el.closest && el.closest('#ghostdash-toolbar,#ghostdash-editor-panel,#ghostdash-hint')) return true;
     if (el.closest && el.closest('.l-sidebar__menu,.l-sidebar__menu__item,.l-header__menu,.l-header__menu__item')) return true;
     return false;
   }
-
-  function isEligibleText(text) {
-    if (!text) return false;
-    var t = String(text).trim();
+  function isEligibleText(t) {
+    if (!t) return false;
+    t = String(t).trim();
     if (!t || t.length > 200) return false;
-    var hasNumeric = /[0-9]/.test(t);
-    var hasMoneyOrPct = /[\\$\\€\\£\\¥%]/.test(t);
-    var looksLikeYear = /\\b20\\d{2}\\b/.test(t);
-    var looksLikeMonth = /\\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\\b/i.test(t);
-    var looksLikeDate = /\\b\\d{1,2}[\\/\\-]\\d{1,2}([\\/\\-]\\d{2,4})?\\b/.test(t);
-    var shortText = t.length <= 80;
-    return hasNumeric || hasMoneyOrPct || looksLikeYear || looksLikeMonth || looksLikeDate || shortText;
+    return /[0-9]/.test(t) || /[\\$\\€\\£\\¥%]/.test(t) || /\\b20\\d{2}\\b/.test(t) ||
+      /\\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\\b/i.test(t) ||
+      /\\b\\d{1,2}[\\/\\-]\\d{1,2}/.test(t) || t.length <= 80;
   }
-
   function markCandidates() {
-    var selector = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6,li';
-    var nodes = document.querySelectorAll(selector);
+    var sel = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6,li';
+    var nodes = document.querySelectorAll(sel);
     var marked = 0;
     nodes.forEach(function (el) {
-      if (isExcludedElement(el)) return;
+      if (isExcluded(el)) return;
       if (el.childElementCount > 8) return;
-      var hasDirectText = false;
+      var ok = false;
       for (var i = 0; i < el.childNodes.length; i++) {
         var cn = el.childNodes[i];
-        if (cn.nodeType === Node.TEXT_NODE) {
-          var t = (cn.nodeValue || '').trim();
-          if (t && isEligibleText(t)) { hasDirectText = true; break; }
-        }
+        if (cn.nodeType === Node.TEXT_NODE && (cn.nodeValue || '').trim() && isEligibleText(cn.nodeValue)) { ok = true; break; }
       }
-      if (!hasDirectText) {
+      if (!ok) {
         var txt = (el.innerText || el.textContent || '').trim();
-        if (isEligibleText(txt) && el.childElementCount <= 3) hasDirectText = true;
+        if (isEligibleText(txt) && el.childElementCount <= 3) ok = true;
       }
-      if (hasDirectText) { el.setAttribute('data-gd-candidate', '1'); marked++; }
+      if (ok) { el.setAttribute('data-gd-candidate', '1'); marked++; }
     });
     return marked;
   }
-
   function getDomSelector(el) {
     var parts = [];
-    var cur = el;
-    var depth = 0;
+    var cur = el, depth = 0;
     while (cur && cur.nodeType === 1 && cur !== document.body && depth < 10) {
       var part = cur.tagName.toLowerCase();
-      if (cur.id) {
-        part += '#' + cssEscape(cur.id);
-        parts.unshift(part);
-        break;
-      }
-      var idx = 1;
-      var sib = cur;
+      if (cur.id) { part += '#' + cssEsc(cur.id); parts.unshift(part); break; }
+      var idx = 1, sib = cur;
       while ((sib = sib.previousElementSibling)) { if (sib.tagName === cur.tagName) idx++; }
       part += ':nth-of-type(' + idx + ')';
       parts.unshift(part);
-      cur = cur.parentElement;
-      depth++;
+      cur = cur.parentElement; depth++;
     }
     return parts.join('>');
   }
+  function cssEsc(s) { return String(s).replace(/([ #;?%&,.+*~\\\\\\\\'":\\!\\^\\$\\[\\]\\(\\)=>|\\/])/g, '\\\\$1'); }
 
-  function cssEscape(s) {
-    return String(s).replace(/([ #;?%&,.+*~\\\\\\\\'":\\!\\^\\$\\[\\]\\(\\)=>|\\/])/g, '\\\\$1');
+  // ---------- 6) Smart grouping: find related editable values near clicked element
+  function detectPattern(text) {
+    text = text.trim();
+    if (/^\\$[\\d,]+\\.?\\d*$/.test(text)) return 'money_usd';
+    if (/^\\€[\\d,]+\\.?\\d*$/.test(text)) return 'money_eur';
+    if (/^[\\d,]+\\.?\\d*%$/.test(text)) return 'percentage';
+    if (/^\\d{1,2}[\\s\\/\\-](jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(text)) return 'date';
+    if (/^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(text)) return 'date';
+    if (/^[\\d,]+$/.test(text)) return 'number';
+    return 'text';
   }
 
-  // ---------- 6) Editor UI
-  function isEditModeOn() {
-    return document.documentElement.getAttribute('data-ghostdash-edit-mode') === 'on';
+  function findRelatedFields(clickedEl, clickedTextNode) {
+    var fields = [];
+    var clickedText = (clickedTextNode.nodeValue || '').trim();
+    var clickedPattern = detectPattern(clickedText);
+
+    // Find the closest "container" (card, table row, section)
+    var container = clickedEl;
+    var containerSelectors = ['.b-stats__item', '.b-table__row', '.b-earnings', '.b-payout', 'tr', '.m-card', '.b-card', '.b-balance'];
+    for (var i = 0; i < containerSelectors.length; i++) {
+      var c = clickedEl.closest && clickedEl.closest(containerSelectors[i]);
+      if (c) { container = c; break; }
+    }
+    // If no specific container found, go up 3 levels
+    if (container === clickedEl) {
+      container = clickedEl.parentElement && clickedEl.parentElement.parentElement && clickedEl.parentElement.parentElement.parentElement || clickedEl.parentElement || clickedEl;
+    }
+
+    // Collect all candidate elements within the container
+    var candidates = container.querySelectorAll('[data-gd-candidate="1"]');
+    if (!candidates.length) candidates = container.querySelectorAll('span,div,p,td,th,strong,b,small,label,h1,h2,h3,h4');
+
+    var seen = new Set();
+    candidates.forEach(function (el) {
+      if (isExcluded(el)) return;
+      var textNodes = getTextNodes(el);
+      textNodes.forEach(function (tn, idx) {
+        var val = (tn.nodeValue || '').trim();
+        if (!val || !isEligibleText(val)) return;
+        var selector = getDomSelector(el);
+        var key = selector + '||' + idx;
+        if (seen.has(key)) return;
+        seen.add(key);
+        var pattern = detectPattern(val);
+        // Find a label for this field
+        var label = findLabelFor(el, tn, val);
+        fields.push({
+          textNode: tn,
+          element: el,
+          value: val,
+          pattern: pattern,
+          patchKey: key,
+          label: label,
+          isClicked: (tn === clickedTextNode),
+        });
+      });
+    });
+
+    // Sort: clicked item first, then same pattern, then by DOM order
+    fields.sort(function (a, b) {
+      if (a.isClicked && !b.isClicked) return -1;
+      if (!a.isClicked && b.isClicked) return 1;
+      if (a.pattern === clickedPattern && b.pattern !== clickedPattern) return -1;
+      if (a.pattern !== clickedPattern && b.pattern === clickedPattern) return 1;
+      return 0;
+    });
+
+    // Limit to reasonable number
+    return fields.slice(0, 12);
   }
 
-  function setEditMode(on) {
-    document.documentElement.setAttribute('data-ghostdash-edit-mode', on ? 'on' : 'off');
-    var toggle = document.getElementById('ghostdash-edit-toggle');
-    if (toggle) toggle.setAttribute('data-state', on ? 'on' : 'off');
-    if (on) { markCandidates(); showToast('\\u270f\\ufe0f Edit mode ON'); }
-    else { closeEditor(); showToast('\\ud83d\\udd12 Edit mode OFF'); }
+  function findLabelFor(el, textNode, value) {
+    // Check previous sibling text
+    var prev = el.previousElementSibling;
+    if (prev) {
+      var pt = (prev.innerText || prev.textContent || '').trim();
+      if (pt && pt.length < 40 && pt !== value) return pt;
+    }
+    // Check parent's previous sibling
+    var parent = el.parentElement;
+    if (parent) {
+      var pp = parent.previousElementSibling;
+      if (pp) {
+        var ppt = (pp.innerText || pp.textContent || '').trim();
+        if (ppt && ppt.length < 40 && ppt !== value) return ppt;
+      }
+      // Check for label-like class
+      var labelEl = parent.querySelector('.b-tabs__nav__link--active, .m-sm-title, label, .b-stats__item__label, th');
+      if (labelEl) {
+        var lt = (labelEl.innerText || labelEl.textContent || '').trim();
+        if (lt && lt.length < 40 && lt !== value) return lt;
+      }
+    }
+    // Fallback: use truncated value as label
+    return value.length > 25 ? value.substring(0, 22) + '...' : value;
   }
 
-  function createToolbar() {
-    if (document.getElementById('ghostdash-toolbar')) return;
-    var bar = document.createElement('div');
-    bar.id = 'ghostdash-toolbar';
-    bar.innerHTML = '<button id="ghostdash-edit-toggle" data-state="off"><span>Edit</span></button>' +
-      '<button id="ghostdash-save"><span>Sauvegarder</span></button>' +
-      '<button id="ghostdash-reset"><span>Reset</span></button>';
-    document.body.appendChild(bar);
-    document.getElementById('ghostdash-edit-toggle').addEventListener('click', function () { setEditMode(!isEditModeOn()); });
-    document.getElementById('ghostdash-save').addEventListener('click', function () { showToast('\\u2705 D\\u00e9j\\u00e0 sauvegard\\u00e9 (auto)'); });
-    document.getElementById('ghostdash-reset').addEventListener('click', function () {
-      if (confirm('R\\u00e9initialiser toutes les modifications ?')) resetPatches();
+  // ---------- 7) Multi-field Editor Panel
+  var activeFields = [];
+
+  function createEditorPanel() {
+    if (document.getElementById('ghostdash-editor-panel')) return;
+    var panel = document.createElement('div');
+    panel.id = 'ghostdash-editor-panel';
+    panel.innerHTML = '<div class="gd-header"><span class="gd-header-title">\\u270f\\ufe0f Modifier</span><button class="gd-header-close" id="gd-panel-close">\\u2715</button></div>' +
+      '<div class="gd-fields" id="gd-fields-container"></div>' +
+      '<div class="gd-footer">' +
+      '<button class="gd-btn gd-btn-reset" id="gd-panel-reset">Reset</button>' +
+      '<button class="gd-btn gd-btn-close" id="gd-panel-cancel">Fermer</button>' +
+      '<button class="gd-btn gd-btn-save" id="gd-panel-save">\\u2714 Sauvegarder</button>' +
+      '</div>';
+    document.body.appendChild(panel);
+    document.getElementById('gd-panel-close').addEventListener('click', closePanel);
+    document.getElementById('gd-panel-cancel').addEventListener('click', closePanel);
+    document.getElementById('gd-panel-save').addEventListener('click', commitPanel);
+    document.getElementById('gd-panel-reset').addEventListener('click', function () {
+      if (confirm('R\\u00e9initialiser toutes les modifications de cette page ?')) resetPatches();
     });
   }
 
-  function createEditor() {
-    if (document.getElementById('ghostdash-editor')) return;
-    var ed = document.createElement('div');
-    ed.id = 'ghostdash-editor';
-    ed.innerHTML = '<div class="gd-title">Modifier la valeur</div>' +
-      '<input id="ghostdash-editor-input" type="text" />' +
-      '<div class="gd-actions">' +
-      '<button class="gd-btn gd-btn-secondary" id="ghostdash-editor-cancel" type="button">Annuler</button>' +
-      '<button class="gd-btn gd-btn-primary" id="ghostdash-editor-ok" type="button">OK</button></div>';
-    document.body.appendChild(ed);
-    document.getElementById('ghostdash-editor-cancel').addEventListener('click', closeEditor);
-    document.getElementById('ghostdash-editor-ok').addEventListener('click', commitEditor);
-    var input = document.getElementById('ghostdash-editor-input');
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') { e.preventDefault(); commitEditor(); }
-      if (e.key === 'Escape') { e.preventDefault(); closeEditor(); }
+  function openPanel(fields, x, y) {
+    createEditorPanel();
+    activeFields = fields;
+    // Mark active elements
+    fields.forEach(function (f) { f.element.setAttribute('data-gd-active', '1'); });
+
+    var container = document.getElementById('gd-fields-container');
+    container.innerHTML = '';
+    fields.forEach(function (f, i) {
+      var div = document.createElement('div');
+      div.className = 'gd-field';
+      var labelDiv = document.createElement('div');
+      labelDiv.className = 'gd-field-label';
+      labelDiv.textContent = f.label;
+      labelDiv.title = f.label;
+      var input = document.createElement('input');
+      input.className = 'gd-field-input';
+      input.type = 'text';
+      input.value = f.value;
+      input.setAttribute('data-field-index', String(i));
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); commitPanel(); }
+        if (e.key === 'Escape') { e.preventDefault(); closePanel(); }
+      });
+      div.appendChild(labelDiv);
+      div.appendChild(input);
+      container.appendChild(div);
     });
+
+    var panel = document.getElementById('ghostdash-editor-panel');
+    panel.setAttribute('data-open', '1');
+    var left = Math.min(window.innerWidth - 400, Math.max(10, x - 190));
+    var top = Math.min(window.innerHeight - 200, Math.max(10, y + 16));
+    panel.style.left = left + 'px';
+    panel.style.top = top + 'px';
+
+    // Focus clicked field
+    setTimeout(function () {
+      var firstInput = container.querySelector('.gd-field-input');
+      if (firstInput) { firstInput.focus(); firstInput.select(); }
+    }, 50);
   }
 
-  var active = { el: null, textNode: null, textIndex: -1, selector: '', patchKey: '' };
-
-  function openEditorForTextNode(textNode, anchorEl, x, y) {
-    if (!textNode || !anchorEl) return;
-    if (isExcludedElement(anchorEl)) return;
-    var value = (textNode.nodeValue || '').trim();
-    if (!value) return;
-    createEditor();
-    anchorEl.setAttribute('data-gd-active', '1');
-    var selector = getDomSelector(anchorEl);
-    var nodes = getTextNodes(anchorEl);
-    var idx = nodes.indexOf(textNode);
-    if (idx < 0) return;
-    active.el = anchorEl;
-    active.textNode = textNode;
-    active.textIndex = idx;
-    active.selector = selector;
-    active.patchKey = selector + '||' + String(idx);
-    var ed = document.getElementById('ghostdash-editor');
-    var input = document.getElementById('ghostdash-editor-input');
-    input.value = value;
-    ed.setAttribute('data-open', '1');
-    var left = Math.min(window.innerWidth - 340, Math.max(10, x - 160));
-    var top = Math.min(window.innerHeight - 140, Math.max(10, y + 12));
-    ed.style.left = left + 'px';
-    ed.style.top = top + 'px';
-    setTimeout(function () { input.focus(); input.select(); }, 0);
+  function closePanel() {
+    var panel = document.getElementById('ghostdash-editor-panel');
+    if (panel) panel.removeAttribute('data-open');
+    activeFields.forEach(function (f) { f.element.removeAttribute('data-gd-active'); });
+    activeFields = [];
   }
 
-  function closeEditor() {
-    var ed = document.getElementById('ghostdash-editor');
-    if (ed) ed.removeAttribute('data-open');
-    if (active.el) active.el.removeAttribute('data-gd-active');
-    active = { el: null, textNode: null, textIndex: -1, selector: '', patchKey: '' };
-  }
-
-  function commitEditor() {
-    var input = document.getElementById('ghostdash-editor-input');
-    if (!input || !active.textNode || !active.patchKey) return;
-    var newVal = String(input.value);
-    var original = active.textNode.nodeValue || '';
-    var m = original.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
-    var lead = (m && m[1]) || '';
-    var tail = (m && m[3]) || '';
-    active.textNode.nodeValue = lead + newVal + tail;
+  function commitPanel() {
     var patches = readPatches();
-    patches[active.patchKey] = newVal;
-    writePatches(patches);
-    closeEditor();
-    showToast('\\u2705 Sauvegard\\u00e9');
+    var inputs = document.querySelectorAll('#gd-fields-container .gd-field-input');
+    var changed = 0;
+    inputs.forEach(function (input) {
+      var idx = parseInt(input.getAttribute('data-field-index'), 10);
+      var field = activeFields[idx];
+      if (!field) return;
+      var newVal = String(input.value).trim();
+      var oldVal = field.value;
+      if (newVal !== oldVal) {
+        var orig = field.textNode.nodeValue || '';
+        var m = orig.match(/^(\\s*)([\\s\\S]*?)(\\s*)$/);
+        field.textNode.nodeValue = ((m && m[1]) || '') + newVal + ((m && m[3]) || '');
+        patches[field.patchKey] = newVal;
+        changed++;
+      }
+    });
+    if (changed > 0) {
+      writePatches(patches);
+      showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
+    }
+    closePanel();
   }
 
+  // ---------- 8) Double-click handler
   function getTextNodeFromPoint(e) {
-    var x = e.clientX, y = e.clientY;
-    var node = null;
+    var x = e.clientX, y = e.clientY, node = null;
     if (document.caretPositionFromPoint) {
       var pos = document.caretPositionFromPoint(x, y);
       node = pos && pos.offsetNode;
@@ -378,14 +431,13 @@ const GHOSTDASH_SCRIPT = `
     return null;
   }
 
-  function attachEditClick() {
-    document.addEventListener('click', function (e) {
-      if (!isEditModeOn()) return;
+  function attachDblClickEdit() {
+    document.addEventListener('dblclick', function (e) {
       var target = e.target;
-      if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor')) return;
+      if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
 
       var textNode = getTextNodeFromPoint(e);
-      if (!textNode && target && !isExcludedElement(target)) {
+      if (!textNode && target && !isExcluded(target)) {
         var texts = getTextNodes(target);
         if (texts.length === 1) textNode = texts[0];
       }
@@ -398,20 +450,51 @@ const GHOSTDASH_SCRIPT = `
         if (walk.getAttribute && walk.getAttribute('data-gd-candidate') === '1') { anchor = walk; break; }
         walk = walk.parentElement;
       }
-      if (!anchor && directParent && !isExcludedElement(directParent)) anchor = directParent;
+      if (!anchor && directParent && !isExcluded(directParent)) anchor = directParent;
       if (!anchor) return;
 
       e.preventDefault();
       e.stopPropagation();
-      openEditorForTextNode(textNode, anchor, e.clientX, e.clientY);
+
+      // Close any existing panel
+      closePanel();
+
+      // Find related fields
+      var fields = findRelatedFields(anchor, textNode);
+      if (!fields.length) return;
+
+      openPanel(fields, e.clientX, e.clientY);
     }, true);
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') closeEditor();
+      if (e.key === 'Escape') closePanel();
     }, true);
   }
 
-  // ---------- 7) Toast
+  // ---------- 9) Toolbar (simplified - just Reset button + hint)
+  function createToolbar() {
+    if (document.getElementById('ghostdash-toolbar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'ghostdash-toolbar';
+    bar.innerHTML = '<button id="ghostdash-reset"><span>\\ud83d\\uddd1 Reset</span></button>';
+    document.body.appendChild(bar);
+    document.getElementById('ghostdash-reset').addEventListener('click', function () {
+      if (confirm('R\\u00e9initialiser toutes les modifications ?')) resetPatches();
+    });
+  }
+
+  function showHint() {
+    if (document.getElementById('ghostdash-hint')) return;
+    var hint = document.createElement('div');
+    hint.id = 'ghostdash-hint';
+    hint.textContent = '\\ud83d\\udca1 Double-cliquez sur un texte ou montant pour le modifier';
+    document.body.appendChild(hint);
+    setTimeout(function () { hint.setAttribute('data-show', '1'); }, 300);
+    setTimeout(function () { hint.removeAttribute('data-show'); }, 4000);
+    setTimeout(function () { hint.remove(); }, 4500);
+  }
+
+  // ---------- 10) Toast
   function showToast(msg) {
     var existing = document.getElementById('ghostdash-toast');
     if (existing) existing.remove();
@@ -423,16 +506,16 @@ const GHOSTDASH_SCRIPT = `
     setTimeout(function () { toast.remove(); }, 1600);
   }
 
-  // ---------- 8) Init
+  // ---------- 11) Init
   function init() {
-    document.documentElement.setAttribute('data-ghostdash-edit-mode', 'off');
     disableNativeContentEditable();
     createToolbar();
-    createEditor();
-    attachEditClick();
+    createEditorPanel();
+    attachDblClickEdit();
     var applied = applyPatches();
     var marked = markCandidates();
-    console.log('\\ud83d\\udc8e GhostDash Editor v4 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
+    showHint();
+    console.log('\\ud83d\\udc8e GhostDash Editor v5 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
   }
 
   if (document.readyState === 'loading') {
