@@ -337,48 +337,77 @@ const GHOSTDASH_SCRIPT = `
     });
   }
 
-  function openPanel(fields, x, y) {
-    createEditorPanel();
-    activeFields = fields;
-    // Mark active elements
-    fields.forEach(function (f) { f.element.setAttribute('data-gd-active', '1'); });
+   function openPanel(fields, x, y) {
+     createEditorPanel();
+     activeFields = fields;
+     // Mark active elements
+     fields.forEach(function (f) { f.element.setAttribute('data-gd-active', '1'); });
 
-    var container = document.getElementById('gd-fields-container');
-    container.innerHTML = '';
-    fields.forEach(function (f, i) {
-      var div = document.createElement('div');
-      div.className = 'gd-field';
-      var labelDiv = document.createElement('div');
-      labelDiv.className = 'gd-field-label';
-      labelDiv.textContent = f.label;
-      labelDiv.title = f.label;
-      var input = document.createElement('input');
-      input.className = 'gd-field-input';
-      input.type = 'text';
-      input.value = f.value;
-      input.setAttribute('data-field-index', String(i));
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); commitPanel(); }
-        if (e.key === 'Escape') { e.preventDefault(); closePanel(); }
-      });
-      div.appendChild(labelDiv);
-      div.appendChild(input);
-      container.appendChild(div);
-    });
+     var container = document.getElementById('gd-fields-container');
+     container.innerHTML = '';
+     fields.forEach(function (f, i) {
+       var div = document.createElement('div');
+       div.className = 'gd-field';
+       var labelDiv = document.createElement('div');
+       labelDiv.className = 'gd-field-label';
+       labelDiv.textContent = f.label;
+       labelDiv.title = f.label;
+       var input = document.createElement('input');
+       input.className = 'gd-field-input';
+       input.type = 'text';
+       input.value = f.value;
+       input.setAttribute('data-field-index', String(i));
+       input.addEventListener('keydown', function (e) {
+         if (e.key === 'Enter') { e.preventDefault(); commitPanel(); }
+         if (e.key === 'Escape') { e.preventDefault(); closePanel(); }
+       });
+       div.appendChild(labelDiv);
+       div.appendChild(input);
+       container.appendChild(div);
+     });
 
-    var panel = document.getElementById('ghostdash-editor-panel');
-    panel.setAttribute('data-open', '1');
-    var left = Math.min(window.innerWidth - 400, Math.max(10, x - 190));
-    var top = Math.min(window.innerHeight - 200, Math.max(10, y + 16));
-    panel.style.left = left + 'px';
-    panel.style.top = top + 'px';
+     var panel = document.getElementById('ghostdash-editor-panel');
+     panel.setAttribute('data-open', '1');
 
-    // Focus clicked field
-    setTimeout(function () {
-      var firstInput = container.querySelector('.gd-field-input');
-      if (firstInput) { firstInput.focus(); firstInput.select(); }
-    }, 50);
-  }
+     // Smart positioning: ensure panel stays within viewport
+     var isMobile = window.innerWidth <= 640;
+     if (!isMobile) {
+       // Reset for measurement
+       panel.style.left = '0px';
+       panel.style.top = '0px';
+       panel.style.right = 'auto';
+       panel.style.bottom = 'auto';
+       var pRect = panel.getBoundingClientRect();
+       var pw = pRect.width || 300;
+       var ph = pRect.height || 200;
+       var vw = window.innerWidth;
+       var vh = window.innerHeight;
+       var left = x - pw / 2;
+       var top = y + 16;
+       // If panel would overflow bottom, show above click point
+       if (top + ph > vh - 10) top = Math.max(10, y - ph - 16);
+       // Clamp horizontal
+       if (left + pw > vw - 10) left = vw - pw - 10;
+       if (left < 10) left = 10;
+       // Clamp vertical
+       if (top + ph > vh - 10) top = vh - ph - 10;
+       if (top < 10) top = 10;
+       panel.style.left = left + 'px';
+       panel.style.top = top + 'px';
+     } else {
+       // Mobile: bottom sheet style (handled by CSS)
+       panel.style.left = '';
+       panel.style.top = '';
+       panel.style.right = '';
+       panel.style.bottom = '';
+     }
+
+     // Focus clicked field
+     setTimeout(function () {
+       var firstInput = container.querySelector('.gd-field-input');
+       if (firstInput) { firstInput.focus(); firstInput.select(); }
+     }, 50);
+   }
 
   function closePanel() {
     var panel = document.getElementById('ghostdash-editor-panel');
