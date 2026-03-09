@@ -582,7 +582,7 @@ const GHOSTDASH_SCRIPT = `
     disableNativeContentEditable();
     createToolbar();
     createEditorPanel();
-    attachDblClickEdit();
+    attachClickEdit();
     var applied = applyPatches();
     var marked = markCandidates();
     showHint();
