@@ -25,9 +25,9 @@ const GHOSTDASH_SCRIPT = `
     '#ghostdash-toolbar button{display:flex;align-items:center;gap:6px;padding:10px 14px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(0,0,0,.25);}',
     '#ghostdash-reset{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
     '#ghostdash-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
-     '#ghostdash-editor-panel{position:fixed;z-index:10002;min-width:240px;max-width:380px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;}',
+     '#ghostdash-editor-panel{position:fixed;z-index:10002;min-width:240px;max-width:380px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:none;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-height:80vh;overflow:hidden;flex-direction:column;}',
      '#ghostdash-editor-panel[data-open="1"]{display:flex;}',
-     '#ghostdash-editor-panel .gd-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;border-bottom:1px solid #2a2e3d;flex-shrink:0;}',
+     '#ghostdash-editor-panel:not([data-open="1"]){pointer-events:none;}',
      '#ghostdash-editor-panel .gd-header-title{font-size:13px;font-weight:800;color:#00aff0;}',
      '#ghostdash-editor-panel .gd-header-close{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:2px 6px;border-radius:6px;}',
      '#ghostdash-editor-panel .gd-header-close:hover{background:#252936;color:#e8eaed;}',
@@ -426,7 +426,13 @@ const GHOSTDASH_SCRIPT = `
     if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
     pendingClickEvent = null;
     var panel = document.getElementById('ghostdash-editor-panel');
-    if (panel) panel.removeAttribute('data-open');
+    if (panel) {
+      panel.removeAttribute('data-open');
+      panel.style.left = '';
+      panel.style.top = '';
+      panel.style.right = '';
+      panel.style.bottom = '';
+    }
     activeFields.forEach(function (f) { f.element.removeAttribute('data-gd-active'); });
     activeFields = [];
   }
