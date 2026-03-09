@@ -1,26 +1,61 @@
-(function() {
-  if (window.__navInjected) return;
-  window.__navInjected = true;
+(function () {
+  if (window.__ghostdashInjected) return;
+  window.__ghostdashInjected = true;
 
-  // ==========================================
-  // 1. CLEANUP: Hide artifacts & override FakeDash green styles
-  // ==========================================
+  // =====================================================
+  // GhostDash Safe Text Editor (iframe-safe, non-destructive)
+  // - Edit mode: click any eligible text to edit via small popover (NO contenteditable)
+  // - Persists patches per page via localStorage
+  // - Keeps nav bridge
+  // =====================================================
+
+  // ---------- 1) Cleanup styles
   var cleanupStyle = document.createElement('style');
+  cleanupStyle.id = 'ghostdash-cleanup-style';
   cleanupStyle.textContent = [
-    // Hide SingleFile infobar
-    'single-file-infobar { display: none !important; }',
-    // Override FakeDash green contenteditable styles with subtle, native-looking ones
-    '[contenteditable="true"] { border-radius: 3px !important; transition: background 0.15s ease !important; cursor: text !important; outline: none !important; border: none !important; box-shadow: none !important; }',
-    '[contenteditable="true"]:hover { background-color: rgba(0, 145, 234, 0.08) !important; box-shadow: none !important; border: none !important; }',
-    '[contenteditable="true"]:focus { background-color: rgba(0, 145, 234, 0.12) !important; box-shadow: 0 0 0 1.5px rgba(0, 145, 234, 0.4) !important; border: none !important; }',
-    // Kill the old green styles completely
-    '.editable[contenteditable="true"]:focus, a[contenteditable="true"]:focus { background-color: rgba(0, 145, 234, 0.12) !important; box-shadow: 0 0 0 1.5px rgba(0, 145, 234, 0.4) !important; border: none !important; }',
+    'single-file-infobar{display:none!important;}',
+
+    // Prevent old FakeDash green focus styles from showing
+    '[contenteditable="true"],[contenteditable="plaintext-only"]{outline:none!important;border:none!important;box-shadow:none!important;}',
+
+    // Edit mode subtle hover highlight (on candidate elements)
+    'html[data-ghostdash-edit-mode="on"] [data-gd-candidate="1"]:hover{background-color:rgba(0,145,234,0.08)!important;border-radius:3px!important;cursor:text!important;}',
+    'html[data-ghostdash-edit-mode="on"] [data-gd-active="1"]{background-color:rgba(0,145,234,0.12)!important;box-shadow:0 0 0 1.5px rgba(0,145,234,0.4)!important;border-radius:3px!important;}',
+
+    // Toolbar
+    '#ghostdash-toolbar{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;gap:8px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
+    '#ghostdash-toolbar button{display:flex;align-items:center;gap:6px;padding:10px 14px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 6px 20px rgba(0,0,0,.25);}',
+    '#ghostdash-edit-toggle{background:#252936;color:#e8eaed;border:1px solid #3a3f52;}',
+    '#ghostdash-edit-toggle[data-state="on"]{background:#00aff0;color:#fff;border-color:#00aff0;}',
+    '#ghostdash-save{background:#00aff0;color:#fff;}',
+    '#ghostdash-save:hover{background:#0091ea;transform:translateY(-1px);}',
+    '#ghostdash-reset{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
+    '#ghostdash-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
+
+    // Editor popover
+    '#ghostdash-editor{position:fixed;z-index:10002;min-width:220px;max-width:320px;background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.45);padding:10px;display:none;}',
+    '#ghostdash-editor[data-open="1"]{display:block;}',
+    '#ghostdash-editor .gd-title{font-size:12px;font-weight:800;color:#9ca3af;margin:0 0 6px 0;}',
+    '#ghostdash-editor input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:10px 12px;font-size:14px;outline:none;}',
+    '#ghostdash-editor input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15)}',
+    '#ghostdash-editor .gd-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}',
+    '#ghostdash-editor .gd-btn{padding:8px 10px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;}',
+    '#ghostdash-editor .gd-btn-primary{background:#00aff0;color:#fff;}',
+    '#ghostdash-editor .gd-btn-secondary{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
+
+    '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}}',
   ].join('\n');
   document.head.appendChild(cleanupStyle);
 
-  // ==========================================
-  // 2. NAVIGATION BRIDGE (iframe → parent React Router)
-  // ==========================================
+  // ---------- 2) Disable any baked-in contenteditable (avoid partial/edit conflicts)
+  function disableNativeContentEditable() {
+    var els = document.querySelectorAll('[contenteditable="true"],[contenteditable="plaintext-only"]');
+    els.forEach(function (el) {
+      el.setAttribute('contenteditable', 'false');
+    });
+  }
+
+  // ---------- 3) Nav bridge (keep)
   var routes = {
     Home: '/my/statistics/overview/earnings',
     Notifications: '/my/notifications',
@@ -28,190 +63,450 @@
     Statistics: '/my/statistics/overview/earnings',
   };
 
-  document.addEventListener('click', function(e) {
-    var el = e.target;
-    // Don't intercept clicks on contenteditable elements
-    if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
-    while (el && el !== document.body) {
-      if (el.getAttribute && el.getAttribute('contenteditable') === 'true') return;
-      var name = el.getAttribute && el.getAttribute('data-name');
-      if (el.classList && el.classList.contains('l-header__menu__item')) {
-        var route = null;
-        if (name && routes[name]) {
-          route = routes[name];
-        } else {
-          var textEl = el.querySelector('.l-header__menu__item__text');
-          if (textEl) {
-            var text = textEl.textContent.trim();
-            if (routes[text]) route = routes[text];
-          }
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
-        return;
-      }
-      if (name && routes[name]) {
-        e.preventDefault();
-        e.stopPropagation();
-        window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true);
+  document.addEventListener(
+    'click',
+    function (e) {
+      var target = e.target;
+      // Never intercept editor clicks
+      if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor')) return;
+      if (target && target.closest && target.closest('[data-gd-candidate="1"]') && isEditModeOn()) return;
 
-  // ==========================================
-  // 3. EDITABLE DATA PERSISTENCE (localStorage)
-  // ==========================================
-  var STORAGE_PREFIX = 'ghostdash_';
+      var el = target;
+      while (el && el !== document.body) {
+        var name = el.getAttribute && el.getAttribute('data-name');
+        if (el.classList && el.classList.contains('l-header__menu__item')) {
+          var route = null;
+          if (name && routes[name]) {
+            route = routes[name];
+          } else {
+            var textEl = el.querySelector && el.querySelector('.l-header__menu__item__text');
+            if (textEl) {
+              var text = (textEl.textContent || '').trim();
+              if (routes[text]) route = routes[text];
+            }
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
+          return;
+        }
+        if (name && routes[name]) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
+          return;
+        }
+        el = el.parentElement;
+      }
+    },
+    true
+  );
+
+  // ---------- 4) Editor persistence (patches)
+  var STORAGE_PREFIX = 'ghostdash_patches_v3_';
   var pageName = getPageName();
+  var storageKey = STORAGE_PREFIX + pageName;
 
   function getPageName() {
     var path = window.location.pathname;
     if (path.indexOf('statistics') !== -1) return 'statistics';
     if (path.indexOf('statements') !== -1) return 'statements';
     if (path.indexOf('notifications') !== -1) return 'notifications';
-    // Fallback: use filename
     var parts = path.split('/');
     var file = parts[parts.length - 1] || 'page';
-    return file.replace('.html', '');
+    return file.replace('.html', '') || 'page';
   }
 
-  function getStorageKey() {
-    return STORAGE_PREFIX + pageName;
+  function readPatches() {
+    try {
+      var raw = localStorage.getItem(storageKey);
+      if (!raw) return {};
+      var obj = JSON.parse(raw);
+      if (!obj || typeof obj !== 'object') return {};
+      return obj;
+    } catch (e) {
+      return {};
+    }
   }
 
-  function getElementKey(el, index) {
-    // Build a stable key from tag + position + nearby class/id info
-    var tag = el.tagName.toLowerCase();
-    var parent = el.parentElement;
-    var parentClass = parent ? (parent.className || '').split(' ')[0] : '';
-    var parentId = parent ? (parent.id || '') : '';
-    var text = (el.textContent || '').trim().substring(0, 30);
-    // Use a combination for stability
-    return tag + '_' + (parentId || parentClass || 'root') + '_' + index;
+  function writePatches(patches) {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(patches));
+    } catch (e) {
+      console.warn('GhostDash: failed to write patches', e);
+    }
   }
 
-  function getAllEditables() {
-    return document.querySelectorAll('[contenteditable="true"]');
-  }
+  function applyPatches() {
+    var patches = readPatches();
+    var keys = Object.keys(patches);
+    if (keys.length === 0) return 0;
 
-  function saveAllValues() {
-    var elements = getAllEditables();
-    var data = {};
-    elements.forEach(function(el, i) {
-      var key = getElementKey(el, i);
-      data[key] = el.innerHTML;
+    var applied = 0;
+    keys.forEach(function (k) {
+      var parts = k.split('||');
+      if (parts.length !== 2) return;
+      var sel = parts[0];
+      var idx = parseInt(parts[1], 10);
+      if (!sel || isNaN(idx)) return;
+
+      var el = document.querySelector(sel);
+      if (!el) return;
+      var nodes = getTextNodes(el);
+      if (!nodes[idx]) return;
+
+      var original = nodes[idx].nodeValue || '';
+      var m = original.match(/^(\s*)([\s\S]*?)(\s*)$/);
+      var lead = (m && m[1]) || '';
+      var tail = (m && m[3]) || '';
+      nodes[idx].nodeValue = lead + String(patches[k]) + tail;
+      applied++;
     });
-    try {
-      localStorage.setItem(getStorageKey(), JSON.stringify(data));
-    } catch(e) {
-      console.warn('GhostDash: Failed to save', e);
-    }
-    return Object.keys(data).length;
+
+    return applied;
   }
 
-  function loadAllValues() {
-    var raw;
+  function resetPatches() {
     try {
-      raw = localStorage.getItem(getStorageKey());
-    } catch(e) {
-      return 0;
-    }
-    if (!raw) return 0;
-    var data;
-    try {
-      data = JSON.parse(raw);
-    } catch(e) {
-      return 0;
-    }
-    var elements = getAllEditables();
-    var count = 0;
-    elements.forEach(function(el, i) {
-      var key = getElementKey(el, i);
-      if (data[key] !== undefined && data[key] !== el.innerHTML) {
-        el.innerHTML = data[key];
-        count++;
-      }
-    });
-    return count;
-  }
-
-  function resetAllValues() {
-    try {
-      localStorage.removeItem(getStorageKey());
-    } catch(e) {}
+      localStorage.removeItem(storageKey);
+    } catch (e) {}
     location.reload();
   }
 
-  // ==========================================
-  // 4. FLOATING TOOLBAR (Save / Reset)
-  // ==========================================
-  function createToolbar() {
-    var toolbar = document.createElement('div');
-    toolbar.id = 'ghostdash-toolbar';
-    toolbar.innerHTML = [
-      '<button id="ghostdash-save" title="Sauvegarder les modifications">',
-      '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>',
-      '  <span>Sauvegarder</span>',
-      '</button>',
-      '<button id="ghostdash-reset" title="Réinitialiser">',
-      '  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>',
-      '  <span>Reset</span>',
-      '</button>',
-    ].join('');
+  // ---------- 5) Candidate detection
+  function isExcludedElement(el) {
+    if (!el || el.nodeType !== 1) return true;
 
-    var toolbarStyle = document.createElement('style');
-    toolbarStyle.textContent = [
-      '#ghostdash-toolbar {',
-      '  position: fixed; bottom: 20px; right: 20px; z-index: 9999;',
-      '  display: flex; gap: 8px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;',
-      '}',
-      '#ghostdash-toolbar button {',
-      '  display: flex; align-items: center; gap: 6px;',
-      '  padding: 10px 18px; border: none; border-radius: 10px;',
-      '  font-size: 13px; font-weight: 600; cursor: pointer;',
-      '  transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.3);',
-      '}',
-      '#ghostdash-save {',
-      '  background: #00aff0; color: white;',
-      '}',
-      '#ghostdash-save:hover {',
-      '  background: #0091ea; transform: translateY(-1px);',
-      '  box-shadow: 0 6px 20px rgba(0,175,240,0.4);',
-      '}',
-      '#ghostdash-reset {',
-      '  background: #252936; color: #9ca3af; border: 1px solid #3a3f52 !important;',
-      '}',
-      '#ghostdash-reset:hover {',
-      '  background: #ef4444; color: white; border-color: #ef4444 !important;',
-      '}',
-      '@media (max-width: 640px) {',
-      '  #ghostdash-toolbar { bottom: 70px; right: 12px; }',
-      '  #ghostdash-toolbar button { padding: 8px 14px; font-size: 12px; }',
-      '  #ghostdash-toolbar button span { display: none; }',
-      '}',
-    ].join('\n');
+    var tag = el.tagName.toLowerCase();
+    if (
+      tag === 'script' ||
+      tag === 'style' ||
+      tag === 'noscript' ||
+      tag === 'svg' ||
+      tag === 'path' ||
+      tag === 'img' ||
+      tag === 'video' ||
+      tag === 'canvas' ||
+      tag === 'input' ||
+      tag === 'textarea' ||
+      tag === 'select' ||
+      tag === 'option'
+    )
+      return true;
 
-    document.head.appendChild(toolbarStyle);
-    document.body.appendChild(toolbar);
+    if (el.closest && el.closest('#ghostdash-toolbar,#ghostdash-editor')) return true;
 
-    document.getElementById('ghostdash-save').addEventListener('click', function() {
-      var count = saveAllValues();
-      showToast('✅ ' + count + ' éléments sauvegardés');
+    // Keep nav usable
+    if (el.closest && el.closest('.l-sidebar__menu,.l-sidebar__menu__item,.l-header__menu,.l-header__menu__item')) return true;
+
+    return false;
+  }
+
+  function isEligibleText(text) {
+    if (!text) return false;
+    var t = String(text).trim();
+    if (!t) return false;
+    if (t.length > 160) return false;
+
+    var hasNumeric = /[0-9]/.test(t);
+    var hasMoneyOrPct = /[$€£¥%]/.test(t);
+    var looksLikeYear = /\b20\d{2}\b/.test(t);
+    var looksLikeMonth = /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)\b/i.test(t);
+    var looksLikeDate = /\b\d{1,2}[\/-]\d{1,2}([\/-]\d{2,4})?\b/.test(t);
+    var shortText = t.length <= 40;
+
+    return hasNumeric || hasMoneyOrPct || looksLikeYear || looksLikeMonth || looksLikeDate || shortText;
+  }
+
+  function markCandidates() {
+    // Mark parent elements that contain eligible text nodes
+    var selector = 'span,div,p,td,th,a,strong,b,small,label,time,h1,h2,h3,h4,h5,h6';
+    var nodes = document.querySelectorAll(selector);
+    var marked = 0;
+
+    nodes.forEach(function (el) {
+      if (isExcludedElement(el)) return;
+      if (el.childElementCount > 4) return; // keep it safe
+
+      var txt = (el.innerText || el.textContent || '').trim();
+      if (!isEligibleText(txt)) return;
+
+      el.setAttribute('data-gd-candidate', '1');
+      marked++;
     });
 
-    document.getElementById('ghostdash-reset').addEventListener('click', function() {
-      if (confirm('Réinitialiser toutes les modifications de cette page ?')) {
-        resetAllValues();
+    return marked;
+  }
+
+  function getTextNodes(el) {
+    var out = [];
+    var w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        if (!node || !node.nodeValue) return NodeFilter.FILTER_REJECT;
+        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      },
+    });
+
+    var n;
+    while ((n = w.nextNode())) out.push(n);
+    return out;
+  }
+
+  function getDomSelector(el) {
+    // Build a stable CSS selector: prefer #id else build a nth-of-type chain
+    var parts = [];
+    var cur = el;
+    var depth = 0;
+
+    while (cur && cur.nodeType === 1 && cur !== document.body && depth < 10) {
+      var part = cur.tagName.toLowerCase();
+
+      if (cur.id) {
+        part += '#' + cssEscape(cur.id);
+        parts.unshift(part);
+        break;
+      }
+
+      var idx = 1;
+      var sib = cur;
+      while ((sib = sib.previousElementSibling)) {
+        if (sib.tagName === cur.tagName) idx++;
+      }
+      part += ':nth-of-type(' + idx + ')';
+      parts.unshift(part);
+
+      cur = cur.parentElement;
+      depth++;
+    }
+
+    return parts.join('>');
+  }
+
+  function cssEscape(s) {
+    return String(s).replace(/([ #;?%&,.+*~\\':"!^$\[\]()=>|\/])/g, '\\$1');
+  }
+
+  // ---------- 6) Editor UI  interactions
+  function isEditModeOn() {
+    return document.documentElement.getAttribute('data-ghostdash-edit-mode') === 'on';
+  }
+
+  function setEditMode(on) {
+    document.documentElement.setAttribute('data-ghostdash-edit-mode', on ? 'on' : 'off');
+    var toggle = document.getElementById('ghostdash-edit-toggle');
+    if (toggle) toggle.setAttribute('data-state', on ? 'on' : 'off');
+
+    if (on) {
+      markCandidates();
+      showToast('✏️ Edit mode ON');
+    } else {
+      closeEditor();
+      showToast('🔒 Edit mode OFF');
+    }
+  }
+
+  function createToolbar() {
+    if (document.getElementById('ghostdash-toolbar')) return;
+    var bar = document.createElement('div');
+    bar.id = 'ghostdash-toolbar';
+    bar.innerHTML = [
+      '<button id="ghostdash-edit-toggle" data-state="off" title="Activer/Désactiver le mode édition"><span>Edit</span></button>',
+      '<button id="ghostdash-save" title="Sauvegarder"><span>Sauvegarder</span></button>',
+      '<button id="ghostdash-reset" title="Réinitialiser"><span>Reset</span></button>',
+    ].join('');
+    document.body.appendChild(bar);
+
+    document.getElementById('ghostdash-edit-toggle').addEventListener('click', function () {
+      setEditMode(!isEditModeOn());
+    });
+
+    document.getElementById('ghostdash-save').addEventListener('click', function () {
+      showToast('✅ Déjà sauvegardé (auto)');
+    });
+
+    document.getElementById('ghostdash-reset').addEventListener('click', function () {
+      if (confirm('Réinitialiser toutes les modifications de cette page ?')) resetPatches();
+    });
+  }
+
+  function createEditor() {
+    if (document.getElementById('ghostdash-editor')) return;
+    var ed = document.createElement('div');
+    ed.id = 'ghostdash-editor';
+    ed.innerHTML = [
+      '<div class="gd-title">Modifier la valeur</div>',
+      '<input id="ghostdash-editor-input" type="text" />',
+      '<div class="gd-actions">',
+      '  <button class="gd-btn gd-btn-secondary" id="ghostdash-editor-cancel" type="button">Annuler</button>',
+      '  <button class="gd-btn gd-btn-primary" id="ghostdash-editor-ok" type="button">OK</button>',
+      '</div>',
+    ].join('');
+    document.body.appendChild(ed);
+
+    document.getElementById('ghostdash-editor-cancel').addEventListener('click', closeEditor);
+    document.getElementById('ghostdash-editor-ok').addEventListener('click', commitEditor);
+
+    var input = document.getElementById('ghostdash-editor-input');
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        commitEditor();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeEditor();
       }
     });
   }
 
-  // ==========================================
-  // 5. TOAST NOTIFICATION
-  // ==========================================
+  var active = {
+    el: null,
+    textNode: null,
+    textIndex: -1,
+    selector: '',
+    patchKey: '',
+  };
+
+  function openEditorForTextNode(textNode, anchorEl, x, y) {
+    if (!textNode || !anchorEl) return;
+    if (isExcludedElement(anchorEl)) return;
+
+    var value = (textNode.nodeValue || '').trim();
+    if (!isEligibleText(value)) return;
+
+    createEditor();
+
+    // Make sure anchor is marked and highlighted
+    anchorEl.setAttribute('data-gd-active', '1');
+
+    var selector = getDomSelector(anchorEl);
+    var nodes = getTextNodes(anchorEl);
+    var idx = nodes.indexOf(textNode);
+    if (idx < 0) return;
+
+    active.el = anchorEl;
+    active.textNode = textNode;
+    active.textIndex = idx;
+    active.selector = selector;
+    active.patchKey = selector + '||' + String(idx);
+
+    var ed = document.getElementById('ghostdash-editor');
+    var input = document.getElementById('ghostdash-editor-input');
+
+    input.value = value;
+    ed.setAttribute('data-open', '1');
+
+    // Position near click; keep inside viewport
+    var left = Math.min(window.innerWidth - 340, Math.max(10, x - 160));
+    var top = Math.min(window.innerHeight - 140, Math.max(10, y + 12));
+    ed.style.left = left + 'px';
+    ed.style.top = top + 'px';
+
+    setTimeout(function () {
+      input.focus();
+      input.select();
+    }, 0);
+  }
+
+  function closeEditor() {
+    var ed = document.getElementById('ghostdash-editor');
+    if (ed) ed.removeAttribute('data-open');
+
+    if (active.el) active.el.removeAttribute('data-gd-active');
+
+    active.el = null;
+    active.textNode = null;
+    active.textIndex = -1;
+    active.selector = '';
+    active.patchKey = '';
+  }
+
+  function commitEditor() {
+    var input = document.getElementById('ghostdash-editor-input');
+    if (!input || !active.textNode || !active.patchKey) return;
+
+    var newVal = String(input.value);
+
+    // Preserve original surrounding whitespace
+    var original = active.textNode.nodeValue || '';
+    var m = original.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    var lead = (m && m[1]) || '';
+    var tail = (m && m[3]) || '';
+
+    active.textNode.nodeValue = lead + newVal + tail;
+
+    var patches = readPatches();
+    patches[active.patchKey] = newVal;
+    writePatches(patches);
+
+    closeEditor();
+    showToast('✅ Sauvegardé');
+  }
+
+  function getTextNodeFromPoint(e) {
+    var x = e.clientX;
+    var y = e.clientY;
+
+    var node = null;
+    if (document.caretPositionFromPoint) {
+      var pos = document.caretPositionFromPoint(x, y);
+      node = pos && pos.offsetNode;
+    } else if (document.caretRangeFromPoint) {
+      var range = document.caretRangeFromPoint(x, y);
+      node = range && range.startContainer;
+    }
+
+    if (!node) return null;
+
+    if (node.nodeType === Node.TEXT_NODE) return node;
+
+    // If element node, try to get first eligible text node inside
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      var texts = getTextNodes(node);
+      if (texts.length) return texts[0];
+    }
+
+    return null;
+  }
+
+  function attachEditClick() {
+    document.addEventListener(
+      'click',
+      function (e) {
+        if (!isEditModeOn()) return;
+        var target = e.target;
+        if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor')) return;
+
+        var textNode = getTextNodeFromPoint(e);
+        if (!textNode) return;
+
+        // Choose a safe anchor element close to the text node
+        var anchor = textNode.parentElement;
+        while (anchor && anchor !== document.body) {
+          if (anchor.getAttribute && anchor.getAttribute('data-gd-candidate') === '1') break;
+          if (isExcludedElement(anchor)) return;
+          anchor = anchor.parentElement;
+        }
+        if (!anchor || anchor === document.body) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        openEditorForTextNode(textNode, anchor, e.clientX, e.clientY);
+      },
+      true
+    );
+
+    document.addEventListener(
+      'keydown',
+      function (e) {
+        if (e.key === 'Escape') closeEditor();
+      },
+      true
+    );
+  }
+
+  // ---------- 7) Toast
   function showToast(msg) {
     var existing = document.getElementById('ghostdash-toast');
     if (existing) existing.remove();
@@ -219,52 +514,38 @@
     var toast = document.createElement('div');
     toast.id = 'ghostdash-toast';
     toast.textContent = msg;
-    toast.style.cssText = [
-      'position:fixed; bottom:80px; right:20px; z-index:10001;',
-      'background:#10b981; color:white; padding:12px 20px;',
-      'border-radius:8px; font-size:14px; font-weight:500;',
-      'box-shadow:0 8px 24px rgba(0,0,0,0.3);',
-      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;',
-      'animation:ghostdash-toast-in 0.25s ease;',
-    ].join('');
-
-    if (!document.getElementById('ghostdash-toast-anim')) {
-      var animStyle = document.createElement('style');
-      animStyle.id = 'ghostdash-toast-anim';
-      animStyle.textContent = '@keyframes ghostdash-toast-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}';
-      document.head.appendChild(animStyle);
-    }
-
+    toast.style.cssText =
+      'position:fixed;bottom:80px;right:20px;z-index:10001;background:#10b981;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
     document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 2500);
+    setTimeout(function () {
+      toast.remove();
+    }, 1600);
   }
 
-  // ==========================================
-  // 6. INIT
-  // ==========================================
+  // ---------- 8) Init
   function init() {
-    // Load saved values
-    var restored = loadAllValues();
-    if (restored > 0) {
-      console.log('💎 GhostDash: ' + restored + ' valeurs restaurées (' + pageName + ')');
-    }
+    document.documentElement.setAttribute('data-ghostdash-edit-mode', 'off');
 
-    // Create toolbar
+    disableNativeContentEditable();
     createToolbar();
+    createEditor();
+    attachEditClick();
 
-    // Auto-save on blur of any contenteditable
-    document.addEventListener('focusout', function(e) {
-      if (e.target && e.target.getAttribute && e.target.getAttribute('contenteditable') === 'true') {
-        saveAllValues();
-      }
-    }, true);
+    var applied = applyPatches();
+    var marked = markCandidates();
 
-    console.log('💎 GhostDash Editor ready (' + pageName + ', ' + getAllEditables().length + ' editable elements)');
+    console.log('💎 GhostDash Editor v3 ready', {
+      pageName: pageName,
+      candidates: marked,
+      patchesApplied: applied,
+    });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 300); });
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(init, 350);
+    });
   } else {
-    setTimeout(init, 300);
+    setTimeout(init, 350);
   }
 })();
