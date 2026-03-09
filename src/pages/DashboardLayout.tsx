@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IframePage } from '@/components/dashboard/IframePage';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const PAGES = [
   { path: '/my/notifications', src: '/notifications.html', title: 'Notifications' },
@@ -18,6 +20,33 @@ const NAV_ROUTES: Record<string, string> = {
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    // Handle auth callback from landing page
+    const handleAuthCallback = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+
+      if (accessToken && refreshToken) {
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (error) {
+          toast.error("Failed to restore session");
+          console.error(error);
+        } else {
+          toast.success("Welcome back!");
+          // Clean URL
+          window.history.replaceState({}, "", "/");
+        }
+      }
+    };
+
+    handleAuthCallback();
+  }, []);
 
   useEffect(() => {
     // Redirect root to statistics
