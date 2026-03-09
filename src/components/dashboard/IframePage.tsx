@@ -558,7 +558,7 @@ const GHOSTDASH_SCRIPT = `
     if (document.getElementById('ghostdash-hint')) return;
     var hint = document.createElement('div');
     hint.id = 'ghostdash-hint';
-    hint.textContent = '\\ud83d\\udca1 Double-cliquez sur un texte ou montant pour le modifier';
+    hint.textContent = '\\ud83d\\udca1 Cliquez ou double-cliquez sur un texte pour le modifier';
     document.body.appendChild(hint);
     setTimeout(function () { hint.setAttribute('data-show', '1'); }, 300);
     setTimeout(function () { hint.removeAttribute('data-show'); }, 4000);
