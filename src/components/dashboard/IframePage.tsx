@@ -499,7 +499,7 @@ const GHOSTDASH_SCRIPT = `
 
    function handleEditTrigger(e) {
      var target = e.target;
-     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
 
      var textNode = getTextNodeFromPoint(e);
      if (!textNode && target && !isExcluded(target)) {
