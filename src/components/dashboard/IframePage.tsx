@@ -575,16 +575,9 @@ const GHOSTDASH_SCRIPT = `
      }, true);
    }
 
-  // ---------- 9) Toolbar (simplified - just Reset button + hint)
+  // ---------- 9) Toolbar removed (reset accessible via editor panel only)
   function createToolbar() {
-    if (document.getElementById('ghostdash-toolbar')) return;
-    var bar = document.createElement('div');
-    bar.id = 'ghostdash-toolbar';
-    bar.innerHTML = '<button id="ghostdash-reset"><span>\\ud83d\\uddd1 Reset</span></button>';
-    document.body.appendChild(bar);
-    document.getElementById('ghostdash-reset').addEventListener('click', function () {
-      if (confirm('R\\u00e9initialiser toutes les modifications ?')) resetPatches();
-    });
+    // No floating toolbar - clean UI
   }
 
   function showHint() {
