@@ -70,7 +70,7 @@ const GHOSTDASH_SCRIPT = `
 
   document.addEventListener('click', function (e) {
     var target = e.target;
-    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
 
     var el = target;
     while (el && el !== document.body) {
@@ -499,7 +499,7 @@ const GHOSTDASH_SCRIPT = `
 
    function handleEditTrigger(e) {
      var target = e.target;
-     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
 
      var textNode = getTextNodeFromPoint(e);
      if (!textNode && target && !isExcluded(target)) {
@@ -539,6 +539,7 @@ const GHOSTDASH_SCRIPT = `
       var target = e.target;
       var inPanel = target && target.closest && target.closest('#ghostdash-editor-panel');
       var inToolbar = target && target.closest && target.closest('#ghostdash-toolbar');
+      var inAvatar = target && target.closest && target.closest('[data-gd-avatar]');
 
       // Close when clicking anywhere outside panel/toolbar
       if (isPanelOpen() && !inPanel && !inToolbar) {
@@ -546,7 +547,7 @@ const GHOSTDASH_SCRIPT = `
       }
 
       // Skip toolbar/panel/nav elements for edit trigger
-      if (inPanel || inToolbar) return;
+      if (inPanel || inToolbar || inAvatar) return;
       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
 
       // Skip links
@@ -574,16 +575,9 @@ const GHOSTDASH_SCRIPT = `
      }, true);
    }
 
-  // ---------- 9) Toolbar (simplified - just Reset button + hint)
+  // ---------- 9) Toolbar removed (reset accessible via editor panel only)
   function createToolbar() {
-    if (document.getElementById('ghostdash-toolbar')) return;
-    var bar = document.createElement('div');
-    bar.id = 'ghostdash-toolbar';
-    bar.innerHTML = '<button id="ghostdash-reset"><span>\\ud83d\\uddd1 Reset</span></button>';
-    document.body.appendChild(bar);
-    document.getElementById('ghostdash-reset').addEventListener('click', function () {
-      if (confirm('R\\u00e9initialiser toutes les modifications ?')) resetPatches();
-    });
+    // No floating toolbar - clean UI
   }
 
   function showHint() {
