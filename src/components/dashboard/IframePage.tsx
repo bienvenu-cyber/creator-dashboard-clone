@@ -608,7 +608,131 @@ const GHOSTDASH_SCRIPT = `
     setTimeout(function () { toast.remove(); }, 1600);
   }
 
-  // ---------- 11) Init
+  // ---------- 11) Avatar Editor
+  var AVATAR_STORAGE_KEY = 'ghostdash_avatar_data';
+
+  function setupAvatarEditing() {
+    var avatars = document.querySelectorAll('.g-avatar__img-wrapper img, .g-avatar img, img[src*="avatar"], img[src*="data:image"]');
+    if (!avatars.length) {
+      // fallback: find images inside avatar wrappers
+      avatars = document.querySelectorAll('.g-avatar__img-wrapper');
+    }
+
+    // Also add CSS for avatar hover
+    var avatarStyle = document.createElement('style');
+    avatarStyle.textContent = [
+      '.gd-avatar-editable{cursor:pointer!important;position:relative!important;transition:filter .2s ease!important;}',
+      '.gd-avatar-editable:hover{filter:brightness(0.7)!important;}',
+      '.gd-avatar-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease;pointer-events:none;z-index:10;}',
+      '.gd-avatar-editable:hover .gd-avatar-overlay{opacity:1;}',
+      '.gd-avatar-overlay-icon{background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;}',
+    ].join('\\n');
+    document.head.appendChild(avatarStyle);
+
+    // Create hidden file input
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    var currentTarget = null;
+
+    function getImgElement(wrapper) {
+      if (wrapper.tagName === 'IMG') return wrapper;
+      var img = wrapper.querySelector('img');
+      return img || wrapper;
+    }
+
+    function applyAvatar(dataUrl) {
+      // Apply to ALL avatar images on the page
+      var allAvatars = document.querySelectorAll('.g-avatar__img-wrapper img, .g-avatar img, img[src*="avatar"], img[src*="data:image"]');
+      allAvatars.forEach(function(img) {
+        img.src = dataUrl;
+        img.srcset = '';
+      });
+      // Also check for background-image avatars
+      document.querySelectorAll('.g-avatar__img-wrapper').forEach(function(w) {
+        var bgImg = w.querySelector('img');
+        if (bgImg) { bgImg.src = dataUrl; bgImg.srcset = ''; }
+      });
+    }
+
+    function loadSavedAvatar() {
+      var saved = localStorage.getItem(AVATAR_STORAGE_KEY);
+      if (saved) {
+        applyAvatar(saved);
+        return true;
+      }
+      return false;
+    }
+
+    // Load saved avatar immediately
+    loadSavedAvatar();
+
+    // Listen for storage events from other iframes
+    window.addEventListener('storage', function(e) {
+      if (e.key === AVATAR_STORAGE_KEY && e.newValue) {
+        applyAvatar(e.newValue);
+      }
+    });
+
+    // Also listen for postMessage sync
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'ghostdash-avatar-sync' && e.data.dataUrl) {
+        applyAvatar(e.data.dataUrl);
+        localStorage.setItem(AVATAR_STORAGE_KEY, e.data.dataUrl);
+      }
+    });
+
+    fileInput.addEventListener('change', function() {
+      if (!fileInput.files || !fileInput.files[0]) return;
+      var file = fileInput.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Image trop lourde (max 5MB)');
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        var dataUrl = ev.target.result;
+        localStorage.setItem(AVATAR_STORAGE_KEY, dataUrl);
+        applyAvatar(dataUrl);
+        showToast('✅ Avatar mis à jour !');
+        // Notify parent to sync other iframes
+        try {
+          window.parent.postMessage({ type: 'ghostdash-avatar-changed', dataUrl: dataUrl }, '*');
+        } catch(err) {}
+      };
+      reader.readAsDataURL(file);
+      fileInput.value = '';
+    });
+
+    // Make each avatar clickable
+    avatars.forEach(function(el) {
+      var wrapper = el.closest('.g-avatar__img-wrapper') || el.closest('.g-avatar') || el;
+      if (wrapper.dataset.gdAvatar) return;
+      wrapper.dataset.gdAvatar = '1';
+      wrapper.classList.add('gd-avatar-editable');
+      wrapper.style.position = 'relative';
+
+      // Add camera overlay
+      var overlay = document.createElement('div');
+      overlay.className = 'gd-avatar-overlay';
+      overlay.innerHTML = '<div class="gd-avatar-overlay-icon">📷</div>';
+      wrapper.appendChild(overlay);
+
+      wrapper.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        currentTarget = wrapper;
+        fileInput.click();
+      }, true);
+    });
+
+    console.log('📷 Avatar editing ready (' + avatars.length + ' avatars found)');
+  }
+
+  // ---------- 12) Init
   function init() {
     disableNativeContentEditable();
     createToolbar();
@@ -616,6 +740,7 @@ const GHOSTDASH_SCRIPT = `
     attachClickEdit();
     var applied = applyPatches();
     var marked = markCandidates();
+    setupAvatarEditing();
     showHint();
     console.log('\\ud83d\\udc8e GhostDash Editor v6 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
   }
