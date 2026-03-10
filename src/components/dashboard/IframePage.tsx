@@ -539,6 +539,7 @@ const GHOSTDASH_SCRIPT = `
       var target = e.target;
       var inPanel = target && target.closest && target.closest('#ghostdash-editor-panel');
       var inToolbar = target && target.closest && target.closest('#ghostdash-toolbar');
+      var inAvatar = target && target.closest && target.closest('[data-gd-avatar]');
 
       // Close when clicking anywhere outside panel/toolbar
       if (isPanelOpen() && !inPanel && !inToolbar) {
