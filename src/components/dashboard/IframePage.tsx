@@ -547,7 +547,7 @@ const GHOSTDASH_SCRIPT = `
       }
 
       // Skip toolbar/panel/nav elements for edit trigger
-      if (inPanel || inToolbar) return;
+      if (inPanel || inToolbar || inAvatar) return;
       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
 
       // Skip links
