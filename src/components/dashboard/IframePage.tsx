@@ -764,21 +764,18 @@ export function IframePage({ src, title }: IframePageProps) {
       const doc = iframe.contentDocument || iframe.contentWindow?.document;
       if (!doc) return;
 
-      // Inject script inline to bypass CSP (which blocks external script-src)
       const script = doc.createElement('script');
       script.textContent = GHOSTDASH_SCRIPT;
       doc.body.appendChild(script);
     } catch (e) {
-      // Cross-origin iframes will throw - that's OK for same-origin HTML files
       console.warn('IframePage: Could not inject script', e);
     }
   }, []);
 
-  // Listen for avatar changes from this iframe and broadcast to all other iframes
-  useCallback(() => {
+  // Broadcast avatar changes from any iframe to all others
+  useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === 'ghostdash-avatar-changed' && e.data?.dataUrl) {
-        // Broadcast to all iframes on the page
         const allIframes = document.querySelectorAll('iframe');
         allIframes.forEach((f) => {
           if (f !== iframeRef.current) {
