@@ -774,6 +774,25 @@ export function IframePage({ src, title }: IframePageProps) {
     }
   }, []);
 
+  // Listen for avatar changes from this iframe and broadcast to all other iframes
+  useCallback(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === 'ghostdash-avatar-changed' && e.data?.dataUrl) {
+        // Broadcast to all iframes on the page
+        const allIframes = document.querySelectorAll('iframe');
+        allIframes.forEach((f) => {
+          if (f !== iframeRef.current) {
+            try {
+              f.contentWindow?.postMessage({ type: 'ghostdash-avatar-sync', dataUrl: e.data.dataUrl }, '*');
+            } catch (err) { /* ignore */ }
+          }
+        });
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
   return (
     <iframe
       ref={iframeRef}
