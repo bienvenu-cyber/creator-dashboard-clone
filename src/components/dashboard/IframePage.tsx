@@ -70,7 +70,7 @@ const GHOSTDASH_SCRIPT = `
 
   document.addEventListener('click', function (e) {
     var target = e.target;
-    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel')) return;
+    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
 
     var el = target;
     while (el && el !== document.body) {
