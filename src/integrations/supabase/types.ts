@@ -224,6 +224,12 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_sessions: { Args: never; Returns: undefined }
+      deactivate_expired_subscriptions: {
+        Args: never
+        Returns: {
+          deactivated_count: number
+        }[]
+      }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
     }
