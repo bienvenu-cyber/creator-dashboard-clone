@@ -667,13 +667,7 @@ const GHOSTDASH_SCRIPT = `
   var AVATAR_STORAGE_KEY = 'ghostdash_avatar_data';
 
   function setupAvatarEditing() {
-    var avatars = document.querySelectorAll('.g-avatar__img-wrapper img, .g-avatar img, img[src*="avatar"], img[src*="data:image"]');
-    if (!avatars.length) {
-      // fallback: find images inside avatar wrappers
-      avatars = document.querySelectorAll('.g-avatar__img-wrapper');
-    }
-
-    // Also add CSS for avatar hover
+    // Add CSS for avatar hover effects and mobile avatar button
     var avatarStyle = document.createElement('style');
     avatarStyle.textContent = [
       '.gd-avatar-editable{cursor:pointer!important;position:relative!important;transition:filter .2s ease!important;}',
@@ -681,6 +675,12 @@ const GHOSTDASH_SCRIPT = `
       '.gd-avatar-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s ease;pointer-events:none;z-index:10;}',
       '.gd-avatar-editable:hover .gd-avatar-overlay{opacity:1;}',
       '.gd-avatar-overlay-icon{background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;}',
+      // Mobile: make the avatar button in the bottom nav look correct and respond to tap
+      'button.m-avatar-item{cursor:pointer!important;-webkit-tap-highlight-color:transparent;}',
+      'button.m-avatar-item .g-avatar__img-wrapper{cursor:pointer!important;position:relative!important;transition:filter .2s ease!important;}',
+      'button.m-avatar-item:active .g-avatar__img-wrapper{filter:brightness(0.7)!important;}',
+      'button.m-avatar-item .gd-avatar-overlay{opacity:0;transition:opacity .2s ease;}',
+      'button.m-avatar-item:active .gd-avatar-overlay{opacity:1;}',
     ].join('\\n');
     document.head.appendChild(avatarStyle);
 
@@ -691,25 +691,20 @@ const GHOSTDASH_SCRIPT = `
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
 
-    var currentTarget = null;
-
-    function getImgElement(wrapper) {
-      if (wrapper.tagName === 'IMG') return wrapper;
-      var img = wrapper.querySelector('img');
-      return img || wrapper;
-    }
-
     function applyAvatar(dataUrl) {
-      // Apply to ALL avatar images on the page
-      var allAvatars = document.querySelectorAll('.g-avatar__img-wrapper img, .g-avatar img, img[src*="avatar"], img[src*="data:image"]');
-      allAvatars.forEach(function(img) {
+      // Apply to ALL known avatar image slots
+      var allAvatarImgs = document.querySelectorAll(
+        'button.m-avatar-item img,' +
+        '.g-avatar__img-wrapper img,' +
+        '.g-avatar img'
+      );
+      allAvatarImgs.forEach(function(img) {
         img.src = dataUrl;
         img.srcset = '';
-      });
-      // Also check for background-image avatars
-      document.querySelectorAll('.g-avatar__img-wrapper').forEach(function(w) {
-        var bgImg = w.querySelector('img');
-        if (bgImg) { bgImg.src = dataUrl; bgImg.srcset = ''; }
+        img.style.objectFit = 'cover';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.borderRadius = 'inherit';
       });
     }
 
@@ -725,14 +720,14 @@ const GHOSTDASH_SCRIPT = `
     // Load saved avatar immediately
     loadSavedAvatar();
 
-    // Listen for storage events from other iframes
+    // Listen for storage events from other iframes / tabs
     window.addEventListener('storage', function(e) {
       if (e.key === AVATAR_STORAGE_KEY && e.newValue) {
         applyAvatar(e.newValue);
       }
     });
 
-    // Also listen for postMessage sync
+    // Listen for postMessage sync from parent
     window.addEventListener('message', function(e) {
       if (e.data && e.data.type === 'ghostdash-avatar-sync' && e.data.dataUrl) {
         applyAvatar(e.data.dataUrl);
@@ -752,7 +747,7 @@ const GHOSTDASH_SCRIPT = `
         var dataUrl = ev.target.result;
         localStorage.setItem(AVATAR_STORAGE_KEY, dataUrl);
         applyAvatar(dataUrl);
-        showToast('✅ Avatar mis à jour !');
+        showToast('\\u2705 Avatar mis \\u00e0 jour !');
         // Notify parent to sync other iframes
         try {
           window.parent.postMessage({ type: 'ghostdash-avatar-changed', dataUrl: dataUrl }, '*');
@@ -762,29 +757,50 @@ const GHOSTDASH_SCRIPT = `
       fileInput.value = '';
     });
 
-    // Make each avatar clickable
-    avatars.forEach(function(el) {
+    // ---- MOBILE: wire up button.m-avatar-item (bottom-nav avatar) ----
+    var mobileAvatarBtn = document.querySelector('button.m-avatar-item');
+    if (mobileAvatarBtn) {
+      var mobileAvatarWrapper = mobileAvatarBtn.querySelector('.g-avatar__img-wrapper');
+      if (mobileAvatarWrapper && !mobileAvatarWrapper.dataset.gdAvatar) {
+        mobileAvatarWrapper.dataset.gdAvatar = '1';
+        mobileAvatarWrapper.classList.add('gd-avatar-editable');
+        mobileAvatarWrapper.style.position = 'relative';
+        var mobileOverlay = document.createElement('div');
+        mobileOverlay.className = 'gd-avatar-overlay';
+        mobileOverlay.innerHTML = '<div class="gd-avatar-overlay-icon" style="width:20px;height:20px;font-size:11px;">\\ud83d\\udcf7</div>';
+        mobileAvatarWrapper.appendChild(mobileOverlay);
+      }
+      // Attach click on the button itself — this is the correct tap target in the bottom nav
+      mobileAvatarBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.click();
+      }, true);
+    }
+
+    // ---- DESKTOP: wire up all other .g-avatar__img-wrapper / .g-avatar img ----
+    var desktopAvatars = document.querySelectorAll('.g-avatar__img-wrapper img, .g-avatar img');
+    // Filter out the one already handled by the mobile button
+    desktopAvatars.forEach(function(el) {
+      // Skip if this img is inside the mobile avatar button (already handled)
+      if (mobileAvatarBtn && mobileAvatarBtn.contains(el)) return;
       var wrapper = el.closest('.g-avatar__img-wrapper') || el.closest('.g-avatar') || el;
       if (wrapper.dataset.gdAvatar) return;
       wrapper.dataset.gdAvatar = '1';
       wrapper.classList.add('gd-avatar-editable');
       wrapper.style.position = 'relative';
 
-      // Add camera overlay
       var overlay = document.createElement('div');
       overlay.className = 'gd-avatar-overlay';
-      overlay.innerHTML = '<div class="gd-avatar-overlay-icon">📷</div>';
+      overlay.innerHTML = '<div class="gd-avatar-overlay-icon">\\ud83d\\udcf7</div>';
       wrapper.appendChild(overlay);
 
       wrapper.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        currentTarget = wrapper;
         fileInput.click();
       }, true);
     });
-
-    console.log('📷 Avatar editing ready (' + avatars.length + ' avatars found)');
   }
 
   // ---------- 12) Init
