@@ -8,6 +8,7 @@ import { AuthCallback } from "@/components/AuthCallback";
 import DashboardLayout from "./pages/DashboardLayout";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import LoadingPage from "./components/LoadingPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/" element={<LoadingPage />} />
             <Route path="/*" element={<DashboardLayout />} />
           </Routes>
         </AuthProvider>
