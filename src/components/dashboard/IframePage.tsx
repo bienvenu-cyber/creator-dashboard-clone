@@ -93,6 +93,10 @@ const GHOSTDASH_SCRIPT = `
   }
 
   // ---------- 3) Nav bridge
+  var isMobilePage = window.location.pathname.indexOf('-mobile') !== -1;
+  var isOnStatisticsMobile = window.location.pathname.indexOf('statistics-mobile') !== -1;
+  var isOnStatementsMobile = window.location.pathname.indexOf('statements-mobile') !== -1;
+
   var routes = {
     Home: '/my/statistics/overview/earnings',
     Notifications: '/my/notifications',
@@ -100,9 +104,28 @@ const GHOSTDASH_SCRIPT = `
     Statistics: '/my/statistics/overview/earnings',
   };
 
+  // Mobile: Home toggles between statistics and statements
+  if (isMobilePage) {
+    if (isOnStatementsMobile) {
+      routes.Home = '/my/statistics/overview/earnings';
+    } else {
+      routes.Home = '/my/statements/earnings';
+    }
+  }
+
   document.addEventListener('click', function (e) {
     var target = e.target;
     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
+
+    // Block ALL external links
+    var linkEl = target && target.closest && target.closest('a[href]');
+    if (linkEl) {
+      var linkHref = linkEl.getAttribute('href') || '';
+      if (linkHref.indexOf('http') === 0 || linkHref.indexOf('//') === 0) {
+        e.preventDefault(); e.stopPropagation();
+        return;
+      }
+    }
 
     var el = target;
     while (el && el !== document.body) {
@@ -110,17 +133,21 @@ const GHOSTDASH_SCRIPT = `
       var name = el.getAttribute && el.getAttribute('data-name');
       if (name && routes[name]) {
         e.preventDefault(); e.stopPropagation();
+        // On mobile, only Home is active; block others
+        if (isMobilePage && name !== 'Home') return;
         window.parent.postMessage({ type: 'navigate', route: routes[name] }, '*');
         return;
       }
       if (el.classList && el.classList.contains('l-header__menu__item')) {
-        var route = null;
-        if (name && routes[name]) { route = routes[name]; }
-        else {
-          var textEl = el.querySelector && el.querySelector('.l-header__menu__item__text');
-          if (textEl) { var txt = (textEl.textContent || '').trim(); if (routes[txt]) route = routes[txt]; }
-        }
         e.preventDefault(); e.stopPropagation();
+        var navName = el.getAttribute && el.getAttribute('data-name');
+        if (!navName) {
+          var textEl = el.querySelector && el.querySelector('.l-header__menu__item__text');
+          if (textEl) navName = (textEl.textContent || '').trim();
+        }
+        // On mobile, only Home is active; block others
+        if (isMobilePage && navName !== 'Home') return;
+        var route = navName && routes[navName] ? routes[navName] : null;
         if (route) window.parent.postMessage({ type: 'navigate', route: route }, '*');
         return;
       }
@@ -128,6 +155,7 @@ const GHOSTDASH_SCRIPT = `
         var href = el.getAttribute('href') || '';
         if (href.indexOf('/my/') === 0 || href.indexOf('/my/') > 0) {
           e.preventDefault(); e.stopPropagation();
+          if (isMobilePage) return; // Block internal nav links on mobile except via Home
           for (var rName in routes) {
             if (href.indexOf(routes[rName]) !== -1) {
               window.parent.postMessage({ type: 'navigate', route: routes[rName] }, '*');

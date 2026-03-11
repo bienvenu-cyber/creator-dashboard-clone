@@ -1,13 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IframePage } from '@/components/dashboard/IframePage';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const PAGES = [
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      || window.innerWidth <= 768;
+  });
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        || window.innerWidth <= 768
+      );
+    };
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
+
+const DESKTOP_PAGES = [
   { path: '/my/notifications', src: '/notifications.html', title: 'Notifications' },
   { path: '/my/statements/earnings', src: '/statements.html', title: 'Statements' },
   { path: '/my/statistics', src: '/statistics.html', title: 'Statistics' },
+];
+
+const MOBILE_PAGES = [
+  { path: '/my/statements/earnings', src: '/statements-mobile.html', title: 'Statements Mobile' },
+  { path: '/my/statistics', src: '/statistics-mobile.html', title: 'Statistics Mobile' },
 ];
 
 const NAV_ROUTES: Record<string, string> = {
@@ -20,9 +44,9 @@ const NAV_ROUTES: Record<string, string> = {
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Handle auth callback from landing page
     const handleAuthCallback = async () => {
       const params = new URLSearchParams(window.location.search);
       const accessToken = params.get("access_token");
@@ -39,7 +63,6 @@ export default function DashboardLayout() {
           console.error(error);
         } else {
           toast.success("Welcome back!");
-          // Clean URL
           window.history.replaceState({}, "", "/");
         }
       }
@@ -49,11 +72,15 @@ export default function DashboardLayout() {
   }, []);
 
   useEffect(() => {
-    // Redirect root to statistics
+    // On mobile, default to statements; on desktop, default to statistics
     if (location.pathname === '/') {
-      navigate('/my/statistics/overview/earnings', { replace: true });
+      if (isMobile) {
+        navigate('/my/statements/earnings', { replace: true });
+      } else {
+        navigate('/my/statistics/overview/earnings', { replace: true });
+      }
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, isMobile]);
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -66,10 +93,11 @@ export default function DashboardLayout() {
   }, [navigate]);
 
   const currentPath = location.pathname;
+  const pages = isMobile ? MOBILE_PAGES : DESKTOP_PAGES;
 
   return (
     <div style={{ width: '100%', height: '100vh', overflow: 'hidden', position: 'relative' }}>
-      {PAGES.map((page) => {
+      {pages.map((page) => {
         const isActive = currentPath.startsWith(page.path);
         return (
           <div
