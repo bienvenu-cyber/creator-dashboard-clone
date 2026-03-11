@@ -331,7 +331,7 @@ const GHOSTDASH_SCRIPT = `
     if (document.getElementById('ghostdash-editor-panel')) return;
     var panel = document.createElement('div');
     panel.id = 'ghostdash-editor-panel';
-    panel.innerHTML = '<div class="gd-header"><span class="gd-header-title">\\u270f\\ufe0f Modifier</span><button class="gd-header-close" id="gd-panel-close">\\u2715</button></div>' +
+    panel.innerHTML = '<div class="gd-header"><span class="gd-header-title">Ghostdash</span><button class="gd-header-close" id="gd-panel-close">\\u2715</button></div>' +
       '<div class="gd-fields" id="gd-fields-container"></div>' +
       '<div class="gd-footer">' +
       '<button class="gd-btn gd-btn-reset" id="gd-panel-reset">Reset</button>' +
