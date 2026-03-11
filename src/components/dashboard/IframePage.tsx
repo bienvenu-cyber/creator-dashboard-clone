@@ -49,9 +49,41 @@ const GHOSTDASH_SCRIPT = `
      '#ghostdash-editor-panel .gd-btn-close:hover{background:#252936;color:#e8eaed;}',
      '#ghostdash-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#252936;color:#9ca3af;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
      '#ghostdash-hint[data-show="1"]{opacity:1;}',
-     '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:8px!important;right:8px!important;top:auto!important;bottom:8px!important;max-width:none!important;max-height:70vh!important;border-radius:14px 14px 14px 14px;}}',
+     '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:8px!important;right:8px!important;top:auto!important;bottom:80px!important;max-width:none!important;max-height:60vh!important;border-radius:14px 14px 14px 14px;}}',
+     // Mobile bottom nav: force fixed positioning immediately, no scroll dependency
+     '@media (max-width:1003.98px){.l-header__menu{position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:9999!important;display:flex!important;visibility:visible!important;opacity:1!important;transform:none!important;transition:none!important;padding-bottom:env(safe-area-inset-bottom)!important;}}',
+     '@media (max-width:1003.98px){body{padding-bottom:calc(60px + env(safe-area-inset-bottom))!important;}}',
   ].join('\\n');
   document.head.appendChild(s);
+
+  // ---------- 1b) Force mobile bottom nav visibility immediately (no scroll/delay dependency)
+  function forceBottomNav() {
+    var nav = document.querySelector('.l-header__menu');
+    if (!nav) return;
+    if (window.innerWidth <= 1003) {
+      nav.style.setProperty('position', 'fixed', 'important');
+      nav.style.setProperty('bottom', '0', 'important');
+      nav.style.setProperty('left', '0', 'important');
+      nav.style.setProperty('right', '0', 'important');
+      nav.style.setProperty('z-index', '9999', 'important');
+      nav.style.setProperty('display', 'flex', 'important');
+      nav.style.setProperty('visibility', 'visible', 'important');
+      nav.style.setProperty('opacity', '1', 'important');
+      nav.style.setProperty('transform', 'none', 'important');
+      nav.style.setProperty('padding-bottom', 'env(safe-area-inset-bottom)', 'important');
+    }
+  }
+  // Run immediately and on every possible trigger
+  forceBottomNav();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', forceBottomNav);
+  }
+  window.addEventListener('load', forceBottomNav);
+  // Also observe DOM for late-rendered nav
+  var navObserver = new MutationObserver(forceBottomNav);
+  navObserver.observe(document.documentElement, { childList: true, subtree: true });
+  // Stop observing after 5s to save resources
+  setTimeout(function() { navObserver.disconnect(); }, 5000);
 
   // ---------- 2) Disable native contenteditable
   function disableNativeContentEditable() {
