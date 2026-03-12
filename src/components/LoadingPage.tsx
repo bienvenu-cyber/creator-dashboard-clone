@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 interface LoadingPageProps {
   duration?: number;
 }
 
 export function LoadingPage({ duration = 2500 }: LoadingPageProps) {
-  const navigate = useNavigate();
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export function LoadingPage({ duration = 2500 }: LoadingPageProps) {
         position: 'relative'
       }}>
         <iframe
-          src="/loading.html"
+          src="/loading-of.html"
           style={{
             width: '100%',
             height: '100%',
