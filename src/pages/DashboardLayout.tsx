@@ -1,8 +1,86 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { IframePage } from '@/components/dashboard/IframePage';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+// OnlyFans-style loader component
+function OnlyFansLoader({ visible }: { visible: boolean }) {
+  if (!visible) return null;
+  
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: '#000',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 99999,
+        transition: 'opacity 0.3s ease',
+      }}
+    >
+      <div style={{ textAlign: 'center' }}>
+        {/* OnlyFans logo */}
+        <svg
+          width="120"
+          height="120"
+          viewBox="0 0 100 100"
+          style={{ marginBottom: '24px' }}
+        >
+          <defs>
+            <linearGradient id="of-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style={{ stopColor: '#00AFF0', stopOpacity: 1 }} />
+              <stop offset="100%" style={{ stopColor: '#0091EA', stopOpacity: 1 }} />
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#of-gradient)" />
+          <path
+            d="M50 25 C35 25, 25 38, 25 50 C25 62, 35 75, 50 75 C65 75, 75 62, 75 50"
+            stroke="#fff"
+            strokeWidth="6"
+            fill="none"
+            strokeLinecap="round"
+          >
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 50 50"
+              to="360 50 50"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+        {/* Loading dots */}
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              style={{
+                width: '10px',
+                height: '10px',
+                borderRadius: '50%',
+                background: '#00AFF0',
+                animation: `pulse-dot 1.4s ease-in-out ${i * 0.2}s infinite`,
+              }}
+            />
+          ))}
+        </div>
+        <style>{`
+          @keyframes pulse-dot {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+          }
+        `}</style>
+      </div>
+    </div>
+  );
+}
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(() => {
@@ -45,6 +123,29 @@ export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const [showLoader, setShowLoader] = useState(true);
+  const [iframesLoaded, setIframesLoaded] = useState(0);
+  const prevPathRef = useRef(location.pathname);
+
+  // Show loader on initial load for 2.5 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoader(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loader briefly on page navigation (route change)
+  useEffect(() => {
+    if (prevPathRef.current !== location.pathname) {
+      prevPathRef.current = location.pathname;
+      setShowLoader(true);
+      const timer = setTimeout(() => {
+        setShowLoader(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -97,6 +198,7 @@ export default function DashboardLayout() {
 
   return (
     <div style={{ width: '100%', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      <OnlyFansLoader visible={showLoader} />
       {pages.map((page) => {
         const isActive = currentPath.startsWith(page.path);
         return (

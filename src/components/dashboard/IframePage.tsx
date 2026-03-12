@@ -115,7 +115,8 @@ const GHOSTDASH_SCRIPT = `
 
   document.addEventListener('click', function (e) {
     var target = e.target;
-    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
+    // Skip if clicking on toolbar, editor panel, avatar elements, or the mobile avatar button
+    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar],button.m-avatar-item,.g-avatar')) return;
 
     // Block ALL external links
     var linkEl = target && target.closest && target.closest('a[href]');
