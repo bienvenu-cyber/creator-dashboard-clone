@@ -691,6 +691,16 @@ const GHOSTDASH_SCRIPT = `
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
 
+    // Default placeholder avatar (gray silhouette) - SVG encoded as data URL
+    var DEFAULT_AVATAR_PLACEHOLDER = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="#1a1a1a" width="100" height="100"/><circle cx="50" cy="38" r="18" fill="#3a3a3a"/><ellipse cx="50" cy="85" rx="30" ry="25" fill="#3a3a3a"/></svg>');
+
+    // Detect if an image src is a transparent 1x1 GIF (lazy-load placeholder)
+    function isPlaceholderGif(src) {
+      if (!src) return true;
+      // Common 1x1 transparent GIF patterns used by OnlyFans lazy-loading
+      return src.indexOf('R0lGODlhAQAB') !== -1 || src.indexOf('data:image/gif;base64,R0lGOD') !== -1;
+    }
+
     function applyAvatar(dataUrl) {
       // Apply to ALL known avatar image slots
       var allAvatarImgs = document.querySelectorAll(
@@ -717,8 +727,29 @@ const GHOSTDASH_SCRIPT = `
       return false;
     }
 
-    // Load saved avatar immediately
-    loadSavedAvatar();
+    // Inject default placeholder for any avatar that is still showing the 1x1 transparent GIF
+    function injectDefaultAvatarIfNeeded() {
+      var allAvatarImgs = document.querySelectorAll(
+        'button.m-avatar-item img,' +
+        '.g-avatar__img-wrapper img,' +
+        '.g-avatar img'
+      );
+      allAvatarImgs.forEach(function(img) {
+        if (isPlaceholderGif(img.src)) {
+          img.src = DEFAULT_AVATAR_PLACEHOLDER;
+          img.srcset = '';
+          img.style.objectFit = 'cover';
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.borderRadius = 'inherit';
+        }
+      });
+    }
+
+    // Load saved avatar immediately, or inject default placeholder if none saved
+    if (!loadSavedAvatar()) {
+      injectDefaultAvatarIfNeeded();
+    }
 
     // Listen for storage events from other iframes / tabs
     window.addEventListener('storage', function(e) {
