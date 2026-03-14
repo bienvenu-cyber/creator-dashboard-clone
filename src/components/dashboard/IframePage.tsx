@@ -33,17 +33,18 @@ const GHOSTDASH_SCRIPT = `
      '#ghostdash-editor-panel .gd-header-title{font-size:13px;font-weight:800;color:#00aff0;}',
      '#ghostdash-editor-panel .gd-header-close{background:none;border:none;color:#9ca3af;cursor:pointer;font-size:18px;padding:2px 6px;border-radius:6px;}',
      '#ghostdash-editor-panel .gd-header-close:hover{background:#252936;color:#e8eaed;}',
-     '#ghostdash-editor-panel .gd-tabs{display:flex;gap:0;border-bottom:1px solid #2a2e3d;flex-shrink:0;}',
-     '#ghostdash-editor-panel .gd-tab{flex:1;padding:8px 10px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:#9ca3af;border-bottom:2px solid transparent;transition:all .15s ease;}',
+     '#ghostdash-editor-panel .gd-tabs{display:flex;gap:0;border-bottom:1px solid #2a2e3d;flex-shrink:0;flex-wrap:wrap;}',
+     '#ghostdash-editor-panel .gd-tab{flex:1;padding:8px 6px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:#9ca3af;border-bottom:2px solid transparent;transition:all .15s ease;white-space:nowrap;min-width:0;}',
      '#ghostdash-editor-panel .gd-tab.active{color:#00aff0;border-bottom-color:#00aff0;background:rgba(0,175,240,.06);}',
      '#ghostdash-editor-panel .gd-tab:hover:not(.active){color:#e8eaed;background:rgba(255,255,255,.04);}',
-     '#ghostdash-editor-panel .gd-fields{padding:10px 14px;overflow-y:auto;flex:1;min-height:0;}',
+     '#ghostdash-editor-panel .gd-tab-content{padding:10px 14px;overflow-y:auto;flex:1;min-height:0;display:none;}',
+     '#ghostdash-editor-panel .gd-tab-content.active{display:block;}',
      '#ghostdash-editor-panel .gd-field{margin-bottom:10px;}',
      '#ghostdash-editor-panel .gd-field:last-child{margin-bottom:0;}',
      '#ghostdash-editor-panel .gd-field-label{font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}',
      '#ghostdash-editor-panel .gd-field-input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:9px 12px;font-size:14px;outline:none;}',
      '#ghostdash-editor-panel .gd-field-input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15);}',
-     '#ghostdash-editor-panel .gd-footer{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 12px;border-top:1px solid #2a2e3d;flex-shrink:0;}',
+     '#ghostdash-editor-panel .gd-footer{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 12px;border-top:1px solid #2a2e3d;flex-shrink:0;flex-wrap:wrap;}',
      '#ghostdash-editor-panel .gd-btn{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;border:1px solid transparent;transition:all .15s ease;}',
      '#ghostdash-editor-panel .gd-btn-save{background:#00aff0;color:#fff;}',
      '#ghostdash-editor-panel .gd-btn-save:hover{background:#0091ea;}',
@@ -51,12 +52,16 @@ const GHOSTDASH_SCRIPT = `
      '#ghostdash-editor-panel .gd-btn-reset:hover{background:#ef4444;color:#fff;border-color:#ef4444;}',
      '#ghostdash-editor-panel .gd-btn-close{background:transparent;color:#9ca3af;border-color:#3a3f52;}',
      '#ghostdash-editor-panel .gd-btn-close:hover{background:#252936;color:#e8eaed;}',
+     '#ghostdash-editor-panel .gd-btn-logout{background:transparent;color:#ef4444;border-color:#ef4444;}',
+     '#ghostdash-editor-panel .gd-btn-logout:hover{background:#ef4444;color:#fff;}',
+     '#ghostdash-editor-panel .gd-btn-clear{background:transparent;color:#f59e0b;border-color:#3a3f52;}',
+     '#ghostdash-editor-panel .gd-btn-clear:hover{background:#f59e0b;color:#fff;border-color:#f59e0b;}',
      '#ghostdash-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9998;background:#252936;color:#9ca3af;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;box-shadow:0 6px 20px rgba(0,0,0,.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;opacity:0;transition:opacity .3s ease;pointer-events:none;}',
      '#ghostdash-hint[data-show="1"]{opacity:1;}',
-     // Theme toggle
+     // Theme toggle row
      '#ghostdash-editor-panel .gd-theme-toggle{display:flex;align-items:center;gap:8px;padding:6px 14px;border-top:1px solid #2a2e3d;flex-shrink:0;}',
      '#ghostdash-editor-panel .gd-theme-toggle label{font-size:11px;font-weight:700;color:#9ca3af;cursor:pointer;}',
-     '#ghostdash-editor-panel .gd-theme-switch{position:relative;width:36px;height:20px;background:#3a3f52;border-radius:10px;cursor:pointer;transition:background .2s;}',
+     '#ghostdash-editor-panel .gd-theme-switch{position:relative;width:36px;height:20px;background:#3a3f52;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0;}',
      '#ghostdash-editor-panel .gd-theme-switch.active{background:#00aff0;}',
      '#ghostdash-editor-panel .gd-theme-switch-knob{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;}',
      '#ghostdash-editor-panel .gd-theme-switch.active .gd-theme-switch-knob{transform:translateX(16px);}',
@@ -80,6 +85,87 @@ const GHOSTDASH_SCRIPT = `
      '#ghostdash-editor-panel .gd-annual-input:focus{border-color:#00aff0;}',
      '#ghostdash-editor-panel .gd-distribute-btn{background:#00aff0;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}',
      '#ghostdash-editor-panel .gd-distribute-btn:hover{background:#0091ea;}',
+     // Section label in account form
+     '#ghostdash-editor-panel .gd-section-label{font-size:10px;font-weight:800;color:#00aff0;text-transform:uppercase;letter-spacing:.8px;margin:10px 0 6px;padding-top:8px;border-top:1px solid #2a2e3d;}',
+     '#ghostdash-editor-panel .gd-section-label:first-child{border-top:none;margin-top:0;padding-top:0;}',
+     // Calculate button
+     '#ghostdash-editor-panel .gd-btn-calc{background:#10b981;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;width:100%;margin-top:6px;}',
+     '#ghostdash-editor-panel .gd-btn-calc:hover{background:#059669;}',
+     // Withdrawal modal
+     '#gd-withdrawal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:10003;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}',
+     '#gd-withdrawal-modal{background:#1a1d29;color:#e8eaed;border:1px solid #3a3f52;border-radius:14px;padding:24px;min-width:300px;max-width:380px;width:90%;box-shadow:0 18px 50px rgba(0,0,0,.5);}',
+     '#gd-withdrawal-modal .gd-wd-title{font-size:11px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}',
+     '#gd-withdrawal-modal .gd-wd-max{font-size:13px;color:#e8eaed;margin-bottom:4px;}',
+     '#gd-withdrawal-modal .gd-wd-max span{font-weight:800;color:#00aff0;}',
+     '#gd-withdrawal-modal .gd-wd-min{font-size:11px;color:#9ca3af;margin-bottom:14px;}',
+     '#gd-withdrawal-modal .gd-wd-input{width:100%;box-sizing:border-box;background:#252936;color:#e8eaed;border:1px solid #3a3f52;border-radius:10px;padding:12px 14px;font-size:16px;outline:none;margin-bottom:16px;}',
+     '#gd-withdrawal-modal .gd-wd-input:focus{border-color:#00aff0;box-shadow:0 0 0 3px rgba(0,175,240,.15);}',
+     '#gd-withdrawal-modal .gd-wd-buttons{display:flex;gap:10px;}',
+     '#gd-withdrawal-modal .gd-wd-btn{flex:1;padding:12px;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;border:none;text-align:center;transition:all .15s;}',
+     '#gd-withdrawal-modal .gd-wd-cancel{background:#252936;color:#9ca3af;border:1px solid #3a3f52;}',
+     '#gd-withdrawal-modal .gd-wd-cancel:hover{background:#3a3f52;color:#e8eaed;}',
+     '#gd-withdrawal-modal .gd-wd-submit{background:#3a3f52;color:#6b7280;cursor:not-allowed;}',
+     '#gd-withdrawal-modal .gd-wd-submit.valid{background:#00aff0;color:#fff;cursor:pointer;}',
+     '#gd-withdrawal-modal .gd-wd-submit.valid:hover{background:#0091ea;}',
+     '#gd-withdrawal-modal .gd-wd-success{text-align:center;padding:20px 0;}',
+     '#gd-withdrawal-modal .gd-wd-success-text{font-size:14px;font-weight:600;color:#10b981;margin-bottom:16px;}',
+     '#gd-withdrawal-modal .gd-wd-close-x{background:none;border:1px solid #3a3f52;color:#9ca3af;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto;}',
+     '#gd-withdrawal-modal .gd-wd-close-x:hover{background:#252936;color:#e8eaed;}',
+     '#gd-withdrawal-modal .gd-wd-spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:gd-spin .6s linear infinite;vertical-align:middle;}',
+     '@keyframes gd-spin{to{transform:rotate(360deg)}}',
+     // DARK THEME - comprehensive styles for the entire dashboard
+     '.gd-dark-mode{background-color:#1a1d29!important;color:#e8eaed!important;}',
+     '.gd-dark-mode *:not(#ghostdash-editor-panel):not(#ghostdash-editor-panel *):not(#gd-withdrawal-overlay):not(#gd-withdrawal-overlay *){color:inherit;}',
+     'html.gd-dark body{background:#1a1d29!important;color:#e8eaed!important;}',
+     'html.gd-dark .b-page,.html.gd-dark .l-wrapper,.html.gd-dark .l-content{background:#1a1d29!important;}',
+     'html.gd-dark .l-sidebar{background:#141621!important;border-color:#2a2e3d!important;}',
+     'html.gd-dark .l-header{background:#1a1d29!important;border-color:#2a2e3d!important;}',
+     'html.gd-dark .l-header__menu{background:#141621!important;border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-tabs__nav__link{color:#9ca3af!important;border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-tabs__nav__link:hover{color:#00aff0!important;background:#252936!important;}',
+     'html.gd-dark .b-tabs__nav__link.m-current{color:#e8eaed!important;background:#252936!important;border-left-color:#00aff0!important;}',
+     'html.gd-dark .b-stats-row{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-stats-row__head:hover{background:#252936!important;}',
+     'html.gd-dark .b-earnings-table{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-earnings-table__header{border-color:#2a2e3d!important;color:#9ca3af!important;background:#141621!important;}',
+     'html.gd-dark .b-earnings-table__row{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-earnings-table__row:hover{background:#252936!important;}',
+     'html.gd-dark .g-btn.m-rounded{background:#3a3f52!important;color:#6b7280!important;}',
+     'html.gd-dark .balance-wrapper,.html.gd-dark .g-box{border-color:#2a2e3d!important;}',
+     'html.gd-dark .g-box__header.m-title{border-color:#2a2e3d!important;}',
+     'html.gd-dark .g-select{background:#252936!important;border-color:#3a3f52!important;color:#e8eaed!important;}',
+     'html.gd-dark .b-statements__header{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-statements__aside{border-color:#2a2e3d!important;background:#141621!important;}',
+     'html.gd-dark .b-statements__content{background:#1a1d29!important;}',
+     'html.gd-dark .g-box.m-with-icon.m-panel{border-color:#2a2e3d!important;}',
+     'html.gd-dark .g-box.m-with-icon.m-panel .g-box__header{color:#e8eaed!important;}',
+     // Dark for general elements
+     'html.gd-dark{background:#1a1d29!important;color:#e8eaed!important;}',
+     'html.gd-dark body{background:#1a1d29!important;color:#e8eaed!important;}',
+     'html.gd-dark div,html.gd-dark span,html.gd-dark p,html.gd-dark td,html.gd-dark th,html.gd-dark li,html.gd-dark h1,html.gd-dark h2,html.gd-dark h3,html.gd-dark h4,html.gd-dark h5,html.gd-dark h6,html.gd-dark label,html.gd-dark a,html.gd-dark strong,html.gd-dark b,html.gd-dark small{color:#e8eaed!important;}',
+     'html.gd-dark .current-balance,html.gd-dark .pending-balance,html.gd-dark .b-stats-row__month,html.gd-dark .b-stats-row__total-net,html.gd-dark .b-statements__current-balance__title{color:#e8eaed!important;}',
+     'html.gd-dark .g-text-with-info-tip,html.gd-dark .b-statements__min-payout-summ,html.gd-dark .b-statements__head-timezone{color:#9ca3af!important;}',
+     // Dark - borders & backgrounds
+     'html.gd-dark [class*="border"],html.gd-dark [style*="border"]{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-tabs__nav.m-nv.m-row-item{border-color:#2a2e3d!important;}',
+     // Dark - SVG chart
+     'html.gd-dark .highcharts-background{fill:#1a1d29!important;}',
+     'html.gd-dark .highcharts-plot-background{fill:#1a1d29!important;}',
+     'html.gd-dark .highcharts-yaxis-labels text{fill:#9ca3af!important;}',
+     'html.gd-dark .highcharts-xaxis-labels text{fill:#9ca3af!important;}',
+     'html.gd-dark .highcharts-grid-line{stroke:#2a2e3d!important;}',
+     'html.gd-dark .highcharts-tick{stroke:#2a2e3d!important;}',
+     // Dark - statistics page
+     'html.gd-dark .b-stats,.html.gd-dark .b-stats__section{background:#1a1d29!important;}',
+     'html.gd-dark .b-stats__item{border-color:#2a2e3d!important;}',
+     'html.gd-dark .b-stats__item__value{color:#e8eaed!important;}',
+     'html.gd-dark .b-stats__item__label{color:#9ca3af!important;}',
+     // Dark - mobile specific
+     'html.gd-dark .l-header__menu .l-header__menu__item{color:#9ca3af!important;}',
+     'html.gd-dark .l-header__menu .l-header__menu__item.m-current{color:#e8eaed!important;}',
+     // Dark mode scrollbar
+     'html.gd-dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2)!important;}',
+     'html.gd-dark ::-webkit-scrollbar-track{background:#1a1d29!important;}',
      '@media (max-width:640px){#ghostdash-toolbar{bottom:70px;right:12px}#ghostdash-toolbar button{padding:9px 12px;font-size:12px}#ghostdash-editor-panel{left:8px!important;right:8px!important;top:auto!important;bottom:80px!important;max-width:none!important;max-height:60vh!important;border-radius:14px 14px 14px 14px;}}',
      // Mobile bottom nav: force fixed positioning immediately, no scroll dependency
      '@media (max-width:1003.98px){.l-header__menu{position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:9999!important;display:flex!important;visibility:visible!important;opacity:1!important;transform:none!important;transition:none!important;padding-bottom:env(safe-area-inset-bottom)!important;}}',
@@ -87,7 +173,7 @@ const GHOSTDASH_SCRIPT = `
   ].join('\\n');
   document.head.appendChild(s);
 
-  // ---------- 1b) Force mobile bottom nav visibility immediately (no scroll/delay dependency)
+  // ---------- 1b) Force mobile bottom nav visibility immediately
   function forceBottomNav() {
     var nav = document.querySelector('.l-header__menu');
     if (!nav) return;
@@ -112,6 +198,18 @@ const GHOSTDASH_SCRIPT = `
   var navObserver = new MutationObserver(forceBottomNav);
   navObserver.observe(document.documentElement, { childList: true, subtree: true });
   setTimeout(function() { navObserver.disconnect(); }, 5000);
+
+  // ---------- 1c) Theme initialization from localStorage
+  function applyThemeFromStorage() {
+    var saved = null;
+    try { saved = localStorage.getItem('ghostdash_theme'); } catch(e) {}
+    if (saved === 'dark') {
+      document.documentElement.classList.add('gd-dark');
+    } else {
+      document.documentElement.classList.remove('gd-dark');
+    }
+  }
+  applyThemeFromStorage();
 
   // ---------- 2) Disable native contenteditable
   function disableNativeContentEditable() {
@@ -142,7 +240,7 @@ const GHOSTDASH_SCRIPT = `
 
   document.addEventListener('click', function (e) {
     var target = e.target;
-    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
+    if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar],#gd-withdrawal-overlay')) return;
 
     // Block ALL external links
     var linkEl = target && target.closest && target.closest('a[href]');
@@ -262,7 +360,7 @@ const GHOSTDASH_SCRIPT = `
     if (!el || el.nodeType !== 1) return true;
     var tag = el.tagName.toLowerCase();
     if ('script,style,noscript,svg,path,img,video,canvas,input,textarea,select,option'.indexOf(tag) !== -1) return true;
-    if (el.closest && el.closest('#ghostdash-toolbar,#ghostdash-editor-panel,#ghostdash-hint')) return true;
+    if (el.closest && el.closest('#ghostdash-toolbar,#ghostdash-editor-panel,#ghostdash-hint,#gd-withdrawal-overlay')) return true;
     if (el.closest && el.closest('.l-sidebar__menu,.l-sidebar__menu__item,.l-header__menu,.l-header__menu__item')) return true;
     return false;
   }
@@ -388,9 +486,9 @@ const GHOSTDASH_SCRIPT = `
     return value.length > 25 ? value.substring(0, 22) + '...' : value;
   }
 
-  // ---------- 7) Multi-field Editor Panel with Tabs (Edit + Chart)
+  // ---------- 7) Multi-field Editor Panel with 4 Tabs
   var activeFields = [];
-  var currentTab = 'edit'; // 'edit' or 'chart'
+  var currentTab = 'edit';
 
   function createEditorPanel() {
     if (document.getElementById('ghostdash-editor-panel')) return;
@@ -401,64 +499,80 @@ const GHOSTDASH_SCRIPT = `
       '<button class="gd-header-close" id="gd-panel-close">\\u2715</button>' +
       '</div>' +
       '<div class="gd-tabs">' +
-      '<button class="gd-tab active" id="gd-tab-edit" data-tab="edit">\\u270f\\ufe0f Edit</button>' +
-      '<button class="gd-tab" id="gd-tab-chart" data-tab="chart">\\ud83d\\udcc8 Chart</button>' +
+      '<button class="gd-tab active" data-tab="edit">\\u270f\\ufe0f Edit</button>' +
+      '<button class="gd-tab" data-tab="chart">\\ud83d\\udcc8 Chart</button>' +
+      '<button class="gd-tab" data-tab="account">\\ud83d\\udc64 Account</button>' +
+      '<button class="gd-tab" data-tab="balance">\\ud83d\\udcb0 Balance</button>' +
       '</div>' +
-      '<div class="gd-fields" id="gd-fields-container"></div>' +
-      '<div class="gd-fields" id="gd-chart-container" style="display:none;"></div>' +
+      '<div class="gd-tab-content active" data-content="edit" id="gd-fields-container"></div>' +
+      '<div class="gd-tab-content" data-content="chart" id="gd-chart-container"></div>' +
+      '<div class="gd-tab-content" data-content="account" id="gd-account-container"></div>' +
+      '<div class="gd-tab-content" data-content="balance" id="gd-balance-container"></div>' +
       '<div class="gd-theme-toggle" id="gd-theme-row">' +
-      '<label>\\ud83c\\udf19 Dark Mode</label>' +
+      '<label>\\u2600\\ufe0f Light</label>' +
       '<div class="gd-theme-switch" id="gd-theme-switch"><div class="gd-theme-switch-knob"></div></div>' +
+      '<label>\\ud83c\\udf19 Dark</label>' +
       '</div>' +
       '<div class="gd-footer">' +
       '<button class="gd-btn gd-btn-reset" id="gd-panel-reset">Reset</button>' +
-      '<button class="gd-btn gd-btn-close" id="gd-panel-cancel">Fermer</button>' +
-      '<button class="gd-btn gd-btn-save" id="gd-panel-save">\\u2714 Sauvegarder</button>' +
+      '<button class="gd-btn gd-btn-close" id="gd-panel-cancel">Close</button>' +
+      '<button class="gd-btn gd-btn-save" id="gd-panel-save">\\u2714 Save</button>' +
       '</div>';
     document.body.appendChild(panel);
     document.getElementById('gd-panel-close').addEventListener('click', closePanel);
     document.getElementById('gd-panel-cancel').addEventListener('click', closePanel);
     document.getElementById('gd-panel-save').addEventListener('click', function() {
       if (currentTab === 'edit') commitPanel();
-      else commitChartEdits();
+      else if (currentTab === 'chart') commitChartEdits();
+      else if (currentTab === 'account') commitAccountEdits();
+      else if (currentTab === 'balance') commitBalanceEdits();
     });
     document.getElementById('gd-panel-reset').addEventListener('click', function () {
-      if (confirm('R\\u00e9initialiser toutes les modifications de cette page ?')) resetPatches();
+      if (confirm('Reset all modifications on this page?')) resetPatches();
     });
 
     // Tab switching
-    document.getElementById('gd-tab-edit').addEventListener('click', function() { switchTab('edit'); });
-    document.getElementById('gd-tab-chart').addEventListener('click', function() { switchTab('chart'); });
+    panel.querySelectorAll('.gd-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() { switchTab(tab.getAttribute('data-tab')); });
+    });
 
     // Theme toggle
-    var isDark = document.documentElement.classList.contains('m-mode-dark');
+    var isDark = document.documentElement.classList.contains('gd-dark');
     var themeSwitch = document.getElementById('gd-theme-switch');
     if (isDark) themeSwitch.classList.add('active');
     themeSwitch.addEventListener('click', function() {
-      var html = document.documentElement;
-      html.classList.toggle('m-mode-dark');
-      themeSwitch.classList.toggle('active');
-      var nowDark = html.classList.contains('m-mode-dark');
-      try { localStorage.setItem('dark_mode', nowDark ? '1' : ''); } catch(e) {}
-      // Notify parent to sync theme across iframes
-      try { window.parent.postMessage({ type: 'ghostdash-theme-changed', dark: nowDark }, '*'); } catch(e) {}
+      toggleTheme();
     });
+  }
+
+  function toggleTheme() {
+    var html = document.documentElement;
+    html.classList.toggle('gd-dark');
+    var nowDark = html.classList.contains('gd-dark');
+    try { localStorage.setItem('ghostdash_theme', nowDark ? 'dark' : 'light'); } catch(e) {}
+    // Update toggle visual
+    var sw = document.getElementById('gd-theme-switch');
+    if (sw) {
+      if (nowDark) sw.classList.add('active');
+      else sw.classList.remove('active');
+    }
+    // Notify parent to sync theme across iframes
+    try { window.parent.postMessage({ type: 'ghostdash-theme-changed', dark: nowDark }, '*'); } catch(e) {}
   }
 
   function switchTab(tab) {
     currentTab = tab;
-    var editTab = document.getElementById('gd-tab-edit');
-    var chartTab = document.getElementById('gd-tab-chart');
-    var fieldsC = document.getElementById('gd-fields-container');
-    var chartC = document.getElementById('gd-chart-container');
-    if (tab === 'edit') {
-      editTab.classList.add('active'); chartTab.classList.remove('active');
-      fieldsC.style.display = ''; chartC.style.display = 'none';
-    } else {
-      chartTab.classList.add('active'); editTab.classList.remove('active');
-      fieldsC.style.display = 'none'; chartC.style.display = '';
-      buildChartForm();
-    }
+    var panel = document.getElementById('ghostdash-editor-panel');
+    if (!panel) return;
+    panel.querySelectorAll('.gd-tab').forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+    });
+    panel.querySelectorAll('.gd-tab-content').forEach(function(c) {
+      c.classList.toggle('active', c.getAttribute('data-content') === tab);
+    });
+    if (tab === 'chart') buildChartForm();
+    if (tab === 'account') buildAccountForm();
+    if (tab === 'balance') buildBalanceForm();
   }
 
    function openPanel(fields, x, y) {
@@ -575,7 +689,7 @@ const GHOSTDASH_SCRIPT = `
      });
      if (changed > 0) {
        writePatches(patches);
-       showToast('\\u2705 ' + changed + ' valeur' + (changed > 1 ? 's' : '') + ' sauvegard\\u00e9e' + (changed > 1 ? 's' : ''));
+       showToast('\\u2705 ' + changed + ' value' + (changed > 1 ? 's' : '') + ' saved');
      }
      closePanel();
    }
@@ -590,27 +704,11 @@ const GHOSTDASH_SCRIPT = `
     return CHART_STORAGE_KEY + pageName + '_' + id.replace(/[^a-zA-Z0-9]/g, '_');
   }
 
-  function parseChartData(chartEl) {
-    // Extract data from Highcharts SVG points
-    var points = chartEl.querySelectorAll('.highcharts-point');
-    var data = [];
-    points.forEach(function(pt) {
-      var label = pt.getAttribute('aria-label') || '';
-      // aria-label format: "Day, Date, Time, VALUE . Series Name."
-      var valMatch = label.match(/,\\s*([\\d.]+)\\s*\\./);
-      var val = valMatch ? parseFloat(valMatch[1]) : 0;
-      data.push(val);
-    });
-    return data;
-  }
-
   function getChartDimensions(chartEl) {
     var svg = chartEl.querySelector('svg.highcharts-root');
     if (!svg) return null;
     var w = parseInt(svg.getAttribute('width')) || 568;
     var h = parseInt(svg.getAttribute('height')) || 150;
-
-    // Get Y axis scale from labels
     var yLabels = chartEl.querySelectorAll('.highcharts-yaxis-labels text');
     var maxY = 0;
     yLabels.forEach(function(lbl) {
@@ -619,8 +717,6 @@ const GHOSTDASH_SCRIPT = `
       if (!isNaN(v) && v > maxY) maxY = v;
     });
     if (maxY === 0) maxY = 1;
-
-    // Plot area (usually full width of SVG in these charts)
     var plotBg = chartEl.querySelector('.highcharts-plot-background');
     var plotX = 0, plotY = 0, plotW = w, plotH = h - 1;
     if (plotBg) {
@@ -635,23 +731,16 @@ const GHOSTDASH_SCRIPT = `
   function redrawChart(chartEl, monthlyValues) {
     var dims = getChartDimensions(chartEl);
     if (!dims) return;
-
     var numPoints = monthlyValues.length;
     if (numPoints === 0) return;
-
     var maxVal = Math.max.apply(null, monthlyValues);
     if (maxVal === 0) maxVal = 1;
-    // Add 20% headroom
     var yMax = maxVal * 1.2;
-
     var svg = chartEl.querySelector('svg.highcharts-root');
     if (!svg) return;
-
-    // Build path points
     var pathParts = [];
     var areaDown = [];
     var xStep = dims.plotW / (numPoints > 1 ? numPoints - 1 : 1);
-
     for (var i = 0; i < numPoints; i++) {
       var x = dims.plotX + i * xStep;
       var yVal = monthlyValues[i] || 0;
@@ -661,28 +750,18 @@ const GHOSTDASH_SCRIPT = `
       else pathParts.push('L ' + x + ' ' + y);
       areaDown.unshift('L ' + x + ' ' + (dims.plotY + dims.plotH));
     }
-
     var graphD = pathParts.join(' ');
     var areaD = graphD + ' ' + areaDown.join(' ') + ' Z';
-
-    // Update area path
     var areaPath = svg.querySelector('.highcharts-area');
     if (areaPath) areaPath.setAttribute('d', areaD);
-
-    // Update graph path
     var graphPaths = svg.querySelectorAll('.highcharts-graph, .highcharts-tracker-line');
     graphPaths.forEach(function(p) { p.setAttribute('d', graphD); });
-
-    // Update point markers
     var markerGroup = svg.querySelector('.highcharts-markers');
     if (markerGroup) {
-      // Remove old points
       var oldPoints = markerGroup.querySelectorAll('.highcharts-point');
       oldPoints.forEach(function(p) { p.remove(); });
-      // Remove halo
       var halo = markerGroup.querySelector('.highcharts-halo');
       if (halo) halo.remove();
-
       for (var j = 0; j < numPoints; j++) {
         var px = dims.plotX + j * xStep;
         var pyVal = monthlyValues[j] || 0;
@@ -701,8 +780,6 @@ const GHOSTDASH_SCRIPT = `
         markerGroup.appendChild(point);
       }
     }
-
-    // Update Y-axis labels
     var yLabels = svg.querySelectorAll('.highcharts-yaxis-labels text');
     var labelCount = yLabels.length;
     if (labelCount > 0) {
@@ -712,8 +789,6 @@ const GHOSTDASH_SCRIPT = `
         yLabels[k].textContent = labelVal >= 1 ? '$' + Math.round(labelVal).toLocaleString() : '$' + labelVal.toFixed(2);
       }
     }
-
-    // Save to localStorage
     var key = getChartStorageKey(chartEl);
     try { localStorage.setItem(key, JSON.stringify(monthlyValues)); } catch(e) {}
   }
@@ -722,46 +797,34 @@ const GHOSTDASH_SCRIPT = `
     var container = document.getElementById('gd-chart-container');
     if (!container) return;
     container.innerHTML = '';
-
-    var currentMonth = new Date().getMonth(); // 0-based
-
-    // Load saved monthly data
+    var currentMonth = new Date().getMonth();
     var chartEls = document.querySelectorAll('[data-highcharts-chart]');
     var targetChart = activeChartContainer || (chartEls.length > 0 ? chartEls[0] : null);
     var savedKey = targetChart ? getChartStorageKey(targetChart) : null;
     var savedData = null;
     if (savedKey) {
-      try { var s = localStorage.getItem(savedKey); if (s) savedData = JSON.parse(s); } catch(e) {}
+      try { var sv = localStorage.getItem(savedKey); if (sv) savedData = JSON.parse(sv); } catch(e) {}
     }
-
     var monthValues = savedData && savedData.length === 12 ? savedData : [0,0,0,0,0,0,0,0,0,0,0,0];
-
-    // Annual input row
     var annualRow = document.createElement('div');
     annualRow.className = 'gd-annual-row';
     var annualInput = document.createElement('input');
     annualInput.className = 'gd-annual-input';
     annualInput.type = 'number';
     annualInput.placeholder = 'Annual figure ($)';
-    annualInput.value = '';
     var distBtn = document.createElement('button');
     distBtn.className = 'gd-distribute-btn';
     distBtn.textContent = 'Distribute';
     annualRow.appendChild(annualInput);
     annualRow.appendChild(distBtn);
     container.appendChild(annualRow);
-
-    // Info text
     var info = document.createElement('div');
     info.style.cssText = 'font-size:10px;color:#9ca3af;margin-bottom:8px;';
-    info.textContent = 'Enter annual total and distribute, or edit each month individually.';
+    info.textContent = 'Enter annual total and distribute, or edit each month.';
     container.appendChild(info);
-
-    // Month grid
     var grid = document.createElement('div');
     grid.className = 'gd-month-grid';
     grid.id = 'gd-month-grid';
-
     MONTH_NAMES.forEach(function(name, idx) {
       var item = document.createElement('div');
       item.className = 'gd-month-item';
@@ -777,7 +840,6 @@ const GHOSTDASH_SCRIPT = `
       input.placeholder = '0.00';
       input.setAttribute('data-month-idx', String(idx));
       input.addEventListener('input', function() {
-        // Live update chart
         updateChartFromMonthInputs(targetChart);
       });
       item.appendChild(label);
@@ -785,8 +847,6 @@ const GHOSTDASH_SCRIPT = `
       grid.appendChild(item);
     });
     container.appendChild(grid);
-
-    // Distribute button handler
     distBtn.addEventListener('click', function() {
       var annual = parseFloat(annualInput.value);
       if (isNaN(annual) || annual <= 0) {
@@ -795,9 +855,7 @@ const GHOSTDASH_SCRIPT = `
       }
       var perMonth = annual / 12;
       var inputs = grid.querySelectorAll('.gd-month-input');
-      inputs.forEach(function(inp) {
-        inp.value = perMonth.toFixed(2);
-      });
+      inputs.forEach(function(inp) { inp.value = perMonth.toFixed(2); });
       updateChartFromMonthInputs(targetChart);
       showToast('\\ud83d\\udcca Distributed $' + annual.toLocaleString() + ' across 12 months');
     });
@@ -807,9 +865,7 @@ const GHOSTDASH_SCRIPT = `
     if (!chartEl) return;
     var inputs = document.querySelectorAll('#gd-month-grid .gd-month-input');
     var values = [];
-    inputs.forEach(function(inp) {
-      values.push(parseFloat(inp.value) || 0);
-    });
+    inputs.forEach(function(inp) { values.push(parseFloat(inp.value) || 0); });
     redrawChart(chartEl, values);
   }
 
@@ -823,14 +879,11 @@ const GHOSTDASH_SCRIPT = `
     closePanel();
   }
 
-  // Setup chart click handlers
   function setupChartEditing() {
     var charts = document.querySelectorAll('[data-highcharts-chart]');
     charts.forEach(function(chartEl) {
       chartEl.classList.add('gd-chart-editable');
       chartEl.style.cursor = 'pointer';
-
-      // Load saved chart data
       var key = getChartStorageKey(chartEl);
       try {
         var saved = localStorage.getItem(key);
@@ -839,20 +892,15 @@ const GHOSTDASH_SCRIPT = `
           if (data && data.length) redrawChart(chartEl, data);
         }
       } catch(e) {}
-
       chartEl.addEventListener('click', function(e) {
-        // Skip if clicking inside editor panel
         if (e.target.closest && e.target.closest('#ghostdash-editor-panel')) return;
         e.preventDefault();
         e.stopPropagation();
-
         activeChartContainer = chartEl;
         createEditorPanel();
         var panel = document.getElementById('ghostdash-editor-panel');
         panel.setAttribute('data-open', '1');
         switchTab('chart');
-
-        // Position
         var isMobile = window.innerWidth <= 640;
         if (!isMobile) {
           panel.style.left = '0px';
@@ -883,6 +931,336 @@ const GHOSTDASH_SCRIPT = `
     });
   }
 
+  // ---------- 7c) Account Stats Form (All time earnings, Account age, etc.)
+  var ACCOUNT_STORAGE_KEY = 'ghostdash_account_data';
+
+  function getAccountData() {
+    try { var d = localStorage.getItem(ACCOUNT_STORAGE_KEY); return d ? JSON.parse(d) : {}; } catch(e) { return {}; }
+  }
+  function saveAccountData(data) {
+    try { localStorage.setItem(ACCOUNT_STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+
+  var ACCOUNT_FIELDS = [
+    { key: 'all_time_earnings', label: 'All time earnings', placeholder: '$0.00', type: 'text' },
+    { key: 'account_age', label: 'Account age', placeholder: 'e.g. 2 years', type: 'text' },
+    { key: 'start_date', label: 'Start Date', placeholder: 'MM/DD/YYYY', type: 'text' },
+    { key: 'notifications', label: 'Notifications', placeholder: '0', type: 'text' },
+    { key: 'messages', label: 'Messages', placeholder: '0', type: 'text' },
+    { key: 'max_value', label: 'Max value', placeholder: '$0.00', type: 'text' },
+    { key: 'top_rated', label: 'Top rated', placeholder: '0%', type: 'text' },
+    { key: 'current_balance', label: 'Current balance', placeholder: '$0.00', type: 'text' },
+    { key: 'pending_balance', label: 'Pending balance', placeholder: '$0.00', type: 'text' },
+  ];
+
+  function buildAccountForm() {
+    var container = document.getElementById('gd-account-container');
+    if (!container) return;
+    container.innerHTML = '';
+    var saved = getAccountData();
+
+    ACCOUNT_FIELDS.forEach(function(f) {
+      var div = document.createElement('div');
+      div.className = 'gd-field';
+      var label = document.createElement('div');
+      label.className = 'gd-field-label';
+      label.textContent = f.label;
+      var input = document.createElement('input');
+      input.className = 'gd-field-input';
+      input.type = 'text';
+      input.placeholder = f.placeholder;
+      input.value = saved[f.key] || '';
+      input.setAttribute('data-account-key', f.key);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); commitAccountEdits(); }
+      });
+      div.appendChild(label);
+      div.appendChild(input);
+      container.appendChild(div);
+    });
+
+    // Calculate button
+    var calcBtn = document.createElement('button');
+    calcBtn.className = 'gd-btn-calc';
+    calcBtn.textContent = '\\ud83d\\udda9 CALCULATE';
+    calcBtn.addEventListener('click', function() {
+      // Auto-calculate: sum monthly chart data as all time earnings
+      var chartEls = document.querySelectorAll('[data-highcharts-chart]');
+      var total = 0;
+      chartEls.forEach(function(ch) {
+        var key = getChartStorageKey(ch);
+        try {
+          var s = localStorage.getItem(key);
+          if (s) {
+            var data = JSON.parse(s);
+            if (data && data.length) data.forEach(function(v) { total += (parseFloat(v) || 0); });
+          }
+        } catch(e) {}
+      });
+      var ateInput = container.querySelector('[data-account-key="all_time_earnings"]');
+      if (ateInput) ateInput.value = '$' + total.toFixed(2);
+      showToast('\\ud83d\\udda9 Calculated from chart data');
+    });
+    container.appendChild(calcBtn);
+
+    // Footer buttons row
+    var footerRow = document.createElement('div');
+    footerRow.style.cssText = 'display:flex;gap:6px;margin-top:10px;';
+    var clearBtn = document.createElement('button');
+    clearBtn.className = 'gd-btn gd-btn-clear';
+    clearBtn.textContent = 'Clear';
+    clearBtn.style.flex = '1';
+    clearBtn.addEventListener('click', function() {
+      container.querySelectorAll('.gd-field-input').forEach(function(inp) { inp.value = ''; });
+      saveAccountData({});
+      showToast('\\ud83d\\uddd1 Account data cleared');
+    });
+    var logoutBtn = document.createElement('button');
+    logoutBtn.className = 'gd-btn gd-btn-logout';
+    logoutBtn.textContent = 'Logout';
+    logoutBtn.style.flex = '1';
+    logoutBtn.addEventListener('click', function() {
+      if (confirm('Are you sure you want to logout?')) {
+        try {
+          localStorage.clear();
+          window.parent.postMessage({ type: 'navigate', route: '/' }, '*');
+        } catch(e) {}
+        showToast('Logged out');
+      }
+    });
+    footerRow.appendChild(clearBtn);
+    footerRow.appendChild(logoutBtn);
+    container.appendChild(footerRow);
+  }
+
+  function commitAccountEdits() {
+    var container = document.getElementById('gd-account-container');
+    if (!container) return;
+    var data = {};
+    container.querySelectorAll('.gd-field-input').forEach(function(inp) {
+      var key = inp.getAttribute('data-account-key');
+      if (key && inp.value.trim()) data[key] = inp.value.trim();
+    });
+    saveAccountData(data);
+
+    // Apply values to page elements where possible
+    var patches = readPatches();
+    var changed = 0;
+
+    // Try to find and update matching elements on the page
+    var mappings = {
+      'current_balance': '.current-balance',
+      'pending_balance': '.pending-balance',
+    };
+    for (var key in mappings) {
+      if (data[key]) {
+        var el = document.querySelector(mappings[key]);
+        if (el) {
+          el.textContent = data[key];
+          changed++;
+        }
+      }
+    }
+
+    showToast('\\u2705 Account data saved' + (changed > 0 ? ' & applied' : ''));
+    closePanel();
+  }
+
+  // ---------- 7d) Balance Quick Edit Form
+  var BALANCE_STORAGE_KEY = 'ghostdash_balance_data';
+
+  function getBalanceData() {
+    try { var d = localStorage.getItem(BALANCE_STORAGE_KEY); return d ? JSON.parse(d) : {}; } catch(e) { return {}; }
+  }
+  function saveBalanceData(data) {
+    try { localStorage.setItem(BALANCE_STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+  }
+
+  function buildBalanceForm() {
+    var container = document.getElementById('gd-balance-container');
+    if (!container) return;
+    container.innerHTML = '';
+    var saved = getBalanceData();
+
+    // Read current values from page
+    var curBalEl = document.querySelector('.current-balance');
+    var pendBalEl = document.querySelector('.pending-balance');
+    var curVal = saved.current || (curBalEl ? (curBalEl.textContent || '').trim() : '$0.00');
+    var pendVal = saved.pending || (pendBalEl ? (pendBalEl.textContent || '').trim() : '$0.00');
+
+    // Title
+    var title = document.createElement('div');
+    title.className = 'gd-section-label';
+    title.textContent = '\\ud83d\\udcb0 Quick Balance Editor';
+    title.style.borderTop = 'none';
+    container.appendChild(title);
+
+    // Current balance
+    var f1 = document.createElement('div');
+    f1.className = 'gd-field';
+    var l1 = document.createElement('div');
+    l1.className = 'gd-field-label';
+    l1.textContent = 'Current balance';
+    var i1 = document.createElement('input');
+    i1.className = 'gd-field-input';
+    i1.id = 'gd-bal-current';
+    i1.type = 'text';
+    i1.value = curVal;
+    i1.placeholder = '$0.00';
+    f1.appendChild(l1);
+    f1.appendChild(i1);
+    container.appendChild(f1);
+
+    // Pending balance
+    var f2 = document.createElement('div');
+    f2.className = 'gd-field';
+    var l2 = document.createElement('div');
+    l2.className = 'gd-field-label';
+    l2.textContent = 'Pending balance';
+    var i2 = document.createElement('input');
+    i2.className = 'gd-field-input';
+    i2.id = 'gd-bal-pending';
+    i2.type = 'text';
+    i2.value = pendVal;
+    i2.placeholder = '$0.00';
+    f2.appendChild(l2);
+    f2.appendChild(i2);
+    container.appendChild(f2);
+
+    // Quick apply hint
+    var hint = document.createElement('div');
+    hint.style.cssText = 'font-size:10px;color:#9ca3af;margin-top:6px;';
+    hint.textContent = 'Changes apply instantly to the dashboard when saved.';
+    container.appendChild(hint);
+  }
+
+  function commitBalanceEdits() {
+    var curInput = document.getElementById('gd-bal-current');
+    var pendInput = document.getElementById('gd-bal-pending');
+    if (!curInput || !pendInput) { closePanel(); return; }
+
+    var curVal = curInput.value.trim();
+    var pendVal = pendInput.value.trim();
+
+    // Save
+    saveBalanceData({ current: curVal, pending: pendVal });
+
+    // Apply to page
+    var curBalEl = document.querySelector('.current-balance');
+    var pendBalEl = document.querySelector('.pending-balance');
+    if (curBalEl && curVal) curBalEl.textContent = curVal;
+    if (pendBalEl && pendVal) pendBalEl.textContent = pendVal;
+
+    // Also update account data
+    var acctData = getAccountData();
+    if (curVal) acctData.current_balance = curVal;
+    if (pendVal) acctData.pending_balance = pendVal;
+    saveAccountData(acctData);
+
+    showToast('\\u2705 Balance updated');
+    closePanel();
+  }
+
+  // ---------- 7e) Request Withdrawal Modal
+  function setupWithdrawalButton() {
+    // Find "Request Withdrawal" button - it may be a button or link
+    var btns = document.querySelectorAll('button, .g-btn, a');
+    btns.forEach(function(btn) {
+      var text = (btn.textContent || '').trim().toLowerCase();
+      if (text.indexOf('request withdrawal') !== -1 || text.indexOf('request payout') !== -1) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openWithdrawalModal();
+        }, true);
+      }
+    });
+  }
+
+  function openWithdrawalModal() {
+    if (document.getElementById('gd-withdrawal-overlay')) return;
+
+    // Get current balance
+    var curBalEl = document.querySelector('.current-balance');
+    var balText = curBalEl ? (curBalEl.textContent || '').trim() : '$0.00';
+    var balNum = parseFloat(balText.replace(/[^\\d.]/g, '')) || 0;
+
+    var overlay = document.createElement('div');
+    overlay.id = 'gd-withdrawal-overlay';
+
+    var modal = document.createElement('div');
+    modal.id = 'gd-withdrawal-modal';
+    modal.innerHTML =
+      '<div class="gd-wd-title">MANUAL PAYOUTS</div>' +
+      '<div class="gd-wd-max">MAX: <span>$' + balNum.toFixed(2) + '</span></div>' +
+      '<div class="gd-wd-min">Minimum $20 USD</div>' +
+      '<input class="gd-wd-input" id="gd-wd-amount" type="number" placeholder="Enter amount" step="0.01">' +
+      '<div class="gd-wd-buttons">' +
+      '<button class="gd-wd-btn gd-wd-cancel" id="gd-wd-cancel">CANCEL</button>' +
+      '<button class="gd-wd-btn gd-wd-submit" id="gd-wd-submit">REQUEST WITHDRAWAL</button>' +
+      '</div>';
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    var amountInput = document.getElementById('gd-wd-amount');
+    var submitBtn = document.getElementById('gd-wd-submit');
+    var cancelBtn = document.getElementById('gd-wd-cancel');
+
+    // Validation
+    amountInput.addEventListener('input', function() {
+      var val = parseFloat(amountInput.value) || 0;
+      if (val >= 20 && val <= balNum) {
+        submitBtn.classList.add('valid');
+      } else {
+        submitBtn.classList.remove('valid');
+      }
+    });
+
+    // Cancel
+    cancelBtn.addEventListener('click', function() {
+      overlay.remove();
+    });
+
+    // Click outside
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) overlay.remove();
+    });
+
+    // Submit
+    submitBtn.addEventListener('click', function() {
+      if (!submitBtn.classList.contains('valid')) return;
+      var amount = parseFloat(amountInput.value);
+
+      // Show loading
+      submitBtn.innerHTML = '<span class="gd-wd-spinner"></span>';
+      submitBtn.style.pointerEvents = 'none';
+      cancelBtn.style.pointerEvents = 'none';
+      amountInput.disabled = true;
+
+      setTimeout(function() {
+        // Show success
+        modal.innerHTML =
+          '<div class="gd-wd-success">' +
+          '<div class="gd-wd-success-text">Payout request is being processed</div>' +
+          '<button class="gd-wd-close-x" id="gd-wd-close-success">\\u2715</button>' +
+          '</div>';
+
+        document.getElementById('gd-wd-close-success').addEventListener('click', function() {
+          overlay.remove();
+          // Optionally update balance
+          var newBal = balNum - amount;
+          if (newBal < 0) newBal = 0;
+          var curBalEl2 = document.querySelector('.current-balance');
+          if (curBalEl2) curBalEl2.textContent = '$' + newBal.toFixed(2);
+          saveBalanceData({ current: '$' + newBal.toFixed(2), pending: getBalanceData().pending || '$0.00' });
+        });
+      }, 1800);
+    });
+
+    amountInput.focus();
+  }
+
    // ---------- 8) Click & Double-click handlers
    var clickTimer = null;
    var pendingClickEvent = null;
@@ -907,8 +1285,7 @@ const GHOSTDASH_SCRIPT = `
 
    function handleEditTrigger(e) {
      var target = e.target;
-     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar]')) return;
-     // Skip chart containers — they have their own handler
+     if (target && target.closest && target.closest('#ghostdash-toolbar,#ghostdash-editor-panel,[data-gd-avatar],#gd-withdrawal-overlay')) return;
      if (target && target.closest && target.closest('[data-highcharts-chart]')) return;
 
      var textNode = getTextNodeFromPoint(e);
@@ -949,12 +1326,13 @@ const GHOSTDASH_SCRIPT = `
       var inToolbar = target && target.closest && target.closest('#ghostdash-toolbar');
       var inAvatar = target && target.closest && target.closest('[data-gd-avatar]');
       var inChart = target && target.closest && target.closest('[data-highcharts-chart]');
+      var inWithdrawal = target && target.closest && target.closest('#gd-withdrawal-overlay');
 
-      if (isPanelOpen() && !inPanel && !inToolbar && !inChart) {
+      if (isPanelOpen() && !inPanel && !inToolbar && !inChart && !inWithdrawal) {
         closePanel();
       }
 
-      if (inPanel || inToolbar || inAvatar || inChart) return;
+      if (inPanel || inToolbar || inAvatar || inChart || inWithdrawal) return;
       if (target && target.closest && target.closest('.l-sidebar__menu,.l-header__menu,.l-header__menu__item,.b-tabs__nav')) return;
 
       var link = target && target.closest && target.closest('a[href]');
@@ -975,7 +1353,11 @@ const GHOSTDASH_SCRIPT = `
     }, true);
 
      document.addEventListener('keydown', function (e) {
-       if (e.key === 'Escape') closePanel();
+       if (e.key === 'Escape') {
+         var wd = document.getElementById('gd-withdrawal-overlay');
+         if (wd) { wd.remove(); return; }
+         closePanel();
+       }
      }, true);
    }
 
@@ -988,13 +1370,11 @@ const GHOSTDASH_SCRIPT = `
       e.preventDefault();
       e.stopPropagation();
 
-      // If panel is already open, close it
       if (isPanelOpen()) {
         closePanel();
         return;
       }
 
-      // Open editor with all candidates on the page
       createEditorPanel();
       var allCandidates = document.querySelectorAll('[data-gd-candidate="1"]');
       if (allCandidates.length === 0) {
@@ -1002,7 +1382,6 @@ const GHOSTDASH_SCRIPT = `
         allCandidates = document.querySelectorAll('[data-gd-candidate="1"]');
       }
 
-      // Gather first few editable fields
       var fields = [];
       var seen = new Set();
       var limit = 12;
@@ -1027,17 +1406,17 @@ const GHOSTDASH_SCRIPT = `
       });
 
       if (fields.length > 0) {
-        // Center on screen for mobile
         var cx = window.innerWidth / 2;
         var cy = window.innerHeight / 3;
         openPanel(fields, cx, cy);
+        // Switch to Account tab on mobile for the + button
+        switchTab('account');
       } else {
-        // No editable fields, still open chart form
         var panel = document.getElementById('ghostdash-editor-panel');
         if (!panel) createEditorPanel();
         panel = document.getElementById('ghostdash-editor-panel');
         panel.setAttribute('data-open', '1');
-        switchTab('chart');
+        switchTab('account');
         panel.style.left = '';
         panel.style.top = '';
         panel.style.right = '';
@@ -1047,15 +1426,13 @@ const GHOSTDASH_SCRIPT = `
   }
 
   // ---------- 9) Toolbar removed (reset accessible via editor panel only)
-  function createToolbar() {
-    // No floating toolbar - clean UI
-  }
+  function createToolbar() {}
 
   function showHint() {
     if (document.getElementById('ghostdash-hint')) return;
     var hint = document.createElement('div');
     hint.id = 'ghostdash-hint';
-    hint.textContent = '\\ud83d\\udca1 Cliquez ou double-cliquez sur un texte pour le modifier';
+    hint.textContent = '\\ud83d\\udca1 Click or double-click on text to edit';
     document.body.appendChild(hint);
     setTimeout(function () { hint.setAttribute('data-show', '1'); }, 300);
     setTimeout(function () { hint.removeAttribute('data-show'); }, 4000);
@@ -1069,7 +1446,7 @@ const GHOSTDASH_SCRIPT = `
     var toast = document.createElement('div');
     toast.id = 'ghostdash-toast';
     toast.textContent = msg;
-    toast.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:10001;background:#10b981;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
+    toast.style.cssText = 'position:fixed;bottom:80px;right:20px;z-index:10004;background:#10b981;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,0.3);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;';
     document.body.appendChild(toast);
     setTimeout(function () { toast.remove(); }, 1600);
   }
@@ -1157,12 +1534,11 @@ const GHOSTDASH_SCRIPT = `
         applyAvatar(e.data.dataUrl);
         localStorage.setItem(AVATAR_STORAGE_KEY, e.data.dataUrl);
       }
-      // Theme sync
+      // Theme sync from parent
       if (e.data && e.data.type === 'ghostdash-theme-sync') {
-        if (e.data.dark) document.documentElement.classList.add('m-mode-dark');
-        else document.documentElement.classList.remove('m-mode-dark');
-        try { localStorage.setItem('dark_mode', e.data.dark ? '1' : ''); } catch(err) {}
-        // Update toggle if panel exists
+        if (e.data.dark) document.documentElement.classList.add('gd-dark');
+        else document.documentElement.classList.remove('gd-dark');
+        try { localStorage.setItem('ghostdash_theme', e.data.dark ? 'dark' : 'light'); } catch(err) {}
         var sw = document.getElementById('gd-theme-switch');
         if (sw) {
           if (e.data.dark) sw.classList.add('active');
@@ -1174,13 +1550,13 @@ const GHOSTDASH_SCRIPT = `
     fileInput.addEventListener('change', function() {
       if (!fileInput.files || !fileInput.files[0]) return;
       var file = fileInput.files[0];
-      if (file.size > 5 * 1024 * 1024) { showToast('Image trop lourde (max 5MB)'); return; }
+      if (file.size > 5 * 1024 * 1024) { showToast('Image too large (max 5MB)'); return; }
       var reader = new FileReader();
       reader.onload = function(ev) {
         var dataUrl = ev.target.result;
         localStorage.setItem(AVATAR_STORAGE_KEY, dataUrl);
         applyAvatar(dataUrl);
-        showToast('\\u2705 Avatar mis \\u00e0 jour !');
+        showToast('\\u2705 Avatar updated!');
         try { window.parent.postMessage({ type: 'ghostdash-avatar-changed', dataUrl: dataUrl }, '*'); } catch(err) {}
       };
       reader.readAsDataURL(file);
@@ -1228,6 +1604,19 @@ const GHOSTDASH_SCRIPT = `
     });
   }
 
+  // ---------- 11b) Apply saved balance on load
+  function applySavedBalances() {
+    var data = getBalanceData();
+    if (data.current) {
+      var el = document.querySelector('.current-balance');
+      if (el) el.textContent = data.current;
+    }
+    if (data.pending) {
+      var el2 = document.querySelector('.pending-balance');
+      if (el2) el2.textContent = data.pending;
+    }
+  }
+
   // ---------- 12) Init
   function init() {
     disableNativeContentEditable();
@@ -1239,8 +1628,10 @@ const GHOSTDASH_SCRIPT = `
     setupAvatarEditing();
     setupChartEditing();
     setupNewPostButton();
+    setupWithdrawalButton();
+    applySavedBalances();
     showHint();
-    console.log('\\ud83d\\udc8e GhostDash Editor v7 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
+    console.log('\\ud83d\\udc8e GhostDash Editor v8 ready', { pageName: pageName, candidates: marked, patchesApplied: applied });
   }
 
   if (document.readyState === 'loading') {
@@ -1284,6 +1675,7 @@ export function IframePage({ src, title }: IframePageProps) {
         });
       }
       if (e.data?.type === 'ghostdash-theme-changed') {
+        // Sync to all iframes
         const allIframes = document.querySelectorAll('iframe');
         allIframes.forEach((f) => {
           if (f !== iframeRef.current) {
@@ -1292,6 +1684,12 @@ export function IframePage({ src, title }: IframePageProps) {
             } catch (err) { /* ignore */ }
           }
         });
+        // Also apply to parent document
+        if (e.data.dark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       }
     };
     window.addEventListener('message', handler);

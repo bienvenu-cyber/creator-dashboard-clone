@@ -98,6 +98,45 @@ export type Database = {
         }
         Relationships: []
       }
+      pricing: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          duration_days: number
+          features: string[] | null
+          id: string
+          is_active: boolean | null
+          plan_name: string
+          price: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          duration_days: number
+          features?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          plan_name: string
+          price: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          duration_days?: number
+          features?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          plan_name?: string
+          price?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
